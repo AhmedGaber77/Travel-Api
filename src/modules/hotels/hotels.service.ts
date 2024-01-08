@@ -5,6 +5,7 @@ import { UpdateHotelDto } from './dto/update-hotel.dto';
 @Injectable()
 export class HotelsService {
   create(createHotelDto: CreateHotelDto) {
+    console.log('createHotelDto', createHotelDto);
     return 'This action adds a new hotel';
   }
 
@@ -17,6 +18,7 @@ export class HotelsService {
   }
 
   update(id: number, updateHotelDto: UpdateHotelDto) {
+    console.log('updateHotelDto', updateHotelDto);
     return `This action updates a #${id} hotel`;
   }
 

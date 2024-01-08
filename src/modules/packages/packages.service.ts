@@ -5,6 +5,7 @@ import { UpdatePackageDto } from './dto/update-package.dto';
 @Injectable()
 export class PackagesService {
   create(createPackageDto: CreatePackageDto) {
+    console.log('createPackageDto', createPackageDto);
     return 'This action adds a new package';
   }
 
@@ -17,6 +18,7 @@ export class PackagesService {
   }
 
   update(id: number, updatePackageDto: UpdatePackageDto) {
+    console.log('updatePackageDto', updatePackageDto);
     return `This action updates a #${id} package`;
   }
 

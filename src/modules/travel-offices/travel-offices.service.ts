@@ -5,6 +5,7 @@ import { UpdateTravelOfficeDto } from './dto/update-travel-office.dto';
 @Injectable()
 export class TravelOfficesService {
   create(createTravelOfficeDto: CreateTravelOfficeDto) {
+    console.log('createTravelOfficeDto', createTravelOfficeDto);
     return 'This action adds a new travelOffice';
   }
 
@@ -17,6 +18,7 @@ export class TravelOfficesService {
   }
 
   update(id: number, updateTravelOfficeDto: UpdateTravelOfficeDto) {
+    console.log('updateTravelOfficeDto', updateTravelOfficeDto);
     return `This action updates a #${id} travelOffice`;
   }
 

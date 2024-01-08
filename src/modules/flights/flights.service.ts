@@ -5,6 +5,7 @@ import { UpdateFlightDto } from './dto/update-flight.dto';
 @Injectable()
 export class FlightsService {
   create(createFlightDto: CreateFlightDto) {
+    console.log('createFlightDto', createFlightDto);
     return 'This action adds a new flight';
   }
 
@@ -17,6 +18,7 @@ export class FlightsService {
   }
 
   update(id: number, updateFlightDto: UpdateFlightDto) {
+    console.log('updateFlightDto', updateFlightDto);
     return `This action updates a #${id} flight`;
   }
 

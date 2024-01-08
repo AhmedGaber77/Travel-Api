@@ -5,6 +5,7 @@ import { UpdateWholesalerDto } from './dto/update-wholesaler.dto';
 @Injectable()
 export class WholesalersService {
   create(createWholesalerDto: CreateWholesalerDto) {
+    console.log('createWholesalerDto', createWholesalerDto);
     return 'This action adds a new wholesaler';
   }
 
@@ -17,6 +18,7 @@ export class WholesalersService {
   }
 
   update(id: number, updateWholesalerDto: UpdateWholesalerDto) {
+    console.log('updateWholesalerDto', updateWholesalerDto);
     return `This action updates a #${id} wholesaler`;
   }
 
