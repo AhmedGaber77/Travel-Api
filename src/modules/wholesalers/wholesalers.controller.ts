@@ -6,12 +6,19 @@ import {
   Patch,
   Param,
   Delete,
+  HttpStatus,
+  HttpCode,
 } from '@nestjs/common';
 import { WholesalersService } from './wholesalers.service';
 import { CreateWholesalerDto } from './dto/create-wholesaler.dto';
 import { UpdateWholesalerDto } from './dto/update-wholesaler.dto';
+import { ApiTags } from '@nestjs/swagger';
 
-@Controller('wholesalers')
+@ApiTags('Wholesalers')
+@Controller({
+  path: 'wholesalers',
+  version: '1',
+})
 export class WholesalersController {
   constructor(private readonly wholesalersService: WholesalersService) {}
 
@@ -39,6 +46,7 @@ export class WholesalersController {
   }
 
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id') id: string) {
     return this.wholesalersService.remove(+id);
   }

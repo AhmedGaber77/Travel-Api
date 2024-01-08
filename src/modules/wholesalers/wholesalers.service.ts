@@ -1,28 +1,49 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateWholesalerDto } from './dto/create-wholesaler.dto';
 import { UpdateWholesalerDto } from './dto/update-wholesaler.dto';
+import { WholesalerEntity } from './entities/wholesaler.entity';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class WholesalersService {
-  create(createWholesalerDto: CreateWholesalerDto) {
-    console.log('createWholesalerDto', createWholesalerDto);
-    return 'This action adds a new wholesaler';
+  constructor(
+    @InjectRepository(WholesalerEntity)
+    private wholesalersRepository: Repository<WholesalerEntity>,
+  ) {}
+  create(createWholesalerDto: CreateWholesalerDto): Promise<WholesalerEntity> {
+    const wholesaler = this.wholesalersRepository.create(createWholesalerDto);
+    return this.wholesalersRepository.save(wholesaler);
   }
 
   findAll() {
-    return `This action returns all wholesalers`;
+    const wholesalers = this.wholesalersRepository.find();
+    return wholesalers;
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} wholesaler`;
+    const wholesaler = this.wholesalersRepository.findOne({ where: { id } });
+    return wholesaler;
   }
 
-  update(id: number, updateWholesalerDto: UpdateWholesalerDto) {
-    console.log('updateWholesalerDto', updateWholesalerDto);
-    return `This action updates a #${id} wholesaler`;
+  async update(id: number, updateWholesalerDto: UpdateWholesalerDto) {
+    const Existingwholesaler = await this.wholesalersRepository.findOne({
+      where: { id },
+    });
+    if (!Existingwholesaler) {
+      throw new NotFoundException(`wholesaler with id ${id} not found`);
+    }
+    await this.wholesalersRepository.update(id, updateWholesalerDto);
+    return this.wholesalersRepository.findOne({ where: { id } });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} wholesaler`;
+  async remove(id: number) {
+    const result = await this.wholesalersRepository.update(id, {
+      deletedAt: new Date(),
+    });
+
+    if (result.affected === 0) {
+      throw new NotFoundException(`Wholesaler with id ${id} not found`);
+    }
   }
 }

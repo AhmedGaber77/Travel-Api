@@ -20,6 +20,7 @@ import { AuthProvidersEnum } from 'src/auth/auth-providers.enum';
 import { Exclude, Expose } from 'class-transformer';
 import { User } from '../../../../domain/user';
 import { WholesalerEntity } from 'src/modules/wholesalers/entities/wholesaler.entity';
+import { TravelOfficeEntity } from 'src/modules/travel-offices/entities/travel-office.entity';
 
 @Entity({
   name: 'user',
@@ -80,6 +81,9 @@ export class UserEntity extends EntityRelationalHelper implements User {
 
   @ManyToOne(() => WholesalerEntity, (wholesaler) => wholesaler.users)
   wholesaler?: WholesalerEntity;
+
+  @ManyToOne(() => TravelOfficeEntity, (travelOffice) => travelOffice.users)
+  travelOffice?: TravelOfficeEntity;
 
   @CreateDateColumn()
   createdAt: Date;
