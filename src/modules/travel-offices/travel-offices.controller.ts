@@ -6,12 +6,16 @@ import {
   Patch,
   Param,
   Delete,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { TravelOfficesService } from './travel-offices.service';
 import { CreateTravelOfficeDto } from './dto/create-travel-office.dto';
 import { UpdateTravelOfficeDto } from './dto/update-travel-office.dto';
+import { ApiTags } from '@nestjs/swagger';
 
-@Controller('travel-offices')
+@ApiTags('Travel Offices')
+@Controller({ path: 'travel-offices', version: '1' })
 export class TravelOfficesController {
   constructor(private readonly travelOfficesService: TravelOfficesService) {}
 
@@ -39,6 +43,7 @@ export class TravelOfficesController {
   }
 
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id') id: string) {
     return this.travelOfficesService.remove(+id);
   }
