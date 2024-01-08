@@ -4,12 +4,15 @@ import { UpdateTravelOfficeDto } from './dto/update-travel-office.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TravelOfficeEntity } from './entities/travel-office.entity';
 import { Repository } from 'typeorm';
+import { WholesalerEntity } from '../wholesalers/entities/wholesaler.entity';
 
 @Injectable()
 export class TravelOfficesService {
   constructor(
     @InjectRepository(TravelOfficeEntity)
     private travelOfficeRepository: Repository<TravelOfficeEntity>,
+    @InjectRepository(WholesalerEntity)
+    private wholesalerRepository: Repository<WholesalerEntity>,
   ) {}
   create(createTravelOfficeDto: CreateTravelOfficeDto) {
     const travelOffice = this.travelOfficeRepository.create(
@@ -50,5 +53,45 @@ export class TravelOfficesService {
     if (result.affected === 0) {
       throw new NotFoundException(`travelOffice with id ${id} not found`);
     }
+  }
+
+  async findWholesalerByTravelOfficeId(travelOfficeId: number) {
+    const travelOffice = await this.findOne(travelOfficeId);
+    if (!travelOffice) {
+      throw new NotFoundException(
+        `travelOffice with id ${travelOfficeId} not found`,
+      );
+    }
+    const wholesaler = travelOffice.wholesaler;
+    if (!wholesaler) {
+      throw new NotFoundException(
+        `No wholesaler assigned to travelOffice with id ${travelOfficeId}`,
+      );
+    }
+
+    return wholesaler;
+  }
+
+  async assignWholesalerToTravelOffice(
+    travelOfficeId: number,
+    wholesalerId: number,
+  ) {
+    const travelOffice = await this.findOne(travelOfficeId);
+    if (!travelOffice) {
+      throw new NotFoundException(
+        `travelOffice with id ${travelOfficeId} not found`,
+      );
+    }
+    const wholesaler = await this.wholesalerRepository.findOne({
+      where: { id: wholesalerId },
+    });
+    if (!wholesaler) {
+      throw new NotFoundException(
+        `wholesaler with id ${wholesalerId} not found`,
+      );
+    }
+    travelOffice.wholesaler = wholesaler;
+    await this.travelOfficeRepository.save(travelOffice);
+    return travelOffice;
   }
 }

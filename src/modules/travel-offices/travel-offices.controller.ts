@@ -13,6 +13,7 @@ import { TravelOfficesService } from './travel-offices.service';
 import { CreateTravelOfficeDto } from './dto/create-travel-office.dto';
 import { UpdateTravelOfficeDto } from './dto/update-travel-office.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { AssignWholesalerDto } from './dto/assign-wholesaler.dto';
 
 @ApiTags('Travel Offices')
 @Controller({ path: 'travel-offices', version: '1' })
@@ -46,5 +47,23 @@ export class TravelOfficesController {
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id') id: string) {
     return this.travelOfficesService.remove(+id);
+  }
+
+  @Get(':travelOfficeId/wholesalers')
+  getWholesalers(@Param('travelOfficeId') travelOfficeId: string) {
+    return this.travelOfficesService.findWholesalerByTravelOfficeId(
+      +travelOfficeId,
+    );
+  }
+
+  @Post(':travelOfficeId/wholesalers')
+  addWholesaler(
+    @Param('travelOfficeId') travelOfficeId: string,
+    @Body() assignWholesalerDto: AssignWholesalerDto,
+  ) {
+    return this.travelOfficesService.assignWholesalerToTravelOffice(
+      +travelOfficeId,
+      +assignWholesalerDto.wholesalerId,
+    );
   }
 }
