@@ -30,6 +30,14 @@ import { MailerModule } from './mailer/mailer.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MongooseConfigService } from './database/mongoose-config.service';
 import { DatabaseConfig } from './database/config/database-config.type';
+import { WholesalersModule } from './modules/wholesalers/wholesalers.module';
+import { TravelOfficesModule } from './modules/travel-offices/travel-offices.module';
+import { PackagesModule } from './modules/packages/packages.module';
+import { ServicesModule } from './modules/services/services.module';
+import { HotelsModule } from './modules/hotels/hotels.module';
+import { FlightsModule } from './modules/flights/flights.module';
+import { TransportationsModule } from './modules/transportations/transportations.module';
+import { BookingsModule } from './modules/bookings/bookings.module';
 
 @Module({
   imports: [
@@ -92,6 +100,14 @@ import { DatabaseConfig } from './database/config/database-config.type';
     MailModule,
     MailerModule,
     HomeModule,
+    WholesalersModule,
+    TravelOfficesModule,
+    PackagesModule,
+    ServicesModule,
+    HotelsModule,
+    FlightsModule,
+    TransportationsModule,
+    BookingsModule,
   ],
 })
 export class AppModule {}

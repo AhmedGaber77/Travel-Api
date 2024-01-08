@@ -19,6 +19,7 @@ import { AuthProvidersEnum } from 'src/auth/auth-providers.enum';
 // in your project and return an ORM entity directly in response.
 import { Exclude, Expose } from 'class-transformer';
 import { User } from '../../../../domain/user';
+import { WholesalerEntity } from 'src/modules/wholesalers/entities/wholesaler.entity';
 
 @Entity({
   name: 'user',
@@ -76,6 +77,9 @@ export class UserEntity extends EntityRelationalHelper implements User {
     eager: true,
   })
   status?: StatusEntity;
+
+  @ManyToOne(() => WholesalerEntity, (wholesaler) => wholesaler.users)
+  wholesaler?: WholesalerEntity;
 
   @CreateDateColumn()
   createdAt: Date;
