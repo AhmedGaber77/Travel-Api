@@ -7,10 +7,10 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
-  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -20,7 +20,7 @@ export class PackageEntity extends EntityRelationalHelper {
   id: number;
 
   @Column({ type: String, length: 50, unique: true })
-  @Unique('unique_name', ['name'])
+  // @Unique('unique_name', ['name'])
   @IsString()
   name: string;
 
@@ -49,7 +49,8 @@ export class PackageEntity extends EntityRelationalHelper {
   @ManyToOne(() => WholesalerEntity, (wholesaler) => wholesaler.packages)
   wholesaler: WholesalerEntity;
 
-  @OneToMany(() => ServiceEntity, (service) => service.package)
+  @ManyToMany(() => ServiceEntity, (service) => service.packages)
+  @JoinTable()
   services: ServiceEntity[];
 
   @CreateDateColumn()

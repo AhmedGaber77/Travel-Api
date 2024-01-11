@@ -21,8 +21,10 @@ export class WholesalersService {
     return wholesalers;
   }
 
-  findOne(id: number) {
-    const wholesaler = this.wholesalersRepository.findOne({ where: { id } });
+  async findOne(id: number) {
+    const wholesaler = await this.wholesalersRepository.findOne({
+      where: { id },
+    });
     if (!wholesaler) {
       throw new NotFoundException(`wholesaler with id ${id} not found`);
     }

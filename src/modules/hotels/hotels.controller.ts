@@ -10,8 +10,10 @@ import {
 import { HotelsService } from './hotels.service';
 import { CreateHotelDto } from './dto/create-hotel.dto';
 import { UpdateHotelDto } from './dto/update-hotel.dto';
+import { ApiTags } from '@nestjs/swagger';
 
-@Controller('hotels')
+@ApiTags('Hotels')
+@Controller({ path: 'hotels', version: '1' })
 export class HotelsController {
   constructor(private readonly hotelsService: HotelsService) {}
 

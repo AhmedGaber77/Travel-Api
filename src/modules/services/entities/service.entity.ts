@@ -1,15 +1,26 @@
 import { IsString } from 'class-validator';
+import { HotelEntity } from 'src/modules/hotels/entities/hotel.entity';
 import { PackageEntity } from 'src/modules/packages/entities/package.entity';
+import { WholesalerEntity } from 'src/modules/wholesalers/entities/wholesaler.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
+  ManyToMany,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
+
+export enum ServiceType {
+  Flight = 'flight',
+  Hotel = 'hotel',
+  Transportation = 'transportation',
+}
 
 @Entity({ name: 'service' })
 export class ServiceEntity {
@@ -21,11 +32,15 @@ export class ServiceEntity {
   @IsString()
   name: string;
 
-  @Column({ type: String, nullable: true })
+  @Column({ type: 'enum', enum: ServiceType })
+  @IsString()
+  type: string;
+
+  @Column({ type: String })
   @IsString()
   description: string;
 
-  @Column({ type: 'float', nullable: true })
+  @Column({ type: 'float' })
   @IsString()
   price: number;
 
@@ -45,8 +60,15 @@ export class ServiceEntity {
   @IsString()
   cancelationPolicy: string;
 
-  @ManyToOne(() => PackageEntity, (packageEntity) => packageEntity.services)
-  package: PackageEntity;
+  @ManyToOne(() => WholesalerEntity, (wholesaler) => wholesaler.services)
+  wholesaler: WholesalerEntity;
+
+  @ManyToMany(() => PackageEntity, (packageEntity) => packageEntity.services)
+  packages: PackageEntity[];
+
+  @OneToOne(() => HotelEntity, (hotel) => hotel.service)
+  @JoinColumn()
+  hotel: HotelEntity;
 
   @CreateDateColumn()
   createdAt: Date;
