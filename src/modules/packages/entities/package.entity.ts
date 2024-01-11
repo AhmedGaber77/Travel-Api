@@ -1,4 +1,5 @@
 import { IsBoolean, IsNumber, IsPositive, IsString } from 'class-validator';
+import { ServiceEntity } from 'src/modules/services/entities/service.entity';
 import { WholesalerEntity } from 'src/modules/wholesalers/entities/wholesaler.entity';
 import { EntityRelationalHelper } from 'src/utils/relational-entity-helper';
 import {
@@ -7,6 +8,7 @@ import {
   DeleteDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   Unique,
   UpdateDateColumn,
@@ -46,6 +48,9 @@ export class PackageEntity extends EntityRelationalHelper {
 
   @ManyToOne(() => WholesalerEntity, (wholesaler) => wholesaler.packages)
   wholesaler: WholesalerEntity;
+
+  @OneToMany(() => ServiceEntity, (service) => service.package)
+  services: ServiceEntity[];
 
   @CreateDateColumn()
   createdAt: Date;

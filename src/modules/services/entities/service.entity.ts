@@ -1,5 +1,15 @@
 import { IsString } from 'class-validator';
-import { Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import { PackageEntity } from 'src/modules/packages/entities/package.entity';
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  Unique,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity({ name: 'service' })
 export class ServiceEntity {
@@ -31,7 +41,19 @@ export class ServiceEntity {
   @IsString()
   destination: string;
 
-  @Column({ type: String })
+  @Column({ type: String, nullable: true })
   @IsString()
   cancelationPolicy: string;
+
+  @ManyToOne(() => PackageEntity, (packageEntity) => packageEntity.services)
+  package: PackageEntity;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+
+  @DeleteDateColumn()
+  deletedAt: Date;
 }
