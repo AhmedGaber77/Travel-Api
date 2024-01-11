@@ -10,8 +10,10 @@ import {
 import { PackagesService } from './packages.service';
 import { CreatePackageDto } from './dto/create-package.dto';
 import { UpdatePackageDto } from './dto/update-package.dto';
+import { ApiTags } from '@nestjs/swagger';
 
-@Controller('packages')
+@ApiTags('Packages')
+@Controller({ path: 'packages', version: '1' })
 export class PackagesController {
   constructor(private readonly packagesService: PackagesService) {}
 

@@ -1,28 +1,64 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePackageDto } from './dto/create-package.dto';
 import { UpdatePackageDto } from './dto/update-package.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { PackageEntity } from './entities/package.entity';
+import { Repository } from 'typeorm';
+import { WholesalerEntity } from '../wholesalers/entities/wholesaler.entity';
 
 @Injectable()
 export class PackagesService {
-  create(createPackageDto: CreatePackageDto) {
-    console.log('createPackageDto', createPackageDto);
-    return 'This action adds a new package';
+  constructor(
+    @InjectRepository(PackageEntity)
+    private readonly packageRepository: Repository<PackageEntity>,
+    @InjectRepository(WholesalerEntity)
+    private wholesalerRepository: Repository<WholesalerEntity>,
+  ) {}
+  async create(createPackageDto: CreatePackageDto) {
+    const wholesaler = await this.wholesalerRepository.findOne({
+      where: { id: createPackageDto.WholesalerId },
+    });
+    if (!wholesaler) {
+      throw new NotFoundException(
+        `Wholesaler #${createPackageDto.WholesalerId} not found`,
+      );
+    }
+    const packageObject = this.packageRepository.create(createPackageDto);
+    return this.packageRepository.save(packageObject);
   }
 
   findAll() {
-    return `This action returns all packages`;
+    return this.packageRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} package`;
+  async findOne(id: number) {
+    const packageObject = await this.packageRepository.findOne({
+      where: { id },
+    });
+    if (!packageObject) {
+      throw new NotFoundException(`package with id ${id} not found`);
+    }
+    return packageObject;
   }
 
-  update(id: number, updatePackageDto: UpdatePackageDto) {
-    console.log('updatePackageDto', updatePackageDto);
-    return `This action updates a #${id} package`;
+  async update(id: number, updatePackageDto: UpdatePackageDto) {
+    const ExistingPackage = await this.packageRepository.findOne({
+      where: { id },
+    });
+    if (!ExistingPackage) {
+      throw new NotFoundException(`Package with id ${id} not found`);
+    }
+    await this.packageRepository.update(id, updatePackageDto);
+    return this.packageRepository.findOne({ where: { id } });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} package`;
+  async remove(id: number) {
+    const result = await this.packageRepository.update(id, {
+      deletedAt: new Date(),
+    });
+
+    if (result.affected === 0) {
+      throw new NotFoundException(`Package with id ${id} not found`);
+    }
   }
 }

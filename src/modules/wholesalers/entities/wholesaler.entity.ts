@@ -1,4 +1,5 @@
 import { IsEmail, IsJSON, IsPostalCode } from 'class-validator';
+import { PackageEntity } from 'src/modules/packages/entities/package.entity';
 import { TravelOfficeEntity } from 'src/modules/travel-offices/entities/travel-office.entity';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { EntityRelationalHelper } from 'src/utils/relational-entity-helper';
@@ -52,6 +53,9 @@ export class WholesalerEntity extends EntityRelationalHelper {
     (travelOffice) => travelOffice.wholesaler,
   )
   travelOffices: TravelOfficeEntity[];
+
+  @OneToMany(() => PackageEntity, (packageEntity) => packageEntity.wholesaler)
+  packages: PackageEntity[];
 
   @Column({ length: 255, nullable: true })
   @IsPostalCode()
