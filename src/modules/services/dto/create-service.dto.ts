@@ -49,15 +49,6 @@ export class CreateServiceDto {
   savings: number;
 
   @ApiProperty({
-    description: 'The package id of the service',
-    example: 1,
-  })
-  @IsNotEmpty()
-  @IsNumber()
-  @IsPositive()
-  PackageId: number;
-
-  @ApiProperty({
     description: 'The wholesaler id of the service',
     example: 1,
   })

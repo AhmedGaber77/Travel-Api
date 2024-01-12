@@ -1,26 +1,23 @@
-import {
-  IsNotEmpty,
-  IsOptional,
-  IsPostalCode,
-  IsString,
-} from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { ServiceEntity } from 'src/modules/services/entities/service.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { RoomEntity } from './room.entity';
 
 @Entity({ name: 'hotel' })
 export class HotelEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: String })
+  @Column({ type: String, unique: true })
   @IsNotEmpty()
   @IsString()
   name: string;
@@ -39,7 +36,7 @@ export class HotelEntity {
   state: string;
 
   @IsString()
-  @IsPostalCode()
+  // @IsPostalCode()
   zipCode: string;
 
   @IsString()
@@ -58,6 +55,9 @@ export class HotelEntity {
 
   @OneToOne(() => ServiceEntity, (service) => service.hotel)
   service: ServiceEntity;
+
+  @OneToMany(() => RoomEntity, (room) => room.hotel)
+  rooms: RoomEntity[];
 
   @CreateDateColumn()
   createdAt: Date;

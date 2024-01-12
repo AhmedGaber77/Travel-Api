@@ -2,9 +2,10 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsNotEmpty,
   IsOptional,
-  IsPostalCode,
   IsString,
+  ValidateNested,
 } from 'class-validator';
+import { CreateRoomDto } from './create-room.dto';
 
 export class CreateHotelDto {
   @ApiProperty({
@@ -13,7 +14,7 @@ export class CreateHotelDto {
   })
   @IsNotEmpty()
   @IsString()
-  hotelName: string;
+  name: string;
 
   @ApiProperty({
     description: 'The address of the hotel',
@@ -42,7 +43,7 @@ export class CreateHotelDto {
     example: '12345',
   })
   @IsString()
-  @IsPostalCode()
+  // @IsPostalCode()
   zipCode: string;
 
   @ApiProperty({
@@ -77,4 +78,19 @@ export class CreateHotelDto {
   @IsString()
   @IsOptional()
   description?: string;
+
+  @ApiProperty({
+    description: 'The id of the service',
+    example: 1,
+    required: true,
+  })
+  ServiceId: number;
+
+  @ApiProperty({
+    description: 'The rooms of the hotel',
+    type: [CreateRoomDto],
+  })
+  @ValidateNested()
+  @IsOptional()
+  rooms?: CreateRoomDto[];
 }

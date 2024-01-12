@@ -46,6 +46,16 @@ export class ServicesService {
     if (!existingService) {
       throw new NotFoundException(`Service with id ${id} not found`);
     }
+    if (updateServiceDto.WholesalerId) {
+      const wholesaler = await this.wholesalerRepository.findOne({
+        where: { id: updateServiceDto.WholesalerId },
+      });
+      if (!wholesaler) {
+        throw new NotFoundException(
+          `Wholesaler with id ${updateServiceDto.WholesalerId} not found`,
+        );
+      }
+    }
 
     await this.serviceRepository.update(id, updateServiceDto);
     return this.serviceRepository.findOne({ where: { id } });
