@@ -17,8 +17,7 @@ export class WholesalersService {
   }
 
   findAll() {
-    const wholesalers = this.wholesalersRepository.find();
-    return wholesalers;
+    return this.wholesalersRepository.find();
   }
 
   async findOne(id: number) {
@@ -44,12 +43,7 @@ export class WholesalersService {
   }
 
   async remove(id: number) {
-    const result = await this.wholesalersRepository.update(id, {
-      deletedAt: new Date(),
-    });
-
-    if (result.affected === 0) {
-      throw new NotFoundException(`Wholesaler with id ${id} not found`);
-    }
+    const wholesaler = await this.findOne(id);
+    await this.wholesalersRepository.softDelete(wholesaler.id);
   }
 }
