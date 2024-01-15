@@ -32,14 +32,15 @@ export class WholesalersService {
   }
 
   async update(id: number, updateWholesalerDto: UpdateWholesalerDto) {
-    const Existingwholesaler = await this.wholesalersRepository.findOne({
-      where: { id },
+    let wholesaler = await this.wholesalersRepository.preload({
+      id: id,
+      ...updateWholesalerDto,
     });
-    if (!Existingwholesaler) {
+    if (!wholesaler) {
       throw new NotFoundException(`wholesaler with id ${id} not found`);
     }
-    await this.wholesalersRepository.update(id, updateWholesalerDto);
-    return this.wholesalersRepository.findOne({ where: { id } });
+    wholesaler = await this.wholesalersRepository.save(wholesaler);
+    return wholesaler;
   }
 
   async remove(id: number) {
