@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsPositive,
+  IsString,
+} from 'class-validator';
+import { isUnique } from 'src/validators/unique-field.validator';
 
 export class CreateTravelOfficeDto {
   @ApiProperty({
@@ -15,11 +22,19 @@ export class CreateTravelOfficeDto {
   })
   @IsEmail()
   @IsNotEmpty()
+  @isUnique({
+    tableName: 'travel_office',
+    column: 'email',
+  })
   email: string;
 
   @ApiProperty({
     description: 'The phone number of the travel office',
     example: '+1234567890',
+  })
+  @isUnique({
+    tableName: 'travel_office',
+    column: 'phone',
   })
   // @IsPhoneNumber()
   @IsNotEmpty()
@@ -69,7 +84,10 @@ export class CreateTravelOfficeDto {
   @IsOptional()
   contactInfo: any;
 
-  constructor(partial: Partial<CreateTravelOfficeDto>) {
-    Object.assign(this, partial);
-  }
+  @ApiProperty({
+    description: 'The ID of the wholesaler that owns the travel office',
+    example: 1,
+  })
+  @IsPositive()
+  WholesalerId: number;
 }

@@ -8,5 +8,6 @@ import { WholesalerEntity } from './entities/wholesaler.entity';
   imports: [TypeOrmModule.forFeature([WholesalerEntity])],
   controllers: [WholesalersController],
   providers: [WholesalersService],
+  exports: [WholesalersService],
 })
 export class WholesalersModule {}

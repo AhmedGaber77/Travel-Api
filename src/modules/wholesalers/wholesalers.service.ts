@@ -33,6 +33,7 @@ export class WholesalersService {
   async findOne(id: number): Promise<WholesalerEntity> {
     const wholesaler = await this.wholesalersRepository.findOne({
       where: { id },
+      relations: ['travelOffices'],
     });
     if (!wholesaler) {
       throw new NotFoundException(`wholesaler with id ${id} not found`);

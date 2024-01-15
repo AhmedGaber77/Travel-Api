@@ -9,6 +9,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  Index,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -19,17 +20,22 @@ export class WholesalerEntity extends EntityRelationalHelper {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @Column({ length: 255 })
+  @Column({ length: 255, unique: true })
   name: string;
 
   @Column('json')
   @IsJSON()
   contactInfo: any;
 
-  @Column({ type: String, unique: true })
+  @Index()
+  @Column({
+    type: String,
+    unique: true,
+  })
   @IsEmail()
   email: string | null;
 
+  @Index()
   @Column({ type: String, unique: true })
   // @IsPhoneNumber()
   phone: string;
@@ -46,7 +52,7 @@ export class WholesalerEntity extends EntityRelationalHelper {
   @Column({ nullable: true })
   country: string;
 
-  @OneToMany(() => UserEntity, (user) => user.wholesaler)
+  @OneToMany(() => UserEntity, (user) => user.wholesaler, { cascade: true })
   users: UserEntity[];
 
   @OneToMany(

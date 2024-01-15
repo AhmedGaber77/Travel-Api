@@ -40,6 +40,7 @@ import { TransportationsModule } from './modules/transportations/transportations
 import { BookingsModule } from './modules/bookings/bookings.module';
 import { CitiesModule } from './modules/cities/cities.module';
 import { CountriesModule } from './modules/countries/countries.module';
+import { IsUniqueConstraint } from './validators/unique-field.validator';
 
 @Module({
   imports: [
@@ -113,5 +114,6 @@ import { CountriesModule } from './modules/countries/countries.module';
     CitiesModule,
     CountriesModule,
   ],
+  providers: [IsUniqueConstraint],
 })
 export class AppModule {}
