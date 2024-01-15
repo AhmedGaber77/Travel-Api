@@ -4,20 +4,19 @@ import { UpdateServiceDto } from './dto/update-service.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ServiceEntity } from './entities/service.entity';
 import { Repository } from 'typeorm';
-import { WholesalerEntity } from '../wholesalers/entities/wholesaler.entity';
+import { WholesalersService } from '../wholesalers/wholesalers.service';
 
 @Injectable()
 export class ServicesService {
   constructor(
     @InjectRepository(ServiceEntity)
     private serviceRepository: Repository<ServiceEntity>,
-    @InjectRepository(WholesalerEntity)
-    private wholesalerRepository: Repository<WholesalerEntity>,
+    private wholesalerService: WholesalersService,
   ) {}
   async create(createServiceDto: CreateServiceDto) {
-    const wholesaler = await this.wholesalerRepository.findOne({
-      where: { id: createServiceDto.WholesalerId },
-    });
+    const wholesaler = await this.wholesalerService.findOne(
+      createServiceDto.WholesalerId,
+    );
     if (!wholesaler) {
       throw new NotFoundException(
         `Wholesaler with id ${createServiceDto.WholesalerId} not found`,
@@ -34,39 +33,21 @@ export class ServicesService {
   async findOne(id: number) {
     const service = await this.serviceRepository.findOne({ where: { id } });
     if (!service) {
-      throw new NotFoundException(`service with id ${id} not found`);
+      throw new NotFoundException(`Service with id ${id} not found`);
     }
     return service;
   }
 
   async update(id: number, updateServiceDto: UpdateServiceDto) {
-    const existingService = await this.serviceRepository.findOne({
-      where: { id },
-    });
-    if (!existingService) {
-      throw new NotFoundException(`Service with id ${id} not found`);
-    }
-    if (updateServiceDto.WholesalerId) {
-      const wholesaler = await this.wholesalerRepository.findOne({
-        where: { id: updateServiceDto.WholesalerId },
-      });
-      if (!wholesaler) {
-        throw new NotFoundException(
-          `Wholesaler with id ${updateServiceDto.WholesalerId} not found`,
-        );
-      }
-    }
+    const existingService = await this.findOne(id);
 
-    await this.serviceRepository.update(id, updateServiceDto);
-    return this.serviceRepository.findOne({ where: { id } });
+    this.serviceRepository.merge(existingService, updateServiceDto);
+    return this.serviceRepository.save(existingService);
   }
 
   async remove(id: number) {
-    const result = await this.serviceRepository.update(id, {
-      deletedAt: new Date(),
-    });
-    if (result.affected === 0) {
-      throw new NotFoundException(`service with id ${id} not found`);
-    }
+    const service = await this.findOne(id);
+    await this.serviceRepository.softDelete(service.id);
+    return true;
   }
 }

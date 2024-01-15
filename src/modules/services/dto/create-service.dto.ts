@@ -8,11 +8,16 @@ import {
   IsString,
 } from 'class-validator';
 import { ServiceType } from '../entities/service.entity';
+import { isUnique } from 'src/validators/unique-field.validator';
 
 export class CreateServiceDto {
   @ApiProperty({
     description: 'The name of the service',
     example: 'ABC service',
+  })
+  @isUnique({
+    tableName: 'service',
+    column: 'name',
   })
   @IsNotEmpty()
   name: string;

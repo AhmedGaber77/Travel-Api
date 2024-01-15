@@ -8,12 +8,12 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToMany,
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
-  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -28,11 +28,12 @@ export class ServiceEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Index()
   @Column({ type: String, length: 50, unique: true })
-  @Unique('unique_name', ['name'])
   @IsString()
   name: string;
 
+  @Index()
   @Column({ type: 'enum', enum: ServiceType })
   @IsString()
   type: string;
