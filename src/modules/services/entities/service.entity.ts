@@ -1,4 +1,5 @@
 import { IsString } from 'class-validator';
+import { FlightEntity } from 'src/modules/flights/entities/flight.entity';
 import { HotelEntity } from 'src/modules/hotels/entities/hotel.entity';
 import { PackageEntity } from 'src/modules/packages/entities/package.entity';
 import { WholesalerEntity } from 'src/modules/wholesalers/entities/wholesaler.entity';
@@ -69,6 +70,10 @@ export class ServiceEntity {
   @OneToOne(() => HotelEntity, (hotel) => hotel.service)
   @JoinColumn()
   hotel: HotelEntity;
+
+  @OneToOne(() => FlightEntity, (flight) => flight.service)
+  @JoinColumn()
+  flight: FlightEntity;
 
   @CreateDateColumn()
   createdAt: Date;

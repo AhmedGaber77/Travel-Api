@@ -38,6 +38,8 @@ import { HotelsModule } from './modules/hotels/hotels.module';
 import { FlightsModule } from './modules/flights/flights.module';
 import { TransportationsModule } from './modules/transportations/transportations.module';
 import { BookingsModule } from './modules/bookings/bookings.module';
+import { CitiesModule } from './modules/cities/cities.module';
+import { CountriesModule } from './modules/countries/countries.module';
 
 @Module({
   imports: [
@@ -108,6 +110,8 @@ import { BookingsModule } from './modules/bookings/bookings.module';
     FlightsModule,
     TransportationsModule,
     BookingsModule,
+    CitiesModule,
+    CountriesModule,
   ],
 })
 export class AppModule {}
