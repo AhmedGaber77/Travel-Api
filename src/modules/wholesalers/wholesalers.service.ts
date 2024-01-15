@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateWholesalerDto } from './dto/create-wholesaler.dto';
 import { UpdateWholesalerDto } from './dto/update-wholesaler.dto';
 import { WholesalerEntity } from './entities/wholesaler.entity';
@@ -11,16 +15,22 @@ export class WholesalersService {
     @InjectRepository(WholesalerEntity)
     private wholesalersRepository: Repository<WholesalerEntity>,
   ) {}
-  create(createWholesalerDto: CreateWholesalerDto): Promise<WholesalerEntity> {
-    const wholesaler = this.wholesalersRepository.create(createWholesalerDto);
-    return this.wholesalersRepository.save(wholesaler);
+  async create(
+    createWholesalerDto: CreateWholesalerDto,
+  ): Promise<WholesalerEntity> {
+    try {
+      const wholesaler = this.wholesalersRepository.create(createWholesalerDto);
+      return await this.wholesalersRepository.save(wholesaler);
+    } catch (error) {
+      throw new InternalServerErrorException('Error creating wholesaler');
+    }
   }
 
-  findAll() {
+  async findAll(): Promise<WholesalerEntity[]> {
     return this.wholesalersRepository.find();
   }
 
-  async findOne(id: number) {
+  async findOne(id: number): Promise<WholesalerEntity> {
     const wholesaler = await this.wholesalersRepository.findOne({
       where: { id },
     });
@@ -30,20 +40,18 @@ export class WholesalersService {
     return wholesaler;
   }
 
-  async update(id: number, updateWholesalerDto: UpdateWholesalerDto) {
-    let wholesaler = await this.wholesalersRepository.preload({
-      id: id,
-      ...updateWholesalerDto,
-    });
-    if (!wholesaler) {
-      throw new NotFoundException(`wholesaler with id ${id} not found`);
-    }
-    wholesaler = await this.wholesalersRepository.save(wholesaler);
-    return wholesaler;
+  async update(
+    id: number,
+    updateWholesalerDto: UpdateWholesalerDto,
+  ): Promise<WholesalerEntity> {
+    const wholesaler = await this.findOne(id);
+    this.wholesalersRepository.merge(wholesaler, updateWholesalerDto);
+    return this.wholesalersRepository.save(wholesaler);
   }
 
-  async remove(id: number) {
+  async remove(id: number): Promise<boolean> {
     const wholesaler = await this.findOne(id);
     await this.wholesalersRepository.softDelete(wholesaler.id);
+    return true;
   }
 }
