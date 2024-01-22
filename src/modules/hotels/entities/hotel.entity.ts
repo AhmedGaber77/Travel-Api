@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 import {
   Column,
   CreateDateColumn,
@@ -9,50 +9,87 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { RoomEntity } from './room.entity';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 @Entity({ name: 'hotel' })
 export class HotelEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: String, unique: true })
-  @IsNotEmpty()
+  @ApiProperty({
+    type: () => String,
+  })
   @IsString()
+  @IsNotEmpty()
+  @Column()
   name: string;
 
-  @Column({ type: String })
-  @IsNotEmpty()
+  @ApiProperty({
+    type: () => String,
+  })
   @IsString()
+  @IsNotEmpty()
+  @Column()
   address: string;
 
-  @Column({ type: String })
+  @ApiProperty({
+    type: () => String,
+  })
   @IsString()
+  @IsNotEmpty()
+  @Column()
   city: string;
 
-  @Column({ type: String })
+  @ApiProperty({
+    type: () => String,
+  })
   @IsString()
+  @IsNotEmpty()
+  @Column()
   state: string;
 
+  @ApiProperty({
+    type: () => String,
+  })
   @IsString()
-  // @IsPostalCode()
+  @IsNotEmpty()
+  @Column()
   zipCode: string;
 
+  @ApiProperty({
+    type: () => String,
+  })
   @IsString()
-  // @IsMobilePhone()
+  @IsNotEmpty()
+  @Column()
+  mobileNumber: string;
+
+  @ApiProperty({
+    type: () => String,
+  })
+  @IsString()
+  @IsNotEmpty()
+  @Column()
   phoneNumber: string;
 
+  @ApiPropertyOptional({
+    type: () => String,
+  })
   @IsString()
-  website: string;
+  @Column({ nullable: true })
+  website?: string;
 
+  @ApiPropertyOptional({
+    type: () => String,
+  })
   @IsString()
+  @Column({ nullable: true })
   email: string;
 
+  @ApiPropertyOptional({ type: () => String })
   @IsString()
-  @IsOptional()
-  hotelDescription: string;
-
-  // @OneToOne(() => ServiceEntity, (service) => service.hotel)
-  // service: ServiceEntity;
+  @Column({ nullable: true })
+  description?: string;
 
   @OneToMany(() => RoomEntity, (room) => room.hotel)
   rooms: RoomEntity[];

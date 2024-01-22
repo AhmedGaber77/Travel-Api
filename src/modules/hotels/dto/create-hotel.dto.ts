@@ -1,11 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  ValidateNested,
-} from 'class-validator';
-import { CreateRoomDto } from './create-room.dto';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateHotelDto {
   @ApiProperty({
