@@ -5,10 +5,12 @@ import {
   DeleteDateColumn,
   Entity,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { HotelEntity } from './hotel.entity';
+import { ServiceEntity } from 'src/modules/services/entities/service.entity';
 
 @Entity('room')
 export class RoomEntity {
@@ -38,6 +40,9 @@ export class RoomEntity {
 
   @ManyToOne(() => HotelEntity, (hotel) => hotel.rooms)
   hotel: HotelEntity;
+
+  @OneToOne(() => ServiceEntity, (service) => service.room)
+  service: ServiceEntity;
 
   @CreateDateColumn()
   createdAt: Date;

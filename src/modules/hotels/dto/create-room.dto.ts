@@ -27,8 +27,17 @@ export class CreateRoomDto {
   @IsPositive()
   availableRooms: number;
 
-  // @ApiProperty({ example: 1, description: 'The ID of the hotel' })
-  // @IsNumber()
-  // @IsNotEmpty()
-  // HotelId: number;
+  @ApiProperty({
+    description: 'The id of the hotel',
+    example: 1,
+    required: true,
+  })
+  HotelId: number;
+
+  @ApiProperty({
+    description: 'The id of the service',
+    example: 1,
+    required: true,
+  })
+  ServiceId: number;
 }

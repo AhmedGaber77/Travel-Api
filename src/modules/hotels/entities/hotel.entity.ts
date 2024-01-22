@@ -1,12 +1,10 @@
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { ServiceEntity } from 'src/modules/services/entities/service.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -53,8 +51,8 @@ export class HotelEntity {
   @IsOptional()
   hotelDescription: string;
 
-  @OneToOne(() => ServiceEntity, (service) => service.hotel)
-  service: ServiceEntity;
+  // @OneToOne(() => ServiceEntity, (service) => service.hotel)
+  // service: ServiceEntity;
 
   @OneToMany(() => RoomEntity, (room) => room.hotel)
   rooms: RoomEntity[];

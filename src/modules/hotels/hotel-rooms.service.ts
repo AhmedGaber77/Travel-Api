@@ -19,13 +19,14 @@ export class RoomsService {
     private readonly roomRepository: Repository<RoomEntity>,
     private readonly hotelsService: HotelsService,
   ) {}
-  // async create(createRoomDto: CreateRoomDto) {
-  //   const hotel = await this.hotelsService.findOne(createRoomDto.HotelId);
-  //   if (!hotel) {
-  //     throw new NotFoundException(
-  //       `Hotel with id ${createRoomDto.HotelId} not found`,
-  //     );
-  //   }
+  async create(createRoomDto: CreateRoomDto) {
+    const hotel = await this.hotelsService.findOne(createRoomDto.HotelId);
+    if (!hotel) {
+      throw new NotFoundException(
+        `Hotel with id ${createRoomDto.HotelId} not found`,
+      );
+    }
+  }
 
   //   const room = this.roomRepository.create(createRoomDto);
   //   return this.roomRepository.save(room);

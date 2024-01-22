@@ -6,11 +6,13 @@ import {
   Patch,
   Param,
   Delete,
+  ValidationPipe,
 } from '@nestjs/common';
 import { ServicesService } from './services.service';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { CreateHotelRoomServiceDto } from './dto/create-hotel-rooms.dto';
 
 @ApiTags('Services')
 @Controller({ path: 'services', version: '1' })
@@ -40,5 +42,15 @@ export class ServicesController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.servicesService.remove(+id);
+  }
+
+  @Post('hotel-rooms')
+  async createHotelRoomService(
+    @Body(new ValidationPipe({ transform: true }))
+    createHotelRoomServiceDto: CreateHotelRoomServiceDto,
+  ) {
+    return await this.servicesService.createHotelRoomService(
+      createHotelRoomServiceDto,
+    );
   }
 }

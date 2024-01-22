@@ -79,18 +79,11 @@ export class CreateHotelDto {
   @IsOptional()
   description?: string;
 
-  @ApiProperty({
-    description: 'The id of the service',
-    example: 1,
-    required: true,
-  })
-  ServiceId: number;
-
-  @ApiProperty({
-    description: 'The rooms of the hotel',
-    type: [CreateRoomDto],
-  })
-  @ValidateNested()
-  @IsOptional()
-  rooms?: CreateRoomDto[];
+  // @ApiProperty({
+  //   description: 'The rooms of the hotel',
+  //   type: [CreateRoomDto],
+  // })
+  // @ValidateNested()
+  // @IsOptional()
+  // rooms?: CreateRoomDto[];
 }

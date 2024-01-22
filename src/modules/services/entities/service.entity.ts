@@ -1,6 +1,6 @@
 import { IsString } from 'class-validator';
 import { FlightEntity } from 'src/modules/flights/entities/flight.entity';
-import { HotelEntity } from 'src/modules/hotels/entities/hotel.entity';
+import { RoomEntity } from 'src/modules/hotels/entities/room.entity';
 import { PackageEntity } from 'src/modules/packages/entities/package.entity';
 import { WholesalerEntity } from 'src/modules/wholesalers/entities/wholesaler.entity';
 import {
@@ -18,9 +18,11 @@ import {
 } from 'typeorm';
 
 export enum ServiceType {
-  Flight = 'flight',
-  Hotel = 'hotel',
+  Flight = 'flight-seats',
+  HotelRooms = 'hotel-rooms',
   Transportation = 'transportation',
+  Safari = 'safari',
+  Cruise = 'cruise',
 }
 
 @Entity({ name: 'service' })
@@ -68,9 +70,13 @@ export class ServiceEntity {
   @ManyToMany(() => PackageEntity, (packageEntity) => packageEntity.services)
   packages: PackageEntity[];
 
-  @OneToOne(() => HotelEntity, (hotel) => hotel.service)
+  // @OneToOne(() => HotelEntity, (hotel) => hotel.service)
+  // @JoinColumn()
+  // hotel: HotelEntity;
+
+  @OneToOne(() => RoomEntity, (room) => room.service)
   @JoinColumn()
-  hotel: HotelEntity;
+  room: RoomEntity;
 
   @OneToOne(() => FlightEntity, (flight) => flight.service)
   @JoinColumn()
