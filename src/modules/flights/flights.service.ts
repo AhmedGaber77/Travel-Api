@@ -1,19 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateFlightDto } from './dto/update-flight.dto';
-import { ServicesService } from '../services/services.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FlightEntity } from './entities/flight.entity';
 import { Repository } from 'typeorm';
-import { SeatEntity } from './entities/seat.entity';
 
 @Injectable()
 export class FlightsService {
   constructor(
-    private readonly servicesService: ServicesService,
     @InjectRepository(FlightEntity)
     private readonly flightRepository: Repository<FlightEntity>,
-    @InjectRepository(SeatEntity)
-    private readonly seatRepository: Repository<SeatEntity>,
   ) {}
   findAll() {
     return this.flightRepository.find();
