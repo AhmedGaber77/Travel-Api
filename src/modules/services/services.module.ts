@@ -6,10 +6,11 @@ import { ServiceEntity } from './entities/service.entity';
 import { WholesalersModule } from '../wholesalers/wholesalers.module';
 import { HotelsModule } from '../hotels/hotels.module';
 import { RoomEntity } from '../hotels/entities/room.entity';
+import { FlightEntity } from '../flights/entities/flight.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ServiceEntity, RoomEntity]),
+    TypeOrmModule.forFeature([ServiceEntity, RoomEntity, FlightEntity]),
     WholesalersModule,
     HotelsModule,
   ],

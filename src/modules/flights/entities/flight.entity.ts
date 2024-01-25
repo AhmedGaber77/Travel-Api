@@ -1,5 +1,4 @@
-import { IsString } from 'class-validator';
-import { CityEntity } from 'src/modules/cities/entities/city.entity';
+import { IsNotEmpty, IsPositive, IsString, Min } from 'class-validator';
 import { ServiceEntity } from 'src/modules/services/entities/service.entity';
 import { EntityRelationalHelper } from 'src/utils/relational-entity-helper';
 import {
@@ -7,48 +6,96 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  ManyToOne,
-  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { SeatEntity } from './seat.entity';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 @Entity('flight')
 export class FlightEntity extends EntityRelationalHelper {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: String })
+  @ApiProperty({
+    type: () => String,
+  })
   @IsString()
+  @IsNotEmpty()
+  @Column()
   airline: string;
 
-  @Column({ type: String })
+  @ApiProperty({
+    type: () => String,
+  })
   @IsString()
-  departureLocation: string;
+  @IsNotEmpty()
+  @Column()
+  departureAddress: string;
 
-  @Column({ type: String })
+  @ApiProperty({
+    type: () => String,
+  })
   @IsString()
-  arrivalLocation: string;
+  @IsNotEmpty()
+  @Column()
+  arrivalAddress: string;
 
-  @Column({ type: 'timestamp' })
+  @ApiProperty({
+    type: () => Date,
+  })
+  @IsNotEmpty()
+  @Column()
   departureTime: Date;
 
-  @Column({ type: 'timestamp' })
+  @ApiProperty({
+    type: () => Date,
+  })
+  @IsNotEmpty()
+  @Column()
   arrivalTime: Date;
 
-  @ManyToOne(() => CityEntity, (city) => city.departureFlights)
-  departureCity: CityEntity;
+  @ApiProperty({
+    type: () => String,
+  })
+  @IsString()
+  @IsNotEmpty()
+  @Column()
+  seatType: string;
 
-  @ManyToOne(() => CityEntity, (city) => city.arrivalFlights)
-  arrivalCity: CityEntity;
+  @ApiPropertyOptional({
+    type: () => String,
+  })
+  @IsString()
+  @Column({ nullable: true })
+  description?: string;
+
+  @ApiProperty({
+    type: () => Number,
+  })
+  @IsPositive()
+  @Min(1)
+  @IsNotEmpty()
+  availableSeats: number;
+
+  @ApiProperty({
+    type: () => String,
+  })
+  @IsString()
+  @IsNotEmpty()
+  @Column()
+  departureCity: string;
+
+  @ApiProperty({
+    type: () => String,
+  })
+  @IsString()
+  @IsNotEmpty()
+  @Column()
+  arrivalCity: string;
 
   @OneToOne(() => ServiceEntity, (service) => service.flight)
   service: ServiceEntity;
-
-  @OneToMany(() => SeatEntity, (seat) => seat.flight)
-  seats: SeatEntity[];
 
   @CreateDateColumn()
   createdAt: Date;

@@ -70,15 +70,11 @@ export class ServiceEntity {
   @ManyToMany(() => PackageEntity, (packageEntity) => packageEntity.services)
   packages: PackageEntity[];
 
-  // @OneToOne(() => HotelEntity, (hotel) => hotel.service)
-  // @JoinColumn()
-  // hotel: HotelEntity;
-
-  @OneToOne(() => RoomEntity, (room) => room.service)
+  @OneToOne(() => RoomEntity, (room) => room.service, { cascade: true })
   @JoinColumn()
   room: RoomEntity;
 
-  @OneToOne(() => FlightEntity, (flight) => flight.service)
+  @OneToOne(() => FlightEntity, (flight) => flight.service, { cascade: true })
   @JoinColumn()
   flight: FlightEntity;
 

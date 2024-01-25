@@ -9,9 +9,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ServiceEntity, ServiceType } from './entities/service.entity';
 import { Repository } from 'typeorm';
 import { WholesalersService } from '../wholesalers/wholesalers.service';
-import { CreateHotelRoomServiceDto } from './dto/create-hotel-rooms.dto';
+import { CreateHotelRoomServiceDto } from './dto/create-hotel-room.dto';
 import { HotelsService } from '../hotels/hotels.service';
 import { RoomEntity } from '../hotels/entities/room.entity';
+import { CreateFlightServiceDto } from './dto/create-flight-service.dto';
+import { FlightEntity } from '../flights/entities/flight.entity';
 
 @Injectable()
 export class ServicesService {
@@ -20,6 +22,8 @@ export class ServicesService {
     private serviceRepository: Repository<ServiceEntity>,
     @InjectRepository(RoomEntity)
     private roomRepository: Repository<RoomEntity>,
+    @InjectRepository(FlightEntity)
+    private flightRepository: Repository<FlightEntity>,
     private wholesalerService: WholesalersService,
     private readonly hotelsService: HotelsService,
   ) {}
@@ -72,19 +76,16 @@ export class ServicesService {
       const hotel = await this.hotelsService.findOne(
         createHotelRoomServiceDto.HotelId,
       );
-      console.log(createHotelRoomServiceDto);
       const service = await this.create(createHotelRoomServiceDto.service);
       service.type = ServiceType.HotelRooms;
       await queryRunner.manager.save(service);
       const hotelRoom = this.roomRepository.create({
         ...createHotelRoomServiceDto.room,
       });
-      console.log('here');
       hotelRoom.service = service;
       hotelRoom.hotel = hotel;
       await this.roomRepository.save(hotelRoom);
     } catch (error) {
-      console.log(error);
       await queryRunner.rollbackTransaction();
       throw new InternalServerErrorException(
         'Error creating hotel room service',
@@ -92,5 +93,44 @@ export class ServicesService {
     } finally {
       await queryRunner.release();
     }
+  }
+
+  async findAllHotelRoomServices() {
+    const services = await this.serviceRepository.find({
+      where: { type: 'hotel-rooms' },
+      relations: ['room'],
+    });
+    return services;
+  }
+
+  async createFlightService(createFlightServiceDto: CreateFlightServiceDto) {
+    const queryRunner =
+      this.serviceRepository.manager.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      const service = await this.create(createFlightServiceDto.service);
+      service.type = ServiceType.Flight;
+      await queryRunner.manager.save(service);
+      const flight = this.flightRepository.create({
+        ...createFlightServiceDto.flight,
+      });
+      flight.service = service;
+      await this.flightRepository.save(flight);
+    } catch (error) {
+      console.log(error);
+      await queryRunner.rollbackTransaction();
+      throw new InternalServerErrorException('Error creating flight service');
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  async findAllFlightServices() {
+    const services = await this.serviceRepository.find({
+      where: { type: 'flight-seats' },
+      relations: ['flight'],
+    });
+    return services;
   }
 }

@@ -1,14 +1,5 @@
-import {
-  IsDateString,
-  IsNumber,
-  IsOptional,
-  IsString,
-  ValidateNested,
-} from 'class-validator';
-import { CityEntity } from 'src/modules/cities/entities/city.entity';
-import { ServiceEntity } from 'src/modules/services/entities/service.entity';
-import { ApiProperty } from '@nestjs/swagger';
-import { CreateSeatDto } from './create-seat.dto';
+import { IsDateString, IsPositive, IsString, Min } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 export class CreateFlightDto {
   @ApiProperty({
     example: 'Airline Name',
@@ -22,14 +13,14 @@ export class CreateFlightDto {
     description: 'The departure location',
   })
   @IsString()
-  departureLocation: string;
+  departureAddress: string;
 
   @ApiProperty({
     example: 'Arrival City',
     description: 'The arrival location',
   })
   @IsString()
-  arrivalLocation: string;
+  arrivalAddress: string;
 
   @ApiProperty({
     example: '2022-01-01T10:00:00Z',
@@ -46,31 +37,43 @@ export class CreateFlightDto {
   arrivalTime: Date;
 
   @ApiProperty({
-    example: 1,
-    description: 'The ID of the departure city',
+    type: () => String,
+    description: 'The type of the seat',
+    example: 'Business',
   })
-  @IsNumber()
-  DepartureCityId: CityEntity['id'];
+  @IsString()
+  seatType: string;
+
+  @ApiPropertyOptional({
+    type: () => String,
+    description: 'The description of the seat',
+    example: 'Business seat',
+  })
+  @IsString()
+  description?: string;
 
   @ApiProperty({
-    example: 2,
-    description: 'The ID of the arrival city',
-  })
-  @IsNumber()
-  ArrivalCityId: CityEntity['id'];
-
-  @ApiProperty({
+    type: () => Number,
+    description: 'The number of available seats',
     example: 3,
-    description: 'The ID of the service',
   })
-  @IsNumber()
-  ServiceId: ServiceEntity['id'];
+  @IsPositive()
+  @Min(1)
+  availableSeats: number;
 
   @ApiProperty({
-    description: 'The ID of the airplane',
-    type: [CreateSeatDto],
+    type: () => String,
+    description: 'The departure city',
+    example: 'New York',
   })
-  @IsOptional()
-  @ValidateNested()
-  seats?: CreateSeatDto[];
+  @IsString()
+  departureCity: string;
+
+  @ApiProperty({
+    type: () => String,
+    description: 'The arrival city',
+    example: 'New Jersey',
+  })
+  @IsString()
+  arrivalCity: string;
 }

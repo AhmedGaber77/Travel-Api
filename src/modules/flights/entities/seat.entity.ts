@@ -4,11 +4,10 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { FlightEntity } from './flight.entity';
+// import { FlightEntity } from './flight.entity';
 
 @Entity('seat')
 export class SeatEntity extends EntityRelationalHelper {
@@ -24,8 +23,8 @@ export class SeatEntity extends EntityRelationalHelper {
   @Column({ type: Number })
   quantity: number;
 
-  @ManyToOne(() => FlightEntity, (flight) => flight.seats)
-  flight: FlightEntity;
+  // @ManyToOne(() => FlightEntity, (flight) => flight.seats)
+  // flight: FlightEntity;
 
   @CreateDateColumn()
   createdAt: Date;

@@ -4,7 +4,7 @@ import { HotelEntity } from './entities/hotel.entity';
 import { Repository } from 'typeorm';
 import { ServiceEntity } from '../services/entities/service.entity';
 import { RoomEntity } from './entities/room.entity';
-import { CreateRoomDto } from './dto/create-room.dto';
+// import { CreateRoomDto } from './dto/create-room.dto';
 import { HotelsService } from './hotels.service';
 import { UpdateRoomDto } from './dto/update-room.dto';
 
@@ -19,14 +19,14 @@ export class RoomsService {
     private readonly roomRepository: Repository<RoomEntity>,
     private readonly hotelsService: HotelsService,
   ) {}
-  async create(createRoomDto: CreateRoomDto) {
-    const hotel = await this.hotelsService.findOne(createRoomDto.HotelId);
-    if (!hotel) {
-      throw new NotFoundException(
-        `Hotel with id ${createRoomDto.HotelId} not found`,
-      );
-    }
-  }
+  // async create(createRoomDto: CreateRoomDto) {
+  //   const hotel = await this.hotelsService.findOne(createRoomDto.HotelId);
+  //   if (!hotel) {
+  //     throw new NotFoundException(
+  //       `Hotel with id ${createRoomDto.HotelId} not found`,
+  //     );
+  //   }
+  // }
 
   //   const room = this.roomRepository.create(createRoomDto);
   //   return this.roomRepository.save(room);
@@ -107,15 +107,15 @@ export class RoomsService {
     return room;
   }
 
-  async createHotelRoom(hotelId: number, createRoomDto: CreateRoomDto) {
-    const hotel = await this.hotelsService.findOne(hotelId);
-    if (!hotel) {
-      throw new NotFoundException(`Hotel with id ${hotelId} not found`);
-    }
-    const room = this.roomRepository.create(createRoomDto);
-    room.hotel = hotel;
-    return this.roomRepository.save(room);
-  }
+  // async createHotelRoom(hotelId: number, createRoomDto: CreateRoomDto) {
+  //   const hotel = await this.hotelsService.findOne(hotelId);
+  //   if (!hotel) {
+  //     throw new NotFoundException(`Hotel with id ${hotelId} not found`);
+  //   }
+  //   const room = this.roomRepository.create(createRoomDto);
+  //   room.hotel = hotel;
+  //   return this.roomRepository.save(room);
+  // }
 
   async updateHotelRoom(
     hotelId: number,

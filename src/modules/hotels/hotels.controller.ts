@@ -12,7 +12,7 @@ import { CreateHotelDto } from './dto/create-hotel.dto';
 import { UpdateHotelDto } from './dto/update-hotel.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { RoomsService } from './hotel-rooms.service';
-import { CreateRoomDto } from './dto/create-room.dto';
+// import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
 
 @ApiTags('Hotels')
@@ -58,13 +58,13 @@ export class HotelsController {
     return this.roomsService.getHotelRoom(+id, +roomId);
   }
 
-  @Post(':id/rooms')
-  ceateHotelRoom(
-    @Param('id') id: string,
-    @Body() createRoomDto: CreateRoomDto,
-  ) {
-    return this.roomsService.createHotelRoom(+id, createRoomDto);
-  }
+  // @Post(':id/rooms')
+  // ceateHotelRoom(
+  //   @Param('id') id: string,
+  //   @Body() createRoomDto: CreateRoomDto,
+  // ) {
+  //   return this.roomsService.createHotelRoom(+id, createRoomDto);
+  // }
 
   @Patch(':id/rooms/:roomId')
   updateHotelRoom(

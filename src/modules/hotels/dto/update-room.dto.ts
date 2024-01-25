@@ -1,7 +1,7 @@
 import { ApiHideProperty, PartialType } from '@nestjs/swagger';
-import { CreateRoomDto } from './create-room.dto';
+import { CreateHotelRoomDto } from './create-room.dto';
 
-export class UpdateRoomDto extends PartialType(CreateRoomDto) {
+export class UpdateRoomDto extends PartialType(CreateHotelRoomDto) {
   @ApiHideProperty()
   HotelId: number;
 }

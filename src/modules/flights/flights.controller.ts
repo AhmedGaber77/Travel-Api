@@ -1,24 +1,12 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Body, Patch, Param } from '@nestjs/common';
 import { FlightsService } from './flights.service';
-import { CreateFlightDto } from './dto/create-flight.dto';
 import { UpdateFlightDto } from './dto/update-flight.dto';
+import { ApiTags } from '@nestjs/swagger';
 
-@Controller('flights')
+@ApiTags('Flights')
+@Controller({ path: 'flights', version: '1' })
 export class FlightsController {
   constructor(private readonly flightsService: FlightsService) {}
-
-  @Post()
-  create(@Body() createFlightDto: CreateFlightDto) {
-    return this.flightsService.create(createFlightDto);
-  }
 
   @Get()
   findAll() {
@@ -33,10 +21,5 @@ export class FlightsController {
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateFlightDto: UpdateFlightDto) {
     return this.flightsService.update(+id, updateFlightDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.flightsService.remove(+id);
   }
 }

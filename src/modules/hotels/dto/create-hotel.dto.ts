@@ -35,33 +35,46 @@ export class CreateHotelDto {
   @ApiProperty({
     description: 'The zip code of the hotel',
     example: '12345',
+    required: false,
+    nullable: true,
   })
   @IsString()
-  // @IsPostalCode()
   zipCode: string;
 
   @ApiProperty({
     description: 'The phone number of the hotel',
     example: '+1234567890',
+    required: false,
   })
   @IsString()
-  // @IsMobilePhone()
-  phoneNumber: string;
+  mobileNumber: string;
+
+  @ApiProperty({
+    description: 'The phone number of the hotel',
+    example: '03417589',
+    required: false,
+    nullable: true,
+  })
+  @IsString()
+  phoneNumber?: string;
 
   @ApiProperty({
     description: 'The website of the hotel',
     example: 'www.abchotel.com',
+    required: false,
+    nullable: true,
   })
   @IsString()
-  website: string;
+  website?: string;
 
   @ApiProperty({
     description: 'The email address of the hotel',
     example: '<EMAIL>',
     required: false,
+    nullable: true,
   })
   @IsString()
-  email: string;
+  email?: string;
 
   @ApiProperty({
     description: 'The description of the hotel',

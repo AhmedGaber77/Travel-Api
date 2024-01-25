@@ -48,28 +48,25 @@ export class HotelEntity {
   @Column()
   state: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: () => String,
   })
   @IsString()
-  @IsNotEmpty()
-  @Column()
+  @Column({ nullable: true })
   zipCode: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: () => String,
   })
   @IsString()
-  @IsNotEmpty()
-  @Column()
+  @Column({ nullable: true })
   mobileNumber: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: () => String,
   })
   @IsString()
-  @IsNotEmpty()
-  @Column()
+  @Column({ nullable: true })
   phoneNumber: string;
 
   @ApiPropertyOptional({
