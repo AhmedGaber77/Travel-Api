@@ -1,26 +1,14 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Body, Patch, Param } from '@nestjs/common';
 import { TransportationsService } from './transportations.service';
-import { CreateTransportationDto } from './dto/create-transportation.dto';
 import { UpdateTransportationDto } from './dto/update-transportation.dto';
+import { ApiTags } from '@nestjs/swagger';
 
-@Controller('transportations')
+@ApiTags('Transportations')
+@Controller({ path: 'transportations', version: '1' })
 export class TransportationsController {
   constructor(
     private readonly transportationsService: TransportationsService,
   ) {}
-
-  @Post()
-  create(@Body() createTransportationDto: CreateTransportationDto) {
-    return this.transportationsService.create(createTransportationDto);
-  }
 
   @Get()
   findAll() {
@@ -38,10 +26,5 @@ export class TransportationsController {
     @Body() updateTransportationDto: UpdateTransportationDto,
   ) {
     return this.transportationsService.update(+id, updateTransportationDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.transportationsService.remove(+id);
   }
 }

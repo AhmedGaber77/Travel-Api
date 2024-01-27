@@ -9,11 +9,14 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { ServicesService } from './services.service';
-import { CreateServiceDto } from './dto/create-service.dto';
+// import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { CreateHotelRoomServiceDto } from './dto/create-hotel-room.dto';
 import { CreateFlightServiceDto } from './dto/create-flight-service.dto';
+import { CreateTransportationServiceDto } from './dto/create-transportation-service.dto';
+import { CreateCruiseServiceDto } from './dto/create-cruise-service.dto';
+import { CreateSafariServiceDto } from './dto/create-safari-service.dto';
 
 @ApiTags('Services')
 @Controller({ path: 'services', version: '1' })
@@ -49,10 +52,55 @@ export class ServicesController {
     );
   }
 
-  @Post()
-  create(@Body() createServiceDto: CreateServiceDto) {
-    return this.servicesService.create(createServiceDto);
+  @Get('transportations')
+  async findAllTransportationServices() {
+    return this.servicesService.findAllTransportationServices();
   }
+
+  @Post('transportations')
+  async createTransportationService(
+    @Body(new ValidationPipe({ transform: true }))
+    createTransportationServiceDto: CreateTransportationServiceDto,
+  ) {
+    return await this.servicesService.createTransportationService(
+      createTransportationServiceDto,
+    );
+  }
+
+  @Get('cruises')
+  async findAllCruiseServices() {
+    return this.servicesService.findAllCruiseServices();
+  }
+
+  @Post('cruises')
+  async createCruiseService(
+    @Body(new ValidationPipe({ transform: true }))
+    createCruiseServiceDto: CreateCruiseServiceDto,
+  ) {
+    return await this.servicesService.createCruiseService(
+      createCruiseServiceDto,
+    );
+  }
+
+  @Get('safari')
+  async findAllSafariServices() {
+    return this.servicesService.findAllSafariServices();
+  }
+
+  @Post('safari')
+  async createSafariService(
+    @Body(new ValidationPipe({ transform: true }))
+    createSafariServiceDto: CreateSafariServiceDto,
+  ) {
+    return await this.servicesService.createSafariService(
+      createSafariServiceDto,
+    );
+  }
+
+  // @Post()
+  // create(@Body() createServiceDto: CreateServiceDto) {
+  //   return this.servicesService.create(createServiceDto);
+  // }
 
   @Get()
   findAll() {

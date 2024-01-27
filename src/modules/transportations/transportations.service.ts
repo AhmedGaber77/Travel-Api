@@ -1,28 +1,36 @@
-import { Injectable } from '@nestjs/common';
-import { CreateTransportationDto } from './dto/create-transportation.dto';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateTransportationDto } from './dto/update-transportation.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { TransportationEntity } from './entities/transportation.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class TransportationsService {
-  create(createTransportationDto: CreateTransportationDto) {
-    console.log('createTransportationDto', createTransportationDto);
-    return 'This action adds a new transportation';
+  constructor(
+    @InjectRepository(TransportationEntity)
+    private transportationRepository: Repository<TransportationEntity>,
+  ) {}
+  async findAll() {
+    return this.transportationRepository.find();
   }
 
-  findAll() {
-    return `This action returns all transportations`;
+  async findOne(id: number) {
+    const transportation = await this.transportationRepository.findOne({
+      where: { id },
+      loadRelationIds: true,
+    });
+    if (!transportation) {
+      throw new NotFoundException(`Transportation with id ${id} not found`);
+    }
+    return transportation;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} transportation`;
-  }
-
-  update(id: number, updateTransportationDto: UpdateTransportationDto) {
-    console.log('updateTransportationDto', updateTransportationDto);
-    return `This action updates a #${id} transportation`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} transportation`;
+  async update(id: number, updateTransportationDto: UpdateTransportationDto) {
+    const existingTransportation = await this.findOne(id);
+    this.transportationRepository.merge(
+      existingTransportation,
+      updateTransportationDto,
+    );
+    return this.transportationRepository.save(existingTransportation);
   }
 }

@@ -41,6 +41,8 @@ import { BookingsModule } from './modules/bookings/bookings.module';
 import { CitiesModule } from './modules/cities/cities.module';
 import { CountriesModule } from './modules/countries/countries.module';
 import { IsUniqueConstraint } from './validators/unique-field.validator';
+import { CruisesModule } from './modules/cruises/cruises.module';
+import { SafariModule } from './modules/safari/safari.module';
 
 @Module({
   imports: [
@@ -113,6 +115,8 @@ import { IsUniqueConstraint } from './validators/unique-field.validator';
     BookingsModule,
     CitiesModule,
     CountriesModule,
+    CruisesModule,
+    SafariModule,
   ],
   providers: [IsUniqueConstraint],
 })

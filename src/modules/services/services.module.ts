@@ -7,10 +7,20 @@ import { WholesalersModule } from '../wholesalers/wholesalers.module';
 import { HotelsModule } from '../hotels/hotels.module';
 import { RoomEntity } from '../hotels/entities/room.entity';
 import { FlightEntity } from '../flights/entities/flight.entity';
+import { TransportationEntity } from '../transportations/entities/transportation.entity';
+import { SafariEntity } from '../safari/entities/safari.entity';
+import { CruiseEntity } from '../cruises/entities/cruise.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ServiceEntity, RoomEntity, FlightEntity]),
+    TypeOrmModule.forFeature([
+      ServiceEntity,
+      RoomEntity,
+      FlightEntity,
+      TransportationEntity,
+      SafariEntity,
+      CruiseEntity,
+    ]),
     WholesalersModule,
     HotelsModule,
   ],

@@ -14,6 +14,12 @@ import { HotelsService } from '../hotels/hotels.service';
 import { RoomEntity } from '../hotels/entities/room.entity';
 import { CreateFlightServiceDto } from './dto/create-flight-service.dto';
 import { FlightEntity } from '../flights/entities/flight.entity';
+import { CreateTransportationServiceDto } from './dto/create-transportation-service.dto';
+import { TransportationEntity } from '../transportations/entities/transportation.entity';
+import { CruiseEntity } from '../cruises/entities/cruise.entity';
+import { SafariEntity } from '../safari/entities/safari.entity';
+import { CreateCruiseServiceDto } from './dto/create-cruise-service.dto';
+import { CreateSafariServiceDto } from './dto/create-safari-service.dto';
 
 @Injectable()
 export class ServicesService {
@@ -24,6 +30,12 @@ export class ServicesService {
     private roomRepository: Repository<RoomEntity>,
     @InjectRepository(FlightEntity)
     private flightRepository: Repository<FlightEntity>,
+    @InjectRepository(TransportationEntity)
+    private transportationRepository: Repository<TransportationEntity>,
+    @InjectRepository(SafariEntity)
+    private safariRepository: Repository<SafariEntity>,
+    @InjectRepository(CruiseEntity)
+    private cruiseRepository: Repository<CruiseEntity>,
     private wholesalerService: WholesalersService,
     private readonly hotelsService: HotelsService,
   ) {}
@@ -130,6 +142,99 @@ export class ServicesService {
     const services = await this.serviceRepository.find({
       where: { type: 'flight-seats' },
       relations: ['flight'],
+    });
+    return services;
+  }
+
+  async createTransportationService(
+    createTransportationServiceDto: CreateTransportationServiceDto,
+  ) {
+    const queryRunner =
+      this.serviceRepository.manager.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      const service = await this.create(createTransportationServiceDto.service);
+      service.type = ServiceType.Transportation;
+      await queryRunner.manager.save(service);
+      const transportation = this.transportationRepository.create({
+        ...createTransportationServiceDto.transportation,
+      });
+      transportation.service = service;
+      await this.transportationRepository.save(transportation);
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw new InternalServerErrorException(
+        'Error creating transportation service',
+      );
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  async findAllTransportationServices() {
+    const services = await this.serviceRepository.find({
+      where: { type: 'transportation' },
+      relations: ['transportation'],
+    });
+    return services;
+  }
+
+  async createSafariService(createSafariServiceDto: CreateSafariServiceDto) {
+    const queryRunner =
+      this.serviceRepository.manager.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      const service = await this.create(createSafariServiceDto.service);
+      service.type = ServiceType.Safari;
+      await queryRunner.manager.save(service);
+      const safari = this.safariRepository.create({
+        ...createSafariServiceDto.safari,
+      });
+      safari.service = service;
+      await this.safariRepository.save(safari);
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw new InternalServerErrorException('Error creating safari service');
+    } finally {
+      await queryRunner.release();
+    }
+  }
+  async findAllSafariServices() {
+    const services = await this.serviceRepository.find({
+      where: { type: 'safari' },
+      relations: ['safari'],
+    });
+    return services;
+  }
+
+  async createCruiseService(createCruiseServiceDto: CreateCruiseServiceDto) {
+    const queryRunner =
+      this.serviceRepository.manager.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      const service = await this.create(createCruiseServiceDto.service);
+      service.type = ServiceType.Cruise;
+      await queryRunner.manager.save(service);
+      const cruise = this.cruiseRepository.create({
+        ...createCruiseServiceDto.cruise,
+      });
+      cruise.service = service;
+      await this.cruiseRepository.save(cruise);
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw new InternalServerErrorException('Error creating cruise service');
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  async findAllCruiseServices() {
+    const services = await this.serviceRepository.find({
+      where: { type: 'cruise' },
+      relations: ['cruise'],
     });
     return services;
   }
