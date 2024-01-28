@@ -7,12 +7,9 @@ import {
   IsOptional,
   IsPositive,
   IsString,
-  ValidateNested,
 } from 'class-validator';
 import { ServiceType } from '../entities/service.entity';
 import { isUnique } from 'src/validators/unique-field.validator';
-import { GalleryEntity } from 'src/image-upload/entities/gallery.entity';
-import { Type } from 'class-transformer';
 
 export class CreateServiceDto {
   @ApiProperty({
