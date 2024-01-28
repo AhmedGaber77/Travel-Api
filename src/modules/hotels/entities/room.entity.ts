@@ -5,7 +5,6 @@ import {
   DeleteDateColumn,
   Entity,
   ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -41,7 +40,10 @@ export class RoomEntity {
   @ManyToOne(() => HotelEntity, (hotel) => hotel.rooms)
   hotel: HotelEntity;
 
-  @OneToOne(() => ServiceEntity, (service) => service.room)
+  // @OneToOne(() => ServiceEntity, (service) => service.room)
+  // service: ServiceEntity;
+
+  @Column(() => ServiceEntity)
   service: ServiceEntity;
 
   @CreateDateColumn()

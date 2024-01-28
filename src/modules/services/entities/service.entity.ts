@@ -1,12 +1,7 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsEnum, IsNotEmpty, IsString, Min } from 'class-validator';
 import { GalleryEntity } from 'src/image-upload/entities/gallery.entity';
-import { CruiseEntity } from 'src/modules/cruises/entities/cruise.entity';
-import { FlightEntity } from 'src/modules/flights/entities/flight.entity';
-import { RoomEntity } from 'src/modules/hotels/entities/room.entity';
 import { PackageEntity } from 'src/modules/packages/entities/package.entity';
-import { SafariEntity } from 'src/modules/safari/entities/safari.entity';
-import { TransportationEntity } from 'src/modules/transportations/entities/transportation.entity';
 import { WholesalerEntity } from 'src/modules/wholesalers/entities/wholesaler.entity';
 import {
   Column,
@@ -18,13 +13,13 @@ import {
   ManyToMany,
   ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
+  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
 export enum ServiceType {
-  Flight = 'flight-seats',
+  FlightSeats = 'flight-seats',
   HotelRooms = 'hotel-rooms',
   Transportation = 'transportation',
   Safari = 'safari',
@@ -32,43 +27,60 @@ export enum ServiceType {
 }
 
 @Entity({ name: 'service' })
+@Unique(['name'])
 export class ServiceEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Index()
-  @Column({ type: String, length: 50, unique: true })
+  @ApiProperty({
+    type: () => String,
+  })
   @IsString()
+  @IsNotEmpty()
+  @Column()
   name: string;
 
-  @Index()
-  @Column({ type: 'enum', enum: ServiceType })
-  @IsString()
-  type: string;
+  // @ApiProperty({
+  //   type: 'enum',
+  // })
+  @IsEnum(ServiceType)
+  @IsNotEmpty()
+  @Column({ enum: ServiceType })
+  type: ServiceType;
 
-  @Column({ type: String })
+  @ApiProperty({
+    type: () => String,
+  })
   @IsString()
+  @IsNotEmpty()
+  @Min(10)
+  @Column()
   description: string;
 
-  @Column({ type: 'float' })
-  @IsString()
+  @ApiProperty({
+    type: () => Number,
+  })
+  @IsNotEmpty()
+  @Column()
   price: number;
 
-  @Column({ type: 'float', nullable: true })
-  @IsString()
-  savings: number;
+  @ApiPropertyOptional({
+    type: () => Number,
+  })
+  @Column({ nullable: true })
+  savings?: number;
 
-  @Column({ type: Boolean, nullable: true, default: false })
+  @ApiProperty({
+    type: () => Boolean,
+  })
+  @Column({ nullable: true, default: false })
   @IsString()
-  isOffer: boolean;
+  isOffer: boolean = false;
 
-  @Column({ type: String })
-  @IsString()
-  destination: string;
-
-  // @Column({ type: String, nullable: true })
+  // @Column({ type: String })
   // @IsString()
-  // cancelationPolicy: string;
+  // destination: string;
 
   @ApiPropertyOptional({
     type: () => String,
@@ -83,31 +95,31 @@ export class ServiceEntity {
   @ManyToMany(() => PackageEntity, (packageEntity) => packageEntity.services)
   packages: PackageEntity[];
 
-  @OneToOne(() => RoomEntity, (room) => room.service, { cascade: true })
-  @JoinColumn()
-  room: RoomEntity;
+  // @OneToOne(() => RoomEntity, (room) => room.service, { cascade: true })
+  // @JoinColumn()
+  // room: RoomEntity;
 
-  @OneToOne(() => FlightEntity, (flight) => flight.service, { cascade: true })
-  @JoinColumn()
-  flight: FlightEntity;
+  // @OneToOne(() => FlightEntity, (flight) => flight.service, { cascade: true })
+  // @JoinColumn()
+  // flight: FlightEntity;
 
-  @OneToOne(
-    () => TransportationEntity,
-    (transportation) => transportation.service,
-    {
-      cascade: true,
-    },
-  )
-  @JoinColumn()
-  transportation: TransportationEntity;
+  // @OneToOne(
+  //   () => TransportationEntity,
+  //   (transportation) => transportation.service,
+  //   {
+  //     cascade: true,
+  //   },
+  // )
+  // @JoinColumn()
+  // transportation: TransportationEntity;
 
-  @OneToOne(() => SafariEntity, (safari) => safari.service, { cascade: true })
-  @JoinColumn()
-  safari: SafariEntity;
+  // @OneToOne(() => SafariEntity, (safari) => safari.service, { cascade: true })
+  // @JoinColumn()
+  // safari: SafariEntity;
 
-  @OneToOne(() => CruiseEntity, (cruise) => cruise.service, { cascade: true })
-  @JoinColumn()
-  cruise: CruiseEntity;
+  // @OneToOne(() => CruiseEntity, (cruise) => cruise.service, { cascade: true })
+  // @JoinColumn()
+  // cruise: CruiseEntity;
 
   @OneToMany(() => GalleryEntity, (gallery) => gallery.service, {
     cascade: true,

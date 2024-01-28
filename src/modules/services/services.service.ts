@@ -39,7 +39,7 @@ export class ServicesService {
     private wholesalerService: WholesalersService,
     private readonly hotelsService: HotelsService,
   ) {}
-  async create(createServiceDto: CreateServiceDto) {
+  async create(createServiceDto: CreateServiceDto): Promise<ServiceEntity> {
     const wholesaler = await this.wholesalerService.findOne(
       createServiceDto.WholesalerId,
     );
@@ -56,7 +56,7 @@ export class ServicesService {
     return this.serviceRepository.find();
   }
 
-  async findOne(id: number) {
+  async findOne(id: number): Promise<ServiceEntity> {
     const service = await this.serviceRepository.findOne({ where: { id } });
     if (!service) {
       throw new NotFoundException(`Service with id ${id} not found`);
@@ -110,7 +110,7 @@ export class ServicesService {
 
   async findAllHotelRoomServices() {
     const services = await this.serviceRepository.find({
-      where: { type: 'hotel-rooms' },
+      where: { type: ServiceType.HotelRooms },
       relations: ['room'],
     });
     return services;
@@ -123,7 +123,7 @@ export class ServicesService {
     await queryRunner.startTransaction();
     try {
       const service = await this.create(createFlightServiceDto.service);
-      service.type = ServiceType.Flight;
+      service.type = ServiceType.FlightSeats;
       await queryRunner.manager.save(service);
       const flight = this.flightRepository.create({
         ...createFlightServiceDto.flight,
@@ -141,7 +141,7 @@ export class ServicesService {
 
   async findAllFlightServices() {
     const services = await this.serviceRepository.find({
-      where: { type: 'flight-seats' },
+      where: { type: ServiceType.FlightSeats },
       relations: ['flight'],
     });
     return services;
@@ -175,7 +175,7 @@ export class ServicesService {
 
   async findAllTransportationServices() {
     const services = await this.serviceRepository.find({
-      where: { type: 'transportation' },
+      where: { type: ServiceType.Transportation },
       relations: ['transportation'],
     });
     return services;
@@ -204,7 +204,7 @@ export class ServicesService {
   }
   async findAllSafariServices() {
     const services = await this.serviceRepository.find({
-      where: { type: 'safari' },
+      where: { type: ServiceType.Safari },
       relations: ['safari'],
     });
     return services;
@@ -234,7 +234,7 @@ export class ServicesService {
 
   async findAllCruiseServices() {
     const services = await this.serviceRepository.find({
-      where: { type: 'cruise' },
+      where: { type: ServiceType.Cruise },
       relations: ['cruise'],
     });
     return services;

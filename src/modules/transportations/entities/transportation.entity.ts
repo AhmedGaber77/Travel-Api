@@ -2,7 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
 import { ServiceEntity } from 'src/modules/services/entities/service.entity';
 import { EntityRelationalHelper } from 'src/utils/relational-entity-helper';
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'transportation' })
 export class TransportationEntity extends EntityRelationalHelper {
@@ -60,6 +60,9 @@ export class TransportationEntity extends EntityRelationalHelper {
   })
   returningDate?: Date;
 
-  @OneToOne(() => ServiceEntity, (service) => service.transportation)
+  // @OneToOne(() => ServiceEntity, (service) => service.transportation)
+  // service: ServiceEntity;
+
+  @Column(() => ServiceEntity)
   service: ServiceEntity;
 }

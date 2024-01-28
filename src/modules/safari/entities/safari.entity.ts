@@ -7,7 +7,6 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -86,7 +85,10 @@ export class SafariEntity extends EntityRelationalHelper {
   @Column()
   address: string;
 
-  @OneToOne(() => ServiceEntity, (service) => service.safari)
+  // @OneToOne(() => ServiceEntity, (service) => service.safari)
+  // service: ServiceEntity;
+
+  @Column(() => ServiceEntity)
   service: ServiceEntity;
 
   @CreateDateColumn()

@@ -7,7 +7,6 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -78,7 +77,10 @@ export class CruiseEntity extends EntityRelationalHelper {
   @Column()
   availableSeats: number;
 
-  @OneToOne(() => ServiceEntity, (service) => service.cruise)
+  // @OneToOne(() => ServiceEntity, (service) => service.cruise)
+  // service: ServiceEntity;
+
+  @Column(() => ServiceEntity)
   service: ServiceEntity;
 
   @CreateDateColumn()
