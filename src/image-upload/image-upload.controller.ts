@@ -27,17 +27,35 @@ export class ImageUploadController {
     schema: {
       type: 'object',
       properties: {
-        file: {
-          type: 'string',
-          format: 'binary',
+        files: {
+          type: 'array',
+          items: {
+            type: 'string',
+            format: 'binary',
+          },
         },
       },
     },
   })
-  @UseInterceptors(FilesInterceptor('file'))
+  @UseInterceptors(FilesInterceptor('files'))
   async uploadImages(@UploadedFiles() files: Express.Multer.File[]) {
     return await this.imageUploadService.uploadImages(files);
   }
+  // @ApiBody({
+  //   schema: {
+  //     type: 'object',
+  //     properties: {
+  //       file: {
+  //         type: 'string',
+  //         format: 'binary',
+  //       },
+  //     },
+  //   },
+  // })
+  // @UseInterceptors(FilesInterceptor('file'))
+  // async uploadImages(@UploadedFiles() files: Express.Multer.File[]) {
+  //   return await this.imageUploadService.uploadImages(files);
+  // }
 
   // @Get(':id')
 }

@@ -10,7 +10,7 @@ import {
 } from './dto/update-service.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ServiceEntity, ServiceType } from './entities/service.entity';
-import { DeepPartial, Repository } from 'typeorm';
+import { DeepPartial, In, Repository } from 'typeorm';
 import { WholesalersService } from '../wholesalers/wholesalers.service';
 import { CreateHotelRoomServiceDto } from './dto/create-hotel-room.dto';
 import { HotelsService } from '../hotels/hotels.service';
@@ -23,6 +23,7 @@ import { CruiseEntity } from '../cruises/entities/cruise.entity';
 import { SafariEntity } from '../safari/entities/safari.entity';
 import { CreateCruiseServiceDto } from './dto/create-cruise-service.dto';
 import { CreateSafariServiceDto } from './dto/create-safari-service.dto';
+import { GalleryEntity } from 'src/image-upload/entities/gallery.entity';
 
 @Injectable()
 export class ServicesService {
@@ -39,6 +40,8 @@ export class ServicesService {
     private safariRepository: Repository<SafariEntity>,
     @InjectRepository(CruiseEntity)
     private cruiseRepository: Repository<CruiseEntity>,
+    @InjectRepository(GalleryEntity)
+    private galleryRepository: Repository<GalleryEntity>,
     private wholesalerService: WholesalersService,
     private readonly hotelsService: HotelsService,
   ) {}
@@ -102,6 +105,11 @@ export class ServicesService {
     } else if (serviceType === ServiceType.Cruise) {
       service.cruise = entity;
     }
+    console.log(createServiceDto.imageIds);
+
+    service.images = await this.galleryRepository.findBy({
+      id: In(createServiceDto.imageIds),
+    });
     await this.serviceRepository.save(service);
   }
 
@@ -160,7 +168,7 @@ export class ServicesService {
   async findAllServices(serviceType: ServiceType, relation: string) {
     const services = await this.serviceRepository.find({
       where: { type: serviceType },
-      relations: [relation],
+      relations: [relation, 'images'],
     });
     return services;
   }

@@ -10,6 +10,7 @@ import { FlightEntity } from '../flights/entities/flight.entity';
 import { TransportationEntity } from '../transportations/entities/transportation.entity';
 import { SafariEntity } from '../safari/entities/safari.entity';
 import { CruiseEntity } from '../cruises/entities/cruise.entity';
+import { GalleryEntity } from 'src/image-upload/entities/gallery.entity';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { CruiseEntity } from '../cruises/entities/cruise.entity';
       TransportationEntity,
       SafariEntity,
       CruiseEntity,
+      GalleryEntity,
     ]),
     WholesalersModule,
     HotelsModule,

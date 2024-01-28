@@ -9,7 +9,7 @@ export class CreateCruiseServiceDto {
     description: 'information about the service',
     type: () => CreateServiceDto,
   })
-  @ValidateNested()
+  @ValidateNested({ each: true })
   @Type(() => CreateServiceDto)
   service: CreateServiceDto;
 
@@ -17,7 +17,7 @@ export class CreateCruiseServiceDto {
     description: 'information about the cruise',
     type: () => CreateCruiseDto,
   })
-  @ValidateNested()
+  @ValidateNested({ each: true })
   @Type(() => CreateCruiseDto)
   cruise: CreateCruiseDto;
 }

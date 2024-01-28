@@ -1,14 +1,18 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
+  IsArray,
   IsBoolean,
   IsNotEmpty,
   IsNumber,
   IsOptional,
   IsPositive,
   IsString,
+  ValidateNested,
 } from 'class-validator';
 import { ServiceType } from '../entities/service.entity';
 import { isUnique } from 'src/validators/unique-field.validator';
+import { GalleryEntity } from 'src/image-upload/entities/gallery.entity';
+import { Type } from 'class-transformer';
 
 export class CreateServiceDto {
   @ApiProperty({
@@ -87,6 +91,27 @@ export class CreateServiceDto {
     example: 'Cancelation policy Long text',
   })
   cancelationPolicy: string;
+
+  // @ApiProperty({
+  //   description: 'The images of the service',
+  //   type: [GalleryEntity],
+  // })
+  // @IsArray()
+  // @Type(() => GalleryEntity)
+  // @IsNotEmpty()
+  // @ValidateNested({ each: true })
+  // images: GalleryEntity[];
+
+  @ApiProperty({
+    description: 'The image ids of the service',
+    example: [1, 2, 3],
+    type: 'array',
+    items: {
+      type: 'number',
+    },
+  })
+  @IsArray()
+  imageIds: number[];
 
   // @ApiProperty({
   //   description: 'The images of the service',
