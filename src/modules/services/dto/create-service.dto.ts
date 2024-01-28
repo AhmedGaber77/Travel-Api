@@ -86,4 +86,14 @@ export class CreateServiceDto {
     example: 'Cancelation policy Long text',
   })
   cancelationPolicy: string;
+
+  // @ApiProperty({
+  //   description: 'The images of the service',
+  //   example: [1, 2, 3],
+  //   type: 'array',
+  //   items: {
+  //     type: 'number',
+  //   },
+  // })
+  // images?: number[];
 }

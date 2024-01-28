@@ -90,6 +90,7 @@ export class ServicesService {
       );
       const service = await this.create(createHotelRoomServiceDto.service);
       service.type = ServiceType.HotelRooms;
+      // service.images = createHotelRoomServiceDto.service.images;
       await queryRunner.manager.save(service);
       const hotelRoom = this.roomRepository.create({
         ...createHotelRoomServiceDto.room,

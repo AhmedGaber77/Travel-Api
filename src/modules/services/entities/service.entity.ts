@@ -1,5 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
+import { GalleryEntity } from 'src/image-upload/entities/gallery.entity';
 import { CruiseEntity } from 'src/modules/cruises/entities/cruise.entity';
 import { FlightEntity } from 'src/modules/flights/entities/flight.entity';
 import { RoomEntity } from 'src/modules/hotels/entities/room.entity';
@@ -16,6 +17,7 @@ import {
   JoinColumn,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -106,6 +108,12 @@ export class ServiceEntity {
   @OneToOne(() => CruiseEntity, (cruise) => cruise.service, { cascade: true })
   @JoinColumn()
   cruise: CruiseEntity;
+
+  @OneToMany(() => GalleryEntity, (gallery) => gallery.service, {
+    cascade: true,
+  })
+  @JoinColumn()
+  images: GalleryEntity[];
 
   @CreateDateColumn()
   createdAt: Date;

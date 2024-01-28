@@ -43,6 +43,9 @@ import { CountriesModule } from './modules/countries/countries.module';
 import { IsUniqueConstraint } from './validators/unique-field.validator';
 import { CruisesModule } from './modules/cruises/cruises.module';
 import { SafariModule } from './modules/safari/safari.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
+// import { ClodinaryService } from './clodinary/clodinary.service';
+import { ImageUploadModule } from './image-upload/image-upload.module';
 
 @Module({
   imports: [
@@ -117,6 +120,8 @@ import { SafariModule } from './modules/safari/safari.module';
     CountriesModule,
     CruisesModule,
     SafariModule,
+    CloudinaryModule,
+    ImageUploadModule,
   ],
   providers: [IsUniqueConstraint],
 })
