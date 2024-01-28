@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsBoolean,
   IsNotEmpty,
@@ -24,19 +24,20 @@ export class CreateServiceDto {
 
   @ApiProperty({
     description: 'The type of the service',
-    example: 'hotel',
-    type: 'enum',
+    example: ServiceType.HotelRooms,
+    type: () => String,
     enum: ServiceType,
   })
   @IsNotEmpty()
-  type: string;
+  type: ServiceType;
 
   @ApiProperty({
     description: 'The description of the service',
     example: 'this is a service description',
   })
-  @IsOptional()
-  description?: string;
+  @IsString()
+  @IsNotEmpty()
+  description: string;
 
   @ApiProperty({
     description: 'The price per unit of the service',
@@ -46,12 +47,12 @@ export class CreateServiceDto {
   @IsNumber()
   price: number;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'The savings of the service',
     example: 50.5,
   })
   @IsNumber()
-  savings: number;
+  savings?: number;
 
   @ApiProperty({
     description: 'The wholesaler id of the service',

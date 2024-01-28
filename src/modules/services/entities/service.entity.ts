@@ -1,5 +1,5 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsEnum, IsNotEmpty, IsString, Min } from 'class-validator';
 import { GalleryEntity } from 'src/image-upload/entities/gallery.entity';
 import { CruiseEntity } from 'src/modules/cruises/entities/cruise.entity';
 import { FlightEntity } from 'src/modules/flights/entities/flight.entity';
@@ -20,11 +20,12 @@ import {
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
+  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
 export enum ServiceType {
-  Flight = 'flight-seats',
+  FlightSeats = 'flight-seats',
   HotelRooms = 'hotel-rooms',
   Transportation = 'transportation',
   Safari = 'safari',
@@ -32,43 +33,56 @@ export enum ServiceType {
 }
 
 @Entity({ name: 'service' })
+@Unique(['name'])
 export class ServiceEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Index()
-  @Column({ type: String, length: 50, unique: true })
+  @ApiProperty({
+    type: () => String,
+  })
   @IsString()
+  @IsNotEmpty()
+  @Column()
   name: string;
 
-  @Index()
-  @Column({ type: 'enum', enum: ServiceType })
-  @IsString()
-  type: string;
+  // @ApiProperty({
+  //   type: 'enum',
+  // })
+  @IsEnum(ServiceType)
+  @IsNotEmpty()
+  @Column({ enum: ServiceType })
+  type: ServiceType;
 
-  @Column({ type: String })
+  @ApiProperty({
+    type: () => String,
+  })
   @IsString()
+  @IsNotEmpty()
+  @Min(10)
+  @Column()
   description: string;
 
+  @ApiProperty({
+    type: () => Number,
+  })
+  @IsNotEmpty()
   @Column({ type: 'float' })
-  @IsString()
   price: number;
 
+  @ApiPropertyOptional({
+    type: () => Number,
+  })
   @Column({ type: 'float', nullable: true })
-  @IsString()
-  savings: number;
+  savings?: number;
 
-  @Column({ type: Boolean, nullable: true, default: false })
+  @ApiProperty({
+    type: () => Boolean,
+  })
+  @Column({ nullable: true, default: false })
   @IsString()
-  isOffer: boolean;
-
-  @Column({ type: String })
-  @IsString()
-  destination: string;
-
-  // @Column({ type: String, nullable: true })
-  // @IsString()
-  // cancelationPolicy: string;
+  isOffer: boolean = false;
 
   @ApiPropertyOptional({
     type: () => String,

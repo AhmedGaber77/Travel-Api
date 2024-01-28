@@ -10,7 +10,14 @@ import {
 } from '@nestjs/common';
 import { ServicesService } from './services.service';
 // import { CreateServiceDto } from './dto/create-service.dto';
-import { UpdateServiceDto } from './dto/update-service.dto';
+import {
+  UpdateCruiseServiceDto,
+  UpdateFlightServiceDto,
+  UpdateHotelRoomServiceDto,
+  UpdateSafariServiceDto,
+  UpdateServiceDto,
+  UpdateTransportationServiceDto,
+} from './dto/update-service.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { CreateHotelRoomServiceDto } from './dto/create-hotel-room.dto';
 import { CreateFlightServiceDto } from './dto/create-flight-service.dto';
@@ -38,6 +45,18 @@ export class ServicesController {
     );
   }
 
+  @Patch('hotel-rooms/:id')
+  async updateHotelRoomService(
+    @Param('id') id: number,
+    @Body(new ValidationPipe({ transform: true }))
+    updateHotelRoomServiceDto: UpdateHotelRoomServiceDto,
+  ) {
+    return await this.servicesService.updateHotelRoomService(
+      id,
+      updateHotelRoomServiceDto,
+    );
+  }
+
   @Get('flights')
   async findAllFlightServices() {
     return this.servicesService.findAllFlightServices();
@@ -49,6 +68,17 @@ export class ServicesController {
   ) {
     return await this.servicesService.createFlightService(
       createFlightServiceDto,
+    );
+  }
+  @Patch('flights/:id')
+  async updateFlightService(
+    @Param('id') id: number,
+    @Body(new ValidationPipe({ transform: true }))
+    updateFlightServiceDto: UpdateFlightServiceDto,
+  ) {
+    return await this.servicesService.updateFlightService(
+      id,
+      updateFlightServiceDto,
     );
   }
 
@@ -66,6 +96,17 @@ export class ServicesController {
       createTransportationServiceDto,
     );
   }
+  @Patch('transportations/:id')
+  async updateTransportationService(
+    @Param('id') id: number,
+    @Body(new ValidationPipe({ transform: true }))
+    updateTransportationServiceDto: UpdateTransportationServiceDto,
+  ) {
+    return await this.servicesService.updateTransportationService(
+      id,
+      updateTransportationServiceDto,
+    );
+  }
 
   @Get('cruises')
   async findAllCruiseServices() {
@@ -81,6 +122,17 @@ export class ServicesController {
       createCruiseServiceDto,
     );
   }
+  @Patch('cruises/:id')
+  async updateCruiseService(
+    @Param('id') id: number,
+    @Body(new ValidationPipe({ transform: true }))
+    updateCruiseServiceDto: UpdateCruiseServiceDto,
+  ) {
+    return await this.servicesService.updateCruiseService(
+      id,
+      updateCruiseServiceDto,
+    );
+  }
 
   @Get('safari')
   async findAllSafariServices() {
@@ -94,6 +146,17 @@ export class ServicesController {
   ) {
     return await this.servicesService.createSafariService(
       createSafariServiceDto,
+    );
+  }
+  @Patch('safari/:id')
+  async updateSafariService(
+    @Param('id') id: number,
+    @Body(new ValidationPipe({ transform: true }))
+    updateSafariServiceDto: UpdateSafariServiceDto,
+  ) {
+    return await this.servicesService.updateSafariService(
+      id,
+      updateSafariServiceDto,
     );
   }
 

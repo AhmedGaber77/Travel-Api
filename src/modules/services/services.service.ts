@@ -1,13 +1,16 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateServiceDto } from './dto/create-service.dto';
-import { UpdateServiceDto } from './dto/update-service.dto';
+import {
+  UpdateCruiseServiceDto,
+  UpdateFlightServiceDto,
+  UpdateHotelRoomServiceDto,
+  UpdateSafariServiceDto,
+  UpdateServiceDto,
+  UpdateTransportationServiceDto,
+} from './dto/update-service.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ServiceEntity, ServiceType } from './entities/service.entity';
-import { Repository } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { WholesalersService } from '../wholesalers/wholesalers.service';
 import { CreateHotelRoomServiceDto } from './dto/create-hotel-room.dto';
 import { HotelsService } from '../hotels/hotels.service';
@@ -39,7 +42,7 @@ export class ServicesService {
     private wholesalerService: WholesalersService,
     private readonly hotelsService: HotelsService,
   ) {}
-  async create(createServiceDto: CreateServiceDto) {
+  async create(createServiceDto: CreateServiceDto): Promise<ServiceEntity> {
     const wholesaler = await this.wholesalerService.findOne(
       createServiceDto.WholesalerId,
     );
@@ -77,166 +80,193 @@ export class ServicesService {
     return true;
   }
 
+  async createService<T>(
+    createServiceDto: CreateServiceDto,
+    serviceType: ServiceType,
+    repository: Repository<any>,
+    entityData: DeepPartial<T>,
+  ): Promise<void> {
+    const service = this.serviceRepository.create(createServiceDto);
+    service.type = serviceType;
+    const entity = repository.create(entityData);
+    (entity as any).service = service;
+    if (serviceType === ServiceType.HotelRooms) {
+      service.room = entity;
+      (entity as any).hotel = (entityData as any).hotel;
+    } else if (serviceType === ServiceType.FlightSeats) {
+      service.flight = entity;
+    } else if (serviceType === ServiceType.Transportation) {
+      service.transportation = entity;
+    } else if (serviceType === ServiceType.Safari) {
+      service.safari = entity;
+    } else if (serviceType === ServiceType.Cruise) {
+      service.cruise = entity;
+    }
+    await this.serviceRepository.save(service);
+  }
+
   async createHotelRoomService(
     createHotelRoomServiceDto: CreateHotelRoomServiceDto,
   ) {
-    const queryRunner =
-      this.serviceRepository.manager.connection.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-    try {
-      const hotel = await this.hotelsService.findOne(
-        createHotelRoomServiceDto.HotelId,
-      );
-      const service = await this.create(createHotelRoomServiceDto.service);
-      service.type = ServiceType.HotelRooms;
-      // service.images = createHotelRoomServiceDto.service.images;
-      await queryRunner.manager.save(service);
-      const hotelRoom = this.roomRepository.create({
-        ...createHotelRoomServiceDto.room,
-      });
-      hotelRoom.service = service;
-      hotelRoom.hotel = hotel;
-      await this.roomRepository.save(hotelRoom);
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-      throw new InternalServerErrorException(
-        'Error creating hotel room service',
-      );
-    } finally {
-      await queryRunner.release();
-    }
-  }
-
-  async findAllHotelRoomServices() {
-    const services = await this.serviceRepository.find({
-      where: { type: 'hotel-rooms' },
-      relations: ['room'],
-    });
-    return services;
+    const hotel = await this.hotelsService.findOne(
+      createHotelRoomServiceDto.HotelId,
+    );
+    await this.createService(
+      createHotelRoomServiceDto.service,
+      ServiceType.HotelRooms,
+      this.roomRepository,
+      { ...createHotelRoomServiceDto.room, hotel },
+    );
   }
 
   async createFlightService(createFlightServiceDto: CreateFlightServiceDto) {
-    const queryRunner =
-      this.serviceRepository.manager.connection.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-    try {
-      const service = await this.create(createFlightServiceDto.service);
-      service.type = ServiceType.Flight;
-      await queryRunner.manager.save(service);
-      const flight = this.flightRepository.create({
-        ...createFlightServiceDto.flight,
-      });
-      flight.service = service;
-      await this.flightRepository.save(flight);
-    } catch (error) {
-      console.log(error);
-      await queryRunner.rollbackTransaction();
-      throw new InternalServerErrorException('Error creating flight service');
-    } finally {
-      await queryRunner.release();
-    }
-  }
-
-  async findAllFlightServices() {
-    const services = await this.serviceRepository.find({
-      where: { type: 'flight-seats' },
-      relations: ['flight'],
-    });
-    return services;
+    await this.createService(
+      createFlightServiceDto.service,
+      ServiceType.FlightSeats,
+      this.flightRepository,
+      createFlightServiceDto.flight,
+    );
   }
 
   async createTransportationService(
     createTransportationServiceDto: CreateTransportationServiceDto,
   ) {
-    const queryRunner =
-      this.serviceRepository.manager.connection.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-    try {
-      const service = await this.create(createTransportationServiceDto.service);
-      service.type = ServiceType.Transportation;
-      await queryRunner.manager.save(service);
-      const transportation = this.transportationRepository.create({
-        ...createTransportationServiceDto.transportation,
-      });
-      transportation.service = service;
-      await this.transportationRepository.save(transportation);
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-      throw new InternalServerErrorException(
-        'Error creating transportation service',
-      );
-    } finally {
-      await queryRunner.release();
-    }
-  }
-
-  async findAllTransportationServices() {
-    const services = await this.serviceRepository.find({
-      where: { type: 'transportation' },
-      relations: ['transportation'],
-    });
-    return services;
+    await this.createService(
+      createTransportationServiceDto.service,
+      ServiceType.Transportation,
+      this.transportationRepository,
+      createTransportationServiceDto.transportation,
+    );
   }
 
   async createSafariService(createSafariServiceDto: CreateSafariServiceDto) {
-    const queryRunner =
-      this.serviceRepository.manager.connection.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-    try {
-      const service = await this.create(createSafariServiceDto.service);
-      service.type = ServiceType.Safari;
-      await queryRunner.manager.save(service);
-      const safari = this.safariRepository.create({
-        ...createSafariServiceDto.safari,
-      });
-      safari.service = service;
-      await this.safariRepository.save(safari);
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-      throw new InternalServerErrorException('Error creating safari service');
-    } finally {
-      await queryRunner.release();
-    }
-  }
-  async findAllSafariServices() {
-    const services = await this.serviceRepository.find({
-      where: { type: 'safari' },
-      relations: ['safari'],
-    });
-    return services;
+    await this.createService(
+      createSafariServiceDto.service,
+      ServiceType.Safari,
+      this.safariRepository,
+      createSafariServiceDto.safari,
+    );
   }
 
   async createCruiseService(createCruiseServiceDto: CreateCruiseServiceDto) {
-    const queryRunner =
-      this.serviceRepository.manager.connection.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-    try {
-      const service = await this.create(createCruiseServiceDto.service);
-      service.type = ServiceType.Cruise;
-      await queryRunner.manager.save(service);
-      const cruise = this.cruiseRepository.create({
-        ...createCruiseServiceDto.cruise,
-      });
-      cruise.service = service;
-      await this.cruiseRepository.save(cruise);
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-      throw new InternalServerErrorException('Error creating cruise service');
-    } finally {
-      await queryRunner.release();
-    }
+    await this.createService(
+      createCruiseServiceDto.service,
+      ServiceType.Cruise,
+      this.cruiseRepository,
+      createCruiseServiceDto.cruise,
+    );
+  }
+
+  async findAllServices(serviceType: ServiceType, relation: string) {
+    const services = await this.serviceRepository.find({
+      where: { type: serviceType },
+      relations: [relation],
+    });
+    return services;
+  }
+
+  async findAllHotelRoomServices() {
+    return this.findAllServices(ServiceType.HotelRooms, 'room');
+  }
+
+  async findAllFlightServices() {
+    return this.findAllServices(ServiceType.FlightSeats, 'flight');
+  }
+
+  async findAllTransportationServices() {
+    return this.findAllServices(ServiceType.Transportation, 'transportation');
+  }
+
+  async findAllSafariServices() {
+    return this.findAllServices(ServiceType.Safari, 'safari');
   }
 
   async findAllCruiseServices() {
-    const services = await this.serviceRepository.find({
-      where: { type: 'cruise' },
-      relations: ['cruise'],
+    return this.findAllServices(ServiceType.Cruise, 'cruise');
+  }
+
+  async updateService<T>(
+    id: number,
+    updateServiceDto: any,
+    serviceType: ServiceType,
+    repository: Repository<any>,
+    entityData: DeepPartial<T>,
+  ): Promise<void> {
+    const service = await this.findOne(id);
+    this.serviceRepository.merge(service, updateServiceDto);
+    await this.serviceRepository.save(service);
+    const entity = await repository.findOne({
+      where: { service: service.id },
     });
-    return services;
+
+    repository.merge(entity, entityData as any);
+    await repository.save(entity);
+  }
+
+  async updateHotelRoomService(
+    id: number,
+    updateHotelRoomServiceDto: UpdateHotelRoomServiceDto,
+  ) {
+    await this.updateService(
+      id,
+      updateHotelRoomServiceDto.service,
+      ServiceType.HotelRooms,
+      this.roomRepository,
+      {
+        ...updateHotelRoomServiceDto.room,
+      },
+    );
+  }
+
+  async updateFlightService(
+    id: number,
+    updateFlightServiceDto: UpdateFlightServiceDto,
+  ) {
+    await this.updateService(
+      id,
+      updateFlightServiceDto.service,
+      ServiceType.FlightSeats,
+      this.flightRepository,
+      updateFlightServiceDto.flight,
+    );
+  }
+
+  async updateTransportationService(
+    id: number,
+    updateTransportationServiceDto: UpdateTransportationServiceDto,
+  ) {
+    await this.updateService(
+      id,
+      updateTransportationServiceDto.service,
+      ServiceType.Transportation,
+      this.transportationRepository,
+      updateTransportationServiceDto.transportation,
+    );
+  }
+
+  async updateSafariService(
+    id: number,
+    updateSafariServiceDto: UpdateSafariServiceDto,
+  ) {
+    await this.updateService(
+      id,
+      updateSafariServiceDto.service,
+      ServiceType.Safari,
+      this.safariRepository,
+      updateSafariServiceDto.safari,
+    );
+  }
+
+  async updateCruiseService(
+    id: number,
+    updateCruiseServiceDto: UpdateCruiseServiceDto,
+  ) {
+    await this.updateService(
+      id,
+      updateCruiseServiceDto.service,
+      ServiceType.Cruise,
+      this.cruiseRepository,
+      updateCruiseServiceDto.cruise,
+    );
   }
 }
