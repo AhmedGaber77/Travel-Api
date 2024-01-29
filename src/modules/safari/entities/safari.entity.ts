@@ -1,4 +1,4 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsPositive, IsString } from 'class-validator';
 import { ServiceEntity } from 'src/modules/services/entities/service.entity';
 import { EntityRelationalHelper } from 'src/utils/relational-entity-helper';
@@ -16,13 +16,6 @@ import {
 export class SafariEntity extends EntityRelationalHelper {
   @PrimaryGeneratedColumn()
   id: number;
-
-  @ApiPropertyOptional({
-    type: () => String,
-  })
-  @IsString()
-  @Column({ nullable: true })
-  description: string;
 
   @ApiProperty({
     type: () => String,

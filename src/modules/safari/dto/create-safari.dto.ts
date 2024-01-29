@@ -1,16 +1,8 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsPositive, IsString } from 'class-validator';
 import { ServiceEntity } from 'src/modules/services/entities/service.entity';
 
 export class CreateSafariDto {
-  @ApiPropertyOptional({
-    type: () => String,
-    description: 'Description of the cruise',
-    example: 'This is a cruise to Paris',
-  })
-  @IsString()
-  description: string;
-
   @ApiProperty({
     type: () => String,
     description: 'Inclucions of the cruise',
