@@ -23,21 +23,17 @@ export class RoomEntity extends EntityRelationalHelper {
   @IsString()
   type: string;
 
-  @Column({ type: String, nullable: true })
-  @IsString()
-  description: string;
-
-  @Column({ type: 'float', nullable: true })
+  @Column({ type: Number })
   @IsPositive()
-  price: number;
-
-  @Column({ type: 'float', nullable: true })
-  @IsPositive()
-  savings: number;
+  roomArea: number;
 
   @Column({ type: Number })
   @IsPositive()
-  availableRooms: number;
+  numberOfBeds: number;
+
+  @Column({ type: Number })
+  @IsPositive()
+  numberOfSleeps: number;
 
   @ManyToOne(() => HotelEntity, (hotel) => hotel.rooms, { eager: true })
   hotel: HotelEntity;
