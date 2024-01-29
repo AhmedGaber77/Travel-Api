@@ -13,12 +13,12 @@ export class CreateHotelRoomServiceDto {
   @Type(() => CreateServiceDto)
   service: CreateServiceDto;
 
-  @ApiProperty({
-    description: 'The id of the hotel',
-    example: 1,
-    required: true,
-  })
-  HotelId: number;
+  // @ApiProperty({
+  //   description: 'The id of the hotel',
+  //   example: 1,
+  //   required: true,
+  // })
+  // HotelId: number;
 
   @ApiProperty({
     description: 'information about the room',

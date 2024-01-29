@@ -11,9 +11,10 @@ import {
 } from 'typeorm';
 import { HotelEntity } from './hotel.entity';
 import { ServiceEntity } from 'src/modules/services/entities/service.entity';
+import { EntityRelationalHelper } from 'src/utils/relational-entity-helper';
 
 @Entity('room')
-export class RoomEntity {
+export class RoomEntity extends EntityRelationalHelper {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -38,7 +39,7 @@ export class RoomEntity {
   @IsPositive()
   availableRooms: number;
 
-  @ManyToOne(() => HotelEntity, (hotel) => hotel.rooms)
+  @ManyToOne(() => HotelEntity, (hotel) => hotel.rooms, { eager: true })
   hotel: HotelEntity;
 
   @OneToOne(() => ServiceEntity, (service) => service.room)

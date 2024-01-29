@@ -10,9 +10,10 @@ import {
 } from 'typeorm';
 import { RoomEntity } from './room.entity';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { EntityRelationalHelper } from 'src/utils/relational-entity-helper';
 
 @Entity({ name: 'hotel' })
-export class HotelEntity {
+export class HotelEntity extends EntityRelationalHelper {
   @PrimaryGeneratedColumn()
   id: number;
 

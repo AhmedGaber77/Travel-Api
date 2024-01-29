@@ -24,6 +24,12 @@ import { SafariEntity } from '../safari/entities/safari.entity';
 import { CreateCruiseServiceDto } from './dto/create-cruise-service.dto';
 import { CreateSafariServiceDto } from './dto/create-safari-service.dto';
 import { GalleryEntity } from 'src/image-upload/entities/gallery.entity';
+import { IPaginationOptions } from 'src/utils/types/pagination-options';
+import { CreateSafariDto } from '../safari/dto/create-safari.dto';
+import { CreateHotelRoomDto } from '../hotels/dto/create-room.dto';
+import { CreateFlightDto } from '../flights/dto/create-flight.dto';
+import { CreateTransportationDto } from '../transportations/dto/create-transportation.dto';
+import { CreateCruiseDto } from '../cruises/dto/create-cruise.dto';
 
 @Injectable()
 export class ServicesService {
@@ -45,24 +51,48 @@ export class ServicesService {
     private wholesalerService: WholesalersService,
     private readonly hotelsService: HotelsService,
   ) {}
+  /**
+   * Creates a new service.
+   *
+   * @param createServiceDto The DTO containing the data for the new service
+   * @returns A promise that resolves to the created service entity
+   */
   async create(createServiceDto: CreateServiceDto): Promise<ServiceEntity> {
+    // Validate wholesaler ID
+    if (!createServiceDto.WholesalerId) {
+      throw new Error('Wholesaler ID is required');
+    }
+
+    // Get wholesaler entity
     const wholesaler = await this.wholesalerService.findOne(
       createServiceDto.WholesalerId,
     );
+
     if (!wholesaler) {
-      throw new NotFoundException(
-        `Wholesaler with id ${createServiceDto.WholesalerId} not found`,
-      );
+      throw new Error('Invalid wholesaler ID');
     }
+
+    // Create service entity
     const service = this.serviceRepository.create(createServiceDto);
+
+    // Assign wholesaler
+    service.wholesaler = wholesaler;
+
+    // Save service
     return this.serviceRepository.save(service);
   }
 
-  findAll() {
-    return this.serviceRepository.find();
+  findAll(paginationOptions: IPaginationOptions) {
+    return this.serviceRepository.find({
+      skip: (paginationOptions.page - 1) * paginationOptions.limit,
+      take: paginationOptions.limit,
+      order: {
+        createdAt: 'DESC',
+      },
+    });
   }
 
-  async findOne(id: number) {
+  async findOne(id: number): Promise<ServiceEntity> {
     const service = await this.serviceRepository.findOne({ where: { id } });
     if (!service) {
       throw new NotFoundException(`Service with id ${id} not found`);
@@ -83,47 +113,63 @@ export class ServicesService {
     return true;
   }
 
-  async createService<T>(
+  async createService(
     createServiceDto: CreateServiceDto,
     serviceType: ServiceType,
-    repository: Repository<any>,
-    entityData: DeepPartial<T>,
-  ): Promise<void> {
+    specificServiceRepository: Repository<
+      | RoomEntity
+      | FlightEntity
+      | TransportationEntity
+      | SafariEntity
+      | CruiseEntity
+    >,
+    specificServiceDto:
+      | CreateSafariDto
+      | CreateHotelRoomDto
+      | CreateFlightDto
+      | CreateTransportationDto
+      | CreateCruiseDto,
+  ): Promise<ServiceEntity> {
     const service = this.serviceRepository.create(createServiceDto);
     service.type = serviceType;
-    const entity = repository.create(entityData);
-    (entity as any).service = service;
-    if (serviceType === ServiceType.HotelRooms) {
-      service.room = entity;
-      (entity as any).hotel = (entityData as any).hotel;
-    } else if (serviceType === ServiceType.FlightSeats) {
-      service.flight = entity;
-    } else if (serviceType === ServiceType.Transportation) {
-      service.transportation = entity;
-    } else if (serviceType === ServiceType.Safari) {
-      service.safari = entity;
-    } else if (serviceType === ServiceType.Cruise) {
-      service.cruise = entity;
-    }
-    console.log(createServiceDto.imageIds);
 
     service.images = await this.galleryRepository.findBy({
       id: In(createServiceDto.imageIds),
     });
-    await this.serviceRepository.save(service);
+
+    const specificService =
+      specificServiceRepository.create(specificServiceDto);
+    specificService.service = service;
+    if (
+      specificService instanceof RoomEntity &&
+      specificServiceDto instanceof CreateHotelRoomDto
+    ) {
+      service.room = specificService;
+      const hotel = await this.hotelsService.findOne(
+        specificServiceDto.HotelId,
+      );
+      specificService.hotel = hotel;
+    } else if (specificService instanceof FlightEntity) {
+      service.flight = specificService;
+    } else if (specificService instanceof TransportationEntity) {
+      service.transportation = specificService;
+    } else if (specificService instanceof SafariEntity) {
+      service.safari = specificService;
+    } else if (specificService instanceof CruiseEntity) {
+      service.cruise = specificService;
+    }
+
+    return this.serviceRepository.save(service);
   }
 
   async createHotelRoomService(
     createHotelRoomServiceDto: CreateHotelRoomServiceDto,
   ) {
-    const hotel = await this.hotelsService.findOne(
-      createHotelRoomServiceDto.HotelId,
-    );
     await this.createService(
       createHotelRoomServiceDto.service,
       ServiceType.HotelRooms,
       this.roomRepository,
-      { ...createHotelRoomServiceDto.room, hotel },
+      createHotelRoomServiceDto.room,
     );
   }
 
@@ -169,6 +215,8 @@ export class ServicesService {
     const services = await this.serviceRepository.find({
       where: { type: serviceType },
       relations: [relation, 'images'],
+      loadRelationIds: { relations: ['wholesaler'] },
+      loadEagerRelations: true,
     });
     return services;
   }

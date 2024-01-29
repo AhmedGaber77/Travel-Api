@@ -7,9 +7,9 @@ import {
   Param,
   Delete,
   ValidationPipe,
+  Query,
 } from '@nestjs/common';
 import { ServicesService } from './services.service';
-// import { CreateServiceDto } from './dto/create-service.dto';
 import {
   UpdateCruiseServiceDto,
   UpdateFlightServiceDto,
@@ -24,6 +24,7 @@ import { CreateFlightServiceDto } from './dto/create-flight-service.dto';
 import { CreateTransportationServiceDto } from './dto/create-transportation-service.dto';
 import { CreateCruiseServiceDto } from './dto/create-cruise-service.dto';
 import { CreateSafariServiceDto } from './dto/create-safari-service.dto';
+import { QueryServiceDto } from './dto/query-service.dto';
 
 @ApiTags('Services')
 @Controller({ path: 'services', version: '1' })
@@ -160,14 +161,18 @@ export class ServicesController {
     );
   }
 
-  // @Post()
-  // create(@Body() createServiceDto: CreateServiceDto) {
-  //   return this.servicesService.create(createServiceDto);
-  // }
-
   @Get()
-  findAll() {
-    return this.servicesService.findAll();
+  findAll(@Query() query: QueryServiceDto) {
+    const page = query?.page ?? 1;
+    let limit = query?.limit ?? 10;
+    if (limit > 50) {
+      limit = 50;
+    }
+
+    return this.servicesService.findAll({
+      page,
+      limit,
+    });
   }
 
   @Get(':id')
