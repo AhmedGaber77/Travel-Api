@@ -25,11 +25,6 @@ import { CreateCruiseServiceDto } from './dto/create-cruise-service.dto';
 import { CreateSafariServiceDto } from './dto/create-safari-service.dto';
 import { GalleryEntity } from 'src/image-upload/entities/gallery.entity';
 import { IPaginationOptions } from 'src/utils/types/pagination-options';
-import { CreateSafariDto } from '../safari/dto/create-safari.dto';
-import { CreateHotelRoomDto } from '../hotels/dto/create-room.dto';
-import { CreateFlightDto } from '../flights/dto/create-flight.dto';
-import { CreateTransportationDto } from '../transportations/dto/create-transportation.dto';
-import { CreateCruiseDto } from '../cruises/dto/create-cruise.dto';
 
 @Injectable()
 export class ServicesService {
