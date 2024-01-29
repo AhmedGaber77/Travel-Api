@@ -123,12 +123,18 @@ export class ServicesService {
       | SafariEntity
       | CruiseEntity
     >,
-    specificServiceDto:
-      | CreateSafariDto
-      | CreateHotelRoomDto
-      | CreateFlightDto
-      | CreateTransportationDto
-      | CreateCruiseDto,
+    // specificServiceDto:
+    //   | CreateSafariDto
+    //   | CreateHotelRoomDto
+    //   | CreateFlightDto
+    //   | CreateTransportationDto
+    //   | CreateCruiseDto,
+    specificServiceEntity:
+      | RoomEntity
+      | FlightEntity
+      | TransportationEntity
+      | SafariEntity
+      | CruiseEntity,
   ): Promise<ServiceEntity> {
     const service = this.serviceRepository.create(createServiceDto);
     service.type = serviceType;
@@ -137,26 +143,22 @@ export class ServicesService {
       id: In(createServiceDto.imageIds),
     });
 
-    const specificService =
-      specificServiceRepository.create(specificServiceDto);
-    specificService.service = service;
-    if (
-      specificService instanceof RoomEntity &&
-      specificServiceDto instanceof CreateHotelRoomDto
-    ) {
-      service.room = specificService;
-      const hotel = await this.hotelsService.findOne(
-        specificServiceDto.HotelId,
-      );
-      specificService.hotel = hotel;
-    } else if (specificService instanceof FlightEntity) {
-      service.flight = specificService;
-    } else if (specificService instanceof TransportationEntity) {
-      service.transportation = specificService;
-    } else if (specificService instanceof SafariEntity) {
-      service.safari = specificService;
-    } else if (specificService instanceof CruiseEntity) {
-      service.cruise = specificService;
+    // const specificService =
+    //   specificServiceRepository.create(specificServiceDto);
+    // specificService.service = service;
+    if (!specificServiceEntity) {
+      return this.serviceRepository.save(service);
+    }
+    if (specificServiceEntity instanceof RoomEntity) {
+      service.room = specificServiceEntity;
+    } else if (specificServiceEntity instanceof FlightEntity) {
+      service.flight = specificServiceEntity;
+    } else if (specificServiceEntity instanceof TransportationEntity) {
+      service.transportation = specificServiceEntity;
+    } else if (specificServiceEntity instanceof SafariEntity) {
+      service.safari = specificServiceEntity;
+    } else if (specificServiceEntity instanceof CruiseEntity) {
+      service.cruise = specificServiceEntity;
     }
 
     return this.serviceRepository.save(service);
@@ -165,49 +167,69 @@ export class ServicesService {
   async createHotelRoomService(
     createHotelRoomServiceDto: CreateHotelRoomServiceDto,
   ) {
+    const hotel = await this.hotelsService.findOne(
+      createHotelRoomServiceDto.room.HotelId,
+    );
+    const roomService = this.roomRepository.create(
+      createHotelRoomServiceDto.room,
+    );
+    roomService.hotel = hotel;
+
     await this.createService(
       createHotelRoomServiceDto.service,
       ServiceType.HotelRooms,
       this.roomRepository,
-      createHotelRoomServiceDto.room,
+      roomService,
     );
   }
 
   async createFlightService(createFlightServiceDto: CreateFlightServiceDto) {
+    const flightService = this.flightRepository.create(
+      createFlightServiceDto.flight,
+    );
     await this.createService(
       createFlightServiceDto.service,
       ServiceType.FlightSeats,
       this.flightRepository,
-      createFlightServiceDto.flight,
+      flightService,
     );
   }
 
   async createTransportationService(
     createTransportationServiceDto: CreateTransportationServiceDto,
   ) {
+    const transportationService = this.transportationRepository.create(
+      createTransportationServiceDto.transportation,
+    );
     await this.createService(
       createTransportationServiceDto.service,
       ServiceType.Transportation,
       this.transportationRepository,
-      createTransportationServiceDto.transportation,
+      transportationService,
     );
   }
 
   async createSafariService(createSafariServiceDto: CreateSafariServiceDto) {
+    const safariService = this.safariRepository.create(
+      createSafariServiceDto.safari,
+    );
     await this.createService(
       createSafariServiceDto.service,
       ServiceType.Safari,
       this.safariRepository,
-      createSafariServiceDto.safari,
+      safariService,
     );
   }
 
   async createCruiseService(createCruiseServiceDto: CreateCruiseServiceDto) {
+    const cruiseService = this.cruiseRepository.create(
+      createCruiseServiceDto.cruise,
+    );
     await this.createService(
       createCruiseServiceDto.service,
       ServiceType.Cruise,
       this.cruiseRepository,
-      createCruiseServiceDto.cruise,
+      cruiseService,
     );
   }
 
