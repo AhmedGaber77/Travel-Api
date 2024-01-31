@@ -5,6 +5,7 @@ import { CruiseEntity } from 'src/modules/cruises/entities/cruise.entity';
 import { FlightEntity } from 'src/modules/flights/entities/flight.entity';
 import { RoomEntity } from 'src/modules/hotels/entities/room.entity';
 import { PackageEntity } from 'src/modules/packages/entities/package.entity';
+import { ReservationEntity } from 'src/modules/reservations/entities/reservation.entity';
 import { SafariEntity } from 'src/modules/safari/entities/safari.entity';
 import { TransportationEntity } from 'src/modules/transportations/entities/transportation.entity';
 import { WholesalerEntity } from 'src/modules/wholesalers/entities/wholesaler.entity';
@@ -128,6 +129,9 @@ export class ServiceEntity {
   })
   @JoinColumn()
   images: GalleryEntity[];
+
+  @OneToMany(() => ReservationEntity, (reservation) => reservation.service)
+  reservations: ReservationEntity[];
 
   @CreateDateColumn()
   createdAt: Date;

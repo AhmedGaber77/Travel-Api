@@ -1,5 +1,6 @@
 import { IsJSON, IsPostalCode } from 'class-validator';
 import { GalleryEntity } from 'src/image-upload/entities/gallery.entity';
+import { ReservationEntity } from 'src/modules/reservations/entities/reservation.entity';
 import { WholesalerEntity } from 'src/modules/wholesalers/entities/wholesaler.entity';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { EntityRelationalHelper } from 'src/utils/relational-entity-helper';
@@ -62,6 +63,9 @@ export class TravelOfficeEntity extends EntityRelationalHelper {
   @OneToOne(() => GalleryEntity, (gallery) => gallery.travelOffice)
   @JoinColumn()
   profilePhoto?: GalleryEntity;
+
+  @OneToMany(() => ReservationEntity, (reservation) => reservation.travelOffice)
+  reservations: ReservationEntity[];
 
   @CreateDateColumn()
   createdAt: Date;
