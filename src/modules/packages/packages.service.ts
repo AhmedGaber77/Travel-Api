@@ -1,11 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreatePackageDto } from './dto/create-package.dto';
-import { UpdatePackageDto } from './dto/update-package.dto';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PackageEntity } from './entities/package.entity';
 import { Repository } from 'typeorm';
-import { WholesalerEntity } from '../wholesalers/entities/wholesaler.entity';
-import { CrudService } from '@nestjs-library/crud';
 import { TypeOrmCrudService } from '@dataui/crud-typeorm';
 
 // @Injectable()
