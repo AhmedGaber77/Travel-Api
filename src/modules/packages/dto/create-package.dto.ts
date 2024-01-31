@@ -45,7 +45,7 @@ export class CreatePackageDto {
   @IsNotEmpty()
   @IsNumber()
   @IsPositive()
-  WholesalerId: number;
+  wholesalerId: number;
 
   @ApiProperty({
     description: 'The destination of the package',
@@ -64,5 +64,5 @@ export class CreatePackageDto {
   })
   @IsBoolean()
   @IsOptional()
-  isOffer: boolean;
+  isOffer?: boolean;
 }

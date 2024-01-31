@@ -7,6 +7,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToMany,
   ManyToOne,
@@ -46,7 +47,10 @@ export class PackageEntity extends EntityRelationalHelper {
   @IsString()
   destination: string;
 
+  @Column()
+  wholesalerId: number;
   @ManyToOne(() => WholesalerEntity, (wholesaler) => wholesaler.packages)
+  @JoinColumn({ name: 'wholesalerId' })
   wholesaler: WholesalerEntity;
 
   @ManyToMany(() => ServiceEntity, (service) => service.packages)
