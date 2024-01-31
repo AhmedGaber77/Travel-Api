@@ -13,6 +13,7 @@ import { WholesalersService } from './wholesalers.service';
 import { CreateWholesalerDto } from './dto/create-wholesaler.dto';
 import { UpdateWholesalerDto } from './dto/update-wholesaler.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { AddUserToWholesalerDto } from './dto/add-user-wholesaler.dto';
 
 @ApiTags('Wholesalers')
 @Controller({
@@ -49,5 +50,21 @@ export class WholesalersController {
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id') id: string) {
     return this.wholesalersService.remove(+id);
+  }
+
+  @Get(':wholesalerId/users')
+  findUsersByWholesalerId(@Param('wholesalerId') wholesalerId: string) {
+    return this.wholesalersService.findUsersByWholesalerId(+wholesalerId);
+  }
+
+  @Post(':wholesalerId/users')
+  assignUserToWholesaler(
+    @Param('wholesalerId') wholesalerId: string,
+    @Body() addUserToWholesaler: AddUserToWholesalerDto,
+  ) {
+    return this.wholesalersService.addUserToWholesaler(
+      +wholesalerId,
+      addUserToWholesaler.userId,
+    );
   }
 }

@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsEmail,
   IsNotEmpty,
@@ -40,6 +40,13 @@ export class CreateTravelOfficeDto {
   @IsNotEmpty()
   phone: string;
 
+  @ApiPropertyOptional({
+    description: 'The Profile photo id of the travel office',
+    example: 1,
+  })
+  @IsNotEmpty()
+  profilePhotoId: number;
+
   @ApiProperty({
     description: 'The address of the travel office',
     example: '123 travel office St.',
@@ -70,19 +77,19 @@ export class CreateTravelOfficeDto {
   @IsOptional()
   country?: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: "The postal code for the travel office's location",
     example: '12345',
   })
   @IsOptional()
-  postalCode: string;
+  postalCode?: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Additional contact information for the travel office',
     type: 'object',
   })
   @IsOptional()
-  contactInfo: any;
+  contactInfo?: any;
 
   @ApiProperty({
     description: 'The ID of the wholesaler that owns the travel office',

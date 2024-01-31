@@ -1,4 +1,6 @@
 import {
+  HttpException,
+  HttpStatus,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -9,12 +11,18 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { TravelOfficeEntity } from './entities/travel-office.entity';
 import { Repository } from 'typeorm';
 import { WholesalersService } from '../wholesalers/wholesalers.service';
+import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
+import { GalleryEntity } from 'src/image-upload/entities/gallery.entity';
 
 @Injectable()
 export class TravelOfficesService {
   constructor(
     @InjectRepository(TravelOfficeEntity)
     private travelOfficeRepository: Repository<TravelOfficeEntity>,
+    @InjectRepository(UserEntity)
+    private userRepository: Repository<UserEntity>,
+    @InjectRepository(GalleryEntity)
+    private galleryRepository: Repository<GalleryEntity>,
     private wholesalerService: WholesalersService,
   ) {}
   async create(
@@ -28,8 +36,15 @@ export class TravelOfficesService {
       const travelOffice = this.travelOfficeRepository.create(
         createTravelOfficeDto,
       );
-      console.log(wholesaler);
       travelOffice.wholesaler = wholesaler;
+      if (createTravelOfficeDto.profilePhotoId) {
+        const photo = await this.galleryRepository.findOne({
+          where: { id: createTravelOfficeDto.profilePhotoId },
+        });
+        if (photo) {
+          travelOffice.profilePhoto = photo;
+        }
+      }
       await this.travelOfficeRepository.save(travelOffice);
       return this.findOne(travelOffice.id);
     } catch (error) {
@@ -44,7 +59,9 @@ export class TravelOfficesService {
   async findOne(id: number): Promise<TravelOfficeEntity> {
     const travelOffice = await this.travelOfficeRepository.findOne({
       where: { id },
-      relations: ['wholesaler'],
+      relations: {
+        users: true,
+      },
     });
     if (!travelOffice) {
       throw new NotFoundException(`Travel office with id ${id} not found`);
@@ -60,6 +77,11 @@ export class TravelOfficesService {
       return;
     }
     return travelOffice;
+  }
+
+  async findUsersByTravelOfficeId(id: number): Promise<any> {
+    const travelOffice = await this.findOne(id);
+    return travelOffice.users;
   }
 
   async update(
@@ -102,5 +124,36 @@ export class TravelOfficesService {
     travelOffice.wholesaler = wholesaler;
     await this.travelOfficeRepository.save(travelOffice);
     return travelOffice;
+  }
+
+  async assignUserToTravelOffice(travelOfficeId: number, userId: number) {
+    const travelOffice = await this.findOne(travelOfficeId);
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException(`User with id ${userId} not found`);
+    }
+    if (user.wholesalerId !== null) {
+      throw new HttpException(
+        `User with id ${userId} is already assigned to a wholesaler`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    if (
+      user.travelOfficeId !== null &&
+      user.travelOfficeId !== travelOfficeId
+    ) {
+      throw new HttpException(
+        `User with id ${userId} is already assigned to a travel office`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    user.travelOfficeId = travelOfficeId;
+    if (!travelOffice.users) {
+      travelOffice.users = [];
+    }
+
+    travelOffice.users.push(user);
+    await this.travelOfficeRepository.save(travelOffice);
   }
 }

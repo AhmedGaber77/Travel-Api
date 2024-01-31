@@ -1,4 +1,6 @@
 import {
+  HttpException,
+  HttpStatus,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -8,12 +10,15 @@ import { UpdateWholesalerDto } from './dto/update-wholesaler.dto';
 import { WholesalerEntity } from './entities/wholesaler.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 
 @Injectable()
 export class WholesalersService {
   constructor(
     @InjectRepository(WholesalerEntity)
     private wholesalersRepository: Repository<WholesalerEntity>,
+    @InjectRepository(UserEntity)
+    private userRepository: Repository<UserEntity>,
   ) {}
   async create(
     createWholesalerDto: CreateWholesalerDto,
@@ -54,5 +59,40 @@ export class WholesalersService {
     const wholesaler = await this.findOne(id);
     await this.wholesalersRepository.softDelete(wholesaler.id);
     return true;
+  }
+
+  async findUsersByWholesalerId(id: number): Promise<UserEntity[]> {
+    const wholesaler = await this.findOne(id);
+    return wholesaler.users ? wholesaler.users : [];
+  }
+
+  async addUserToWholesaler(
+    wholesalerId: number,
+    userId: number,
+  ): Promise<void> {
+    const wholesaler = await this.findOne(wholesalerId);
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException(`User with id ${userId} not found`);
+    }
+    if (user.wholesalerId !== null && user.wholesalerId !== wholesaler.id) {
+      throw new HttpException(
+        `User with id ${userId} is already assigned to a wholesaler`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    if (user.travelOfficeId !== null) {
+      throw new HttpException(
+        `User with id ${userId} is already assigned to a travel office`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    user.wholesalerId = wholesaler.id;
+    if (!wholesaler.users) {
+      wholesaler.users = [];
+    }
+    wholesaler.users.push(user);
+    await this.wholesalersRepository.save(wholesaler);
   }
 }

@@ -1,4 +1,5 @@
 import { IsJSON, IsPostalCode } from 'class-validator';
+import { GalleryEntity } from 'src/image-upload/entities/gallery.entity';
 import { WholesalerEntity } from 'src/modules/wholesalers/entities/wholesaler.entity';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { EntityRelationalHelper } from 'src/utils/relational-entity-helper';
@@ -7,8 +8,10 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -50,10 +53,15 @@ export class TravelOfficeEntity extends EntityRelationalHelper {
   postalCode: string;
 
   @OneToMany(() => UserEntity, (user) => user.travelOffice)
+  @JoinColumn()
   users: UserEntity[];
 
   @ManyToOne(() => WholesalerEntity, (wholesaler) => wholesaler.travelOffices)
   wholesaler: WholesalerEntity;
+
+  @OneToOne(() => GalleryEntity, (gallery) => gallery.travelOffice)
+  @JoinColumn()
+  profilePhoto?: GalleryEntity;
 
   @CreateDateColumn()
   createdAt: Date;

@@ -79,9 +79,13 @@ export class UserEntity extends EntityRelationalHelper implements User {
   })
   status?: StatusEntity;
 
+  @Column({ nullable: true })
+  wholesalerId?: WholesalerEntity['id'];
   @ManyToOne(() => WholesalerEntity, (wholesaler) => wholesaler.users)
   wholesaler?: WholesalerEntity;
 
+  @Column({ nullable: true })
+  travelOfficeId?: TravelOfficeEntity['id'];
   @ManyToOne(() => TravelOfficeEntity, (travelOffice) => travelOffice.users)
   travelOffice?: TravelOfficeEntity;
 
