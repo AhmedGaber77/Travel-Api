@@ -84,13 +84,6 @@ export class CreateTravelOfficeDto {
   @IsOptional()
   postalCode?: string;
 
-  @ApiPropertyOptional({
-    description: 'Additional contact information for the travel office',
-    type: 'object',
-  })
-  @IsOptional()
-  contactInfo?: any;
-
   @ApiProperty({
     description: 'The ID of the wholesaler that owns the travel office',
     example: 1,
