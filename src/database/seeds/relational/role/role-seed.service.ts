@@ -41,5 +41,34 @@ export class RoleSeedService {
         }),
       );
     }
+
+    const countWholesaler = await this.repository.count({
+      where: {
+        id: RoleEnum.wholesaler,
+      },
+    });
+    if (!countWholesaler) {
+      await this.repository.save(
+        this.repository.create({
+          id: RoleEnum.wholesaler,
+          name: 'Wholesaler',
+        }),
+      );
+    }
+
+    const countTravelAgent = await this.repository.count({
+      where: {
+        id: RoleEnum.travelAgent,
+      },
+    });
+
+    if (!countTravelAgent) {
+      await this.repository.save(
+        this.repository.create({
+          id: RoleEnum.travelAgent,
+          name: 'TravelAgent',
+        }),
+      );
+    }
   }
 }
