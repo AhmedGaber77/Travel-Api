@@ -13,6 +13,7 @@ import { Repository } from 'typeorm';
 import { WholesalersService } from '../wholesalers/wholesalers.service';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { GalleryEntity } from 'src/image-upload/entities/gallery.entity';
+import { AccountEntity } from '../accounts/entities/account.entity';
 
 @Injectable()
 export class TravelOfficesService {
@@ -23,6 +24,8 @@ export class TravelOfficesService {
     private userRepository: Repository<UserEntity>,
     @InjectRepository(GalleryEntity)
     private galleryRepository: Repository<GalleryEntity>,
+    @InjectRepository(AccountEntity)
+    private accountRepository: Repository<AccountEntity>,
     private wholesalerService: WholesalersService,
   ) {}
   async create(
@@ -45,6 +48,9 @@ export class TravelOfficesService {
           travelOffice.profilePhoto = photo;
         }
       }
+      travelOffice.account = this.accountRepository.create({
+        travelOffice,
+      });
       await this.travelOfficeRepository.save(travelOffice);
       return this.findOne(travelOffice.id);
     } catch (error) {

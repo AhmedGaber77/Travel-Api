@@ -14,7 +14,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-enum ReservationStatus {
+export enum ReservationStatus {
   Pending = 'pending',
   Confirmed = 'confirmed',
   Canceled = 'canceled',
@@ -24,13 +24,6 @@ enum ReservationStatus {
 export class ReservationEntity extends EntityRelationalHelper {
   @PrimaryGeneratedColumn()
   id: number;
-
-  @ApiProperty({
-    type: () => Date,
-  })
-  @IsNotEmpty()
-  @Column()
-  reserveDate: Date;
 
   @ApiProperty({
     type: () => Number,
@@ -56,12 +49,11 @@ export class ReservationEntity extends EntityRelationalHelper {
   @Column()
   checkInDate: Date;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: () => Date,
   })
-  @IsNotEmpty()
-  @Column()
-  checkOutDate: Date;
+  @Column({ nullable: true })
+  checkOutDate?: Date;
 
   @ApiPropertyOptional({
     type: () => String,
@@ -71,14 +63,14 @@ export class ReservationEntity extends EntityRelationalHelper {
   @Column()
   CancelReason: string;
 
-  @Column()
-  serviceId: ServiceEntity['id'];
+  // @Column()
+  // serviceId: ServiceEntity['id'];
   @ManyToOne(() => ServiceEntity, (service) => service.reservations)
   @JoinColumn({ name: 'serviceId' })
   service: ServiceEntity;
 
-  @Column()
-  travelOfficeId: TravelOfficeEntity['id'];
+  // @Column()
+  // travelOfficeId: TravelOfficeEntity['id'];
   @ManyToOne(
     () => TravelOfficeEntity,
     (travelOffice) => travelOffice.reservations,

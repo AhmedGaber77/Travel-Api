@@ -48,6 +48,15 @@ export class CreateServiceDto {
   @IsNumber()
   price: number;
 
+  @ApiProperty({
+    type: () => Number,
+    description: 'The quantity available of the service',
+    example: 10,
+  })
+  @IsNotEmpty()
+  @IsPositive()
+  quantityAvailable: number;
+
   @ApiPropertyOptional({
     description: 'The savings of the service',
     example: 50.5,

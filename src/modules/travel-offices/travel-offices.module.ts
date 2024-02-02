@@ -7,6 +7,7 @@ import { WholesalerEntity } from '../wholesalers/entities/wholesaler.entity';
 import { WholesalersModule } from '../wholesalers/wholesalers.module';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { GalleryEntity } from 'src/image-upload/entities/gallery.entity';
+import { AccountEntity } from '../accounts/entities/account.entity';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { GalleryEntity } from 'src/image-upload/entities/gallery.entity';
       WholesalerEntity,
       UserEntity,
       GalleryEntity,
+      AccountEntity,
     ]),
     WholesalersModule,
   ],

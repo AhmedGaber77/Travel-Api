@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum, IsNotEmpty, IsString, Min } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsPositive, IsString, Min } from 'class-validator';
 import { GalleryEntity } from 'src/image-upload/entities/gallery.entity';
 import { CruiseEntity } from 'src/modules/cruises/entities/cruise.entity';
 import { FlightEntity } from 'src/modules/flights/entities/flight.entity';
@@ -71,6 +71,14 @@ export class ServiceEntity {
   @IsNotEmpty()
   @Column({ type: 'float' })
   price: number;
+
+  @ApiProperty({
+    type: () => Number,
+  })
+  @IsNotEmpty()
+  @IsPositive()
+  @Column()
+  quantityAvailable: number;
 
   @ApiPropertyOptional({
     type: () => Number,

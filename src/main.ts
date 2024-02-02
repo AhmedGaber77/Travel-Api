@@ -29,6 +29,10 @@ async function bootstrap() {
   });
   app.useGlobalPipes(new ValidationPipe(validationOptions));
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
+  app.enableCors({
+    origin: configService.get('app.frontendDomain', { infer: true }),
+    credentials: true,
+  });
 
   const options = new DocumentBuilder()
     .setTitle('API')
