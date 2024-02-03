@@ -19,7 +19,7 @@ import {
   UpdateServiceDto,
   UpdateTransportationServiceDto,
 } from './dto/update-service.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreateHotelRoomServiceDto } from './dto/create-hotel-room.dto';
 import { CreateFlightServiceDto } from './dto/create-flight-service.dto';
 import { CreateTransportationServiceDto } from './dto/create-transportation-service.dto';
@@ -31,6 +31,7 @@ import { RolesGuard } from 'src/roles/roles.guard';
 import { Roles } from 'src/roles/roles.decorator';
 import { RoleEnum } from 'src/roles/roles.enum';
 
+@ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 @ApiTags('Services')
 @Controller({ path: 'services', version: '1' })

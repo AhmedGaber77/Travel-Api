@@ -64,7 +64,64 @@ export class UserSeedService {
           password,
           role: {
             id: RoleEnum.user,
-            name: 'Admin',
+            name: 'User',
+          },
+          status: {
+            id: StatusEnum.active,
+            name: 'Active',
+          },
+        }),
+      );
+    }
+
+    const countWholesaler = await this.repository.count({
+      where: {
+        role: {
+          id: RoleEnum.wholesaler,
+        },
+      },
+    });
+    if (!countWholesaler) {
+      const salt = await bcrypt.genSalt();
+      const password = await bcrypt.hash('secret', salt);
+
+      await this.repository.save(
+        this.repository.create({
+          firstName: 'John',
+          lastName: 'Doe',
+          email: 'wholesaler@example.com',
+          password,
+          role: {
+            id: RoleEnum.wholesaler,
+            name: 'Wholesaler',
+          },
+          status: {
+            id: StatusEnum.active,
+            name: 'Active',
+          },
+        }),
+      );
+    }
+    const countTravelAgent = await this.repository.count({
+      where: {
+        role: {
+          id: RoleEnum.travelAgent,
+        },
+      },
+    });
+    if (!countTravelAgent) {
+      const salt = await bcrypt.genSalt();
+      const password = await bcrypt.hash('secret', salt);
+
+      await this.repository.save(
+        this.repository.create({
+          firstName: 'John',
+          lastName: 'Doe',
+          email: 'travelAgent@example.com',
+          password,
+          role: {
+            id: RoleEnum.travelAgent,
+            name: 'TravelAgent',
           },
           status: {
             id: StatusEnum.active,
