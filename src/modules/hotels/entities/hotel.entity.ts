@@ -54,21 +54,21 @@ export class HotelEntity extends EntityRelationalHelper {
   })
   @IsString()
   @Column({ nullable: true })
-  zipCode: string;
+  zipCode?: string;
 
   @ApiPropertyOptional({
     type: () => String,
   })
   @IsString()
   @Column({ nullable: true })
-  mobileNumber: string;
+  mobileNumber?: string;
 
   @ApiPropertyOptional({
     type: () => String,
   })
   @IsString()
   @Column({ nullable: true })
-  phoneNumber: string;
+  phoneNumber?: string;
 
   @ApiPropertyOptional({
     type: () => String,
@@ -82,7 +82,7 @@ export class HotelEntity extends EntityRelationalHelper {
   })
   @IsString()
   @Column({ nullable: true })
-  email: string;
+  email?: string;
 
   @ApiPropertyOptional({ type: () => String })
   @IsString()
