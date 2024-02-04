@@ -1,25 +1,21 @@
 import {
   Controller,
+  Get,
+  Param,
   Post,
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { GalleryEntity } from './entities/gallery.entity';
-import { Repository } from 'typeorm';
 import { ImageUploadService } from './image-upload.service';
-import { ApiBody, ApiConsumes } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { FilesInterceptor } from '@nestjs/platform-express';
+import { NullableType } from 'src/utils/types/nullable.type';
 
-@Controller('images')
+@ApiTags('Images')
+@Controller({ path: 'images', version: '1' })
 export class ImageUploadController {
-  constructor(
-    private readonly imageUploadService: ImageUploadService,
-    private readonly cloudinaryService: CloudinaryService,
-    @InjectRepository(GalleryEntity)
-    private galleryRepository: Repository<GalleryEntity>,
-  ) {}
+  constructor(private readonly imageUploadService: ImageUploadService) {}
 
   @Post('upload')
   @ApiConsumes('multipart/form-data')
@@ -41,21 +37,11 @@ export class ImageUploadController {
   async uploadImages(@UploadedFiles() files: Express.Multer.File[]) {
     return await this.imageUploadService.uploadImages(files);
   }
-  // @ApiBody({
-  //   schema: {
-  //     type: 'object',
-  //     properties: {
-  //       file: {
-  //         type: 'string',
-  //         format: 'binary',
-  //       },
-  //     },
-  //   },
-  // })
-  // @UseInterceptors(FilesInterceptor('file'))
-  // async uploadImages(@UploadedFiles() files: Express.Multer.File[]) {
-  //   return await this.imageUploadService.uploadImages(files);
-  // }
 
-  // @Get(':id')
+  @Get(':id')
+  async getImage(
+    @Param('id') id: string,
+  ): Promise<NullableType<GalleryEntity>> {
+    return await this.imageUploadService.getImage(+id);
+  }
 }

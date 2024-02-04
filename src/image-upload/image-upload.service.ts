@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { GalleryEntity } from './entities/gallery.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -38,5 +42,13 @@ export class ImageUploadService {
     });
 
     return this.galleryRepository.save(galleryEntities);
+  }
+
+  async getImage(id: number) {
+    const image = await this.galleryRepository.findOne({ where: { id } });
+    if (!image) {
+      throw new NotFoundException(`Image with id ${id} not found`);
+    }
+    return image;
   }
 }
