@@ -45,6 +45,9 @@ export class UsersRelationalRepository implements UserRepository {
       skip: (paginationOptions.page - 1) * paginationOptions.limit,
       take: paginationOptions.limit,
       where: where,
+      relations: {
+        travelOffice: true,
+      },
       order: sortOptions?.reduce(
         (accumulator, sort) => ({
           ...accumulator,

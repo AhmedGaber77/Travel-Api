@@ -1,5 +1,6 @@
 import { Exclude, Expose } from 'class-transformer';
 import { FileType } from 'src/files/domain/file';
+import { TravelOfficeEntity } from 'src/modules/travel-offices/entities/travel-office.entity';
 import { Role } from 'src/roles/domain/role';
 import { Status } from 'src/statuses/domain/status';
 
@@ -24,6 +25,8 @@ export class User {
   lastName: string | null;
   photo?: FileType | null;
   role?: Role | null;
+  travelOfficeId?: TravelOfficeEntity['id'] | null;
+  travelOffice?: TravelOfficeEntity | null;
   status?: Status;
   createdAt: Date;
   updatedAt: Date;

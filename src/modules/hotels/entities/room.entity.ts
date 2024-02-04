@@ -35,6 +35,8 @@ export class RoomEntity extends EntityRelationalHelper {
   @IsPositive()
   numberOfSleeps: number;
 
+  @Column({ type: Number })
+  hotelId: HotelEntity['id'];
   @ManyToOne(() => HotelEntity, (hotel) => hotel.rooms, { eager: true })
   hotel: HotelEntity;
 

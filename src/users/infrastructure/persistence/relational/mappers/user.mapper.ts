@@ -24,6 +24,8 @@ export class UserMapper {
     user.createdAt = raw.createdAt;
     user.updatedAt = raw.updatedAt;
     user.deletedAt = raw.deletedAt;
+    user.travelOffice = raw.travelOffice;
+    user.travelOfficeId = raw.travelOfficeId;
     return user;
   }
 
