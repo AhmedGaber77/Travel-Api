@@ -17,7 +17,7 @@ export class TransportationsService {
   async findOne(id: number) {
     const transportation = await this.transportationRepository.findOne({
       where: { id },
-      loadRelationIds: true,
+      relations: ['service'],
     });
     if (!transportation) {
       throw new NotFoundException(`Transportation with id ${id} not found`);

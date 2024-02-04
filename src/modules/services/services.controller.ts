@@ -17,6 +17,7 @@ import {
   UpdateHotelRoomServiceDto,
   UpdateSafariServiceDto,
   UpdateServiceDto,
+  UpdateStandardPackageServiceDto,
   UpdateTransportationServiceDto,
 } from './dto/update-service.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -30,6 +31,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/roles/roles.guard';
 import { Roles } from 'src/roles/roles.decorator';
 import { RoleEnum } from 'src/roles/roles.enum';
+import { CreateStandardPackageServiceDto } from './dto/create-standard-package-service.dto';
 
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'), RolesGuard)
@@ -38,11 +40,58 @@ import { RoleEnum } from 'src/roles/roles.enum';
 export class ServicesController {
   constructor(private readonly servicesService: ServicesService) {}
 
+  @ApiTags('Standard Packages')
+  @Roles(RoleEnum.admin, RoleEnum.wholesaler)
+  @Post('standard-packages')
+  async createStandardPackageService(
+    @Body(new ValidationPipe({ transform: true }))
+    createStandardPackageServiceDto: CreateStandardPackageServiceDto,
+  ) {
+    return await this.servicesService.createStandardPackageService(
+      createStandardPackageServiceDto,
+    );
+  }
+
+  @ApiTags('Standard Packages')
+  @Roles(RoleEnum.admin, RoleEnum.wholesaler, RoleEnum.travelAgent)
+  @Get('standard-packages')
+  async findAllStandardPackageServices() {
+    return this.servicesService.findAllStandardPackageServices();
+  }
+
+  @ApiTags('Standard Packages')
+  @Roles(RoleEnum.admin, RoleEnum.wholesaler, RoleEnum.travelAgent)
+  @Get('standard-packages/:id')
+  async findOneStandardPackageService(@Param('id') id: number) {
+    return this.servicesService.findOneService(id, 'standardPackage');
+  }
+
+  @ApiTags('Standard Packages')
+  @Roles(RoleEnum.admin, RoleEnum.wholesaler)
+  @Patch('standard-packages/:id')
+  async updateStandardPackageService(
+    @Param('id') id: number,
+    @Body(new ValidationPipe({ transform: true }))
+    updateStandardPackageServiceDto: UpdateStandardPackageServiceDto,
+  ) {
+    return await this.servicesService.updateStandardPackageService(
+      id,
+      updateStandardPackageServiceDto,
+    );
+  }
+
   @ApiTags('Hotel Rooms')
   @Roles(RoleEnum.admin, RoleEnum.wholesaler, RoleEnum.travelAgent)
   @Get('hotel-rooms')
   async findAllHotelRoomServices() {
     return this.servicesService.findAllHotelRoomServices();
+  }
+
+  @ApiTags('Hotel Rooms')
+  @Roles(RoleEnum.admin, RoleEnum.wholesaler, RoleEnum.travelAgent)
+  @Get('hotel-rooms/:id')
+  async findOneHotelRoomService(@Param('id') id: number) {
+    return this.servicesService.findOneService(id, 'room');
   }
 
   @ApiTags('Hotel Rooms')

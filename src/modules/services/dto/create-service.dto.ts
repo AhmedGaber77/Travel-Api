@@ -25,7 +25,7 @@ export class CreateServiceDto {
 
   @ApiProperty({
     description: 'The type of the service',
-    example: ServiceType.HotelRooms,
+    example: ServiceType.HotelRoom,
     type: () => String,
     enum: ServiceType,
   })
@@ -117,6 +117,7 @@ export class CreateServiceDto {
     },
   })
   @IsArray()
+  @IsNotEmpty()
   imageIds: number[];
 
   // @ApiProperty({

@@ -5,6 +5,7 @@ import { CruiseEntity } from 'src/modules/cruises/entities/cruise.entity';
 import { FlightEntity } from 'src/modules/flights/entities/flight.entity';
 import { RoomEntity } from 'src/modules/hotels/entities/room.entity';
 import { PackageEntity } from 'src/modules/packages/entities/package.entity';
+import { StandardPackageEntity } from 'src/modules/packages/entities/standard-package.entity';
 import { ReservationEntity } from 'src/modules/reservations/entities/reservation.entity';
 import { SafariEntity } from 'src/modules/safari/entities/safari.entity';
 import { TransportationEntity } from 'src/modules/transportations/entities/transportation.entity';
@@ -26,11 +27,12 @@ import {
 } from 'typeorm';
 
 export enum ServiceType {
-  FlightSeats = 'flight-seats',
-  HotelRooms = 'hotel-rooms',
+  FlightSeat = 'flight-seat',
+  HotelRoom = 'hotel-room',
   Transportation = 'transportation',
   Safari = 'safari',
   Cruise = 'cruise',
+  StandardPackage = 'standard-package',
 }
 
 @Entity({ name: 'service' })
@@ -131,6 +133,14 @@ export class ServiceEntity {
   @OneToOne(() => CruiseEntity, (cruise) => cruise.service, { cascade: true })
   @JoinColumn()
   cruise: CruiseEntity;
+
+  @OneToOne(
+    () => StandardPackageEntity,
+    (standardPackage) => standardPackage.service,
+    { cascade: true },
+  )
+  @JoinColumn()
+  standardPackage: StandardPackageEntity;
 
   @OneToMany(() => GalleryEntity, (gallery) => gallery.service, {
     cascade: true,

@@ -18,7 +18,7 @@ export class CruisesService {
   async findOne(id: number) {
     const cruise = await this.cruiseRepository.findOne({
       where: { id },
-      loadRelationIds: true,
+      relations: ['service'],
     });
     if (!cruise) {
       throw new NotFoundException(`Cruise with id ${id} not found`);

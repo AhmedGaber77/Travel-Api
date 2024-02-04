@@ -18,7 +18,7 @@ export class SafariService {
   async findOne(id: number) {
     const safari = await this.safariRepository.findOne({
       where: { id },
-      loadRelationIds: true,
+      relations: ['service'],
     });
     if (!safari) {
       throw new NotFoundException(`Safari with id ${id} not found`);

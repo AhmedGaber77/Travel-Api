@@ -11,6 +11,8 @@ import { TransportationEntity } from '../transportations/entities/transportation
 import { SafariEntity } from '../safari/entities/safari.entity';
 import { CruiseEntity } from '../cruises/entities/cruise.entity';
 import { GalleryEntity } from 'src/image-upload/entities/gallery.entity';
+import { StandardPackageEntity } from '../packages/entities/standard-package.entity';
+import { PackageDayEntity } from '../packages/entities/package-day.entity';
 
 @Module({
   imports: [
@@ -22,6 +24,8 @@ import { GalleryEntity } from 'src/image-upload/entities/gallery.entity';
       SafariEntity,
       CruiseEntity,
       GalleryEntity,
+      StandardPackageEntity,
+      PackageDayEntity,
     ]),
     WholesalersModule,
     HotelsModule,

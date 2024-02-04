@@ -1,9 +1,9 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { TransportationsService } from './transportations.service';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Transportations')
-@Controller({ path: 'transportations', version: '1' })
+@Controller({ path: 'services/transportations', version: '1' })
 export class TransportationsController {
   constructor(
     private readonly transportationsService: TransportationsService,
@@ -14,10 +14,10 @@ export class TransportationsController {
   //   return this.transportationsService.findAll();
   // }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.transportationsService.findOne(+id);
-  // }
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.transportationsService.findOne(+id);
+  }
 
   // @Patch(':id')
   // update(

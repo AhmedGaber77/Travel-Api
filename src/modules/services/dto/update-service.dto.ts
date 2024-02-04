@@ -7,6 +7,8 @@ import { CreateFlightDto } from 'src/modules/flights/dto/create-flight.dto';
 import { CreateCruiseDto } from 'src/modules/cruises/dto/create-cruise.dto';
 import { CreateSafariDto } from 'src/modules/safari/dto/create-safari.dto';
 import { CreateTransportationDto } from 'src/modules/transportations/dto/create-transportation.dto';
+import { CreateStandardPackageDto } from 'src/modules/packages/dto/create-standard-package.dto';
+import { CreatePackageDayDto } from 'src/modules/packages/dto/create-package-day.dto';
 
 export class UpdateServiceDto extends PartialType(CreateServiceDto) {
   @ApiHideProperty()
@@ -30,14 +32,39 @@ export class PartialCreateTransportationServiceDto extends PartialType(
   CreateTransportationDto,
 ) {}
 
+export class PartioalCreateStandardPackageServiceDto extends PartialType(
+  CreateStandardPackageDto,
+) {
+  @ApiHideProperty()
+  packageDays?: CreatePackageDayDto[] | undefined;
+}
+
+export class UpdateStandardPackageServiceDto {
+  @ApiProperty({
+    description: 'information about the service',
+    type: () => UpdateServiceDto,
+  })
+  @ValidateNested({ each: true })
+  @Type(() => UpdateServiceDto)
+  service: UpdateServiceDto;
+
+  @ApiProperty({
+    description: 'inormation about the standard package',
+    type: () => PartioalCreateStandardPackageServiceDto,
+  })
+  @ValidateNested({ each: true })
+  @Type(() => PartioalCreateStandardPackageServiceDto)
+  standardPackage: PartioalCreateStandardPackageServiceDto;
+}
+
 export class UpdateHotelRoomServiceDto {
   @ApiProperty({
     description: 'information about the service',
-    type: () => PartialCreateServiceDto,
+    type: () => UpdateServiceDto,
   })
-  @ValidateNested()
-  @Type(() => PartialCreateServiceDto)
-  service: PartialCreateServiceDto;
+  @ValidateNested({ each: true })
+  @Type(() => UpdateServiceDto)
+  service: UpdateServiceDto;
 
   @ApiProperty({
     description: 'The id of the hotel',
@@ -50,7 +77,7 @@ export class UpdateHotelRoomServiceDto {
     description: 'information about the room',
     type: () => PartialCreateHotelRoomDto,
   })
-  @ValidateNested()
+  @ValidateNested({ each: true })
   @Type(() => PartialCreateHotelRoomDto)
   room: PartialCreateHotelRoomDto;
 }
@@ -58,11 +85,11 @@ export class UpdateHotelRoomServiceDto {
 export class UpdateFlightServiceDto {
   @ApiProperty({
     description: 'information about the service',
-    type: () => PartialCreateServiceDto,
+    type: () => UpdateServiceDto,
   })
-  @ValidateNested()
-  @Type(() => PartialCreateServiceDto)
-  service: PartialCreateServiceDto;
+  @ValidateNested({ each: true })
+  @Type(() => UpdateServiceDto)
+  service: UpdateServiceDto;
 
   @ApiProperty({
     description: 'The id of the flight',
@@ -75,7 +102,7 @@ export class UpdateFlightServiceDto {
     description: 'information about the flight',
     type: () => PartialCreateFlightServiceDto,
   })
-  @ValidateNested()
+  @ValidateNested({ each: true })
   @Type(() => PartialCreateFlightServiceDto)
   flight: PartialCreateFlightServiceDto;
 }
@@ -83,11 +110,11 @@ export class UpdateFlightServiceDto {
 export class UpdateCruiseServiceDto {
   @ApiProperty({
     description: 'information about the service',
-    type: () => PartialCreateServiceDto,
+    type: () => UpdateServiceDto,
   })
-  @ValidateNested()
-  @Type(() => PartialCreateServiceDto)
-  service: PartialCreateServiceDto;
+  @ValidateNested({ each: true })
+  @Type(() => UpdateServiceDto)
+  service: UpdateServiceDto;
 
   @ApiProperty({
     description: 'The id of the cruise',
@@ -100,7 +127,7 @@ export class UpdateCruiseServiceDto {
     description: 'information about the cruise',
     type: () => PartialCreateCruiseServiceDto,
   })
-  @ValidateNested()
+  @ValidateNested({ each: true })
   @Type(() => PartialCreateCruiseServiceDto)
   cruise: PartialCreateCruiseServiceDto;
 }
@@ -108,11 +135,11 @@ export class UpdateCruiseServiceDto {
 export class UpdateSafariServiceDto {
   @ApiProperty({
     description: 'information about the service',
-    type: () => PartialCreateServiceDto,
+    type: () => UpdateServiceDto,
   })
-  @ValidateNested()
-  @Type(() => PartialCreateServiceDto)
-  service: PartialCreateServiceDto;
+  @ValidateNested({ each: true })
+  @Type(() => UpdateServiceDto)
+  service: UpdateServiceDto;
 
   @ApiProperty({
     description: 'The id of the safari',
@@ -125,7 +152,7 @@ export class UpdateSafariServiceDto {
     description: 'information about the safari',
     type: () => PartialCreateSafariServiceDto,
   })
-  @ValidateNested()
+  @ValidateNested({ each: true })
   @Type(() => PartialCreateSafariServiceDto)
   safari: PartialCreateSafariServiceDto;
 }
@@ -133,11 +160,11 @@ export class UpdateSafariServiceDto {
 export class UpdateTransportationServiceDto {
   @ApiProperty({
     description: 'information about the service',
-    type: () => PartialCreateServiceDto,
+    type: () => UpdateServiceDto,
   })
-  @ValidateNested()
-  @Type(() => PartialCreateServiceDto)
-  service: PartialCreateServiceDto;
+  @ValidateNested({ each: true })
+  @Type(() => UpdateServiceDto)
+  service: UpdateServiceDto;
 
   @ApiProperty({
     description: 'The id of the transportation',
@@ -150,7 +177,7 @@ export class UpdateTransportationServiceDto {
     description: 'information about the transportation',
     type: () => PartialCreateTransportationServiceDto,
   })
-  @ValidateNested()
+  @ValidateNested({ each: true })
   @Type(() => PartialCreateTransportationServiceDto)
   transportation: PartialCreateTransportationServiceDto;
 }
