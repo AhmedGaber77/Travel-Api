@@ -1,6 +1,5 @@
-import { Controller, Get, Body, Patch, Param } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { SafariService } from './safari.service';
-import { UpdateSafariDto } from './dto/update-safari.dto';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Safari')
@@ -8,18 +7,18 @@ import { ApiTags } from '@nestjs/swagger';
 export class SafariController {
   constructor(private readonly safariService: SafariService) {}
 
-  @Get()
-  findAll() {
-    return this.safariService.findAll();
-  }
+  // @Get()
+  // findAll() {
+  //   return this.safariService.findAll();
+  // }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.safariService.findOne(+id);
-  }
+  // @Get(':id')
+  // findOne(@Param('id') id: string) {
+  //   return this.safariService.findOne(+id);
+  // }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSafariDto: UpdateSafariDto) {
-    return this.safariService.update(+id, updateSafariDto);
-  }
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateSafariDto: UpdateSafariDto) {
+  //   return this.safariService.update(+id, updateSafariDto);
+  // }
 }

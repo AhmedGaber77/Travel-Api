@@ -1,6 +1,5 @@
-import { Controller, Get, Body, Patch, Param } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { TransportationsService } from './transportations.service';
-import { UpdateTransportationDto } from './dto/update-transportation.dto';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Transportations')
@@ -10,21 +9,21 @@ export class TransportationsController {
     private readonly transportationsService: TransportationsService,
   ) {}
 
-  @Get()
-  findAll() {
-    return this.transportationsService.findAll();
-  }
+  // @Get()
+  // findAll() {
+  //   return this.transportationsService.findAll();
+  // }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.transportationsService.findOne(+id);
-  }
+  // @Get(':id')
+  // findOne(@Param('id') id: string) {
+  //   return this.transportationsService.findOne(+id);
+  // }
 
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateTransportationDto: UpdateTransportationDto,
-  ) {
-    return this.transportationsService.update(+id, updateTransportationDto);
-  }
+  // @Patch(':id')
+  // update(
+  //   @Param('id') id: string,
+  //   @Body() updateTransportationDto: UpdateTransportationDto,
+  // ) {
+  //   return this.transportationsService.update(+id, updateTransportationDto);
+  // }
 }

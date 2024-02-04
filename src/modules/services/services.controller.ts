@@ -38,12 +38,14 @@ import { RoleEnum } from 'src/roles/roles.enum';
 export class ServicesController {
   constructor(private readonly servicesService: ServicesService) {}
 
+  @ApiTags('Hotel Rooms')
   @Roles(RoleEnum.admin, RoleEnum.wholesaler, RoleEnum.travelAgent)
   @Get('hotel-rooms')
   async findAllHotelRoomServices() {
     return this.servicesService.findAllHotelRoomServices();
   }
 
+  @ApiTags('Hotel Rooms')
   @Roles(RoleEnum.admin, RoleEnum.wholesaler)
   @Post('hotel-rooms')
   async createHotelRoomService(
@@ -55,6 +57,7 @@ export class ServicesController {
     );
   }
 
+  @ApiTags('Hotel Rooms')
   @Roles(RoleEnum.admin, RoleEnum.wholesaler)
   @Patch('hotel-rooms/:id')
   async updateHotelRoomService(
@@ -68,12 +71,14 @@ export class ServicesController {
     );
   }
 
+  @ApiTags('Flights')
   @Roles(RoleEnum.admin, RoleEnum.wholesaler, RoleEnum.travelAgent)
   @Get('flights')
   async findAllFlightServices() {
     return this.servicesService.findAllFlightServices();
   }
 
+  @ApiTags('Flights')
   @Roles(RoleEnum.admin, RoleEnum.wholesaler)
   @Post('flights')
   async createFlightService(
@@ -85,6 +90,7 @@ export class ServicesController {
     );
   }
 
+  @ApiTags('Flights')
   @Roles(RoleEnum.admin, RoleEnum.wholesaler)
   @Patch('flights/:id')
   async updateFlightService(
@@ -98,12 +104,14 @@ export class ServicesController {
     );
   }
 
+  @ApiTags('Transportations')
   @Roles(RoleEnum.admin, RoleEnum.wholesaler, RoleEnum.travelAgent)
   @Get('transportations')
   async findAllTransportationServices() {
     return this.servicesService.findAllTransportationServices();
   }
 
+  @ApiTags('Transportations')
   @Roles(RoleEnum.admin, RoleEnum.wholesaler)
   @Post('transportations')
   async createTransportationService(
@@ -115,6 +123,7 @@ export class ServicesController {
     );
   }
 
+  @ApiTags('Transportations')
   @Roles(RoleEnum.admin, RoleEnum.wholesaler)
   @Patch('transportations/:id')
   async updateTransportationService(
@@ -128,12 +137,14 @@ export class ServicesController {
     );
   }
 
+  @ApiTags('Cruises')
   @Roles(RoleEnum.admin, RoleEnum.wholesaler, RoleEnum.travelAgent)
   @Get('cruises')
   async findAllCruiseServices() {
     return this.servicesService.findAllCruiseServices();
   }
 
+  @ApiTags('Cruises')
   @Roles(RoleEnum.admin, RoleEnum.wholesaler)
   @Post('cruises')
   async createCruiseService(
@@ -145,6 +156,7 @@ export class ServicesController {
     );
   }
 
+  @ApiTags('Cruises')
   @Roles(RoleEnum.admin, RoleEnum.wholesaler)
   @Patch('cruises/:id')
   async updateCruiseService(
@@ -158,12 +170,14 @@ export class ServicesController {
     );
   }
 
+  @ApiTags('Safaris')
   @Roles(RoleEnum.admin, RoleEnum.wholesaler, RoleEnum.travelAgent)
   @Get('safari')
   async findAllSafariServices() {
     return this.servicesService.findAllSafariServices();
   }
 
+  @ApiTags('Safaris')
   @Roles(RoleEnum.admin, RoleEnum.wholesaler)
   @Post('safari')
   async createSafariService(
@@ -175,6 +189,7 @@ export class ServicesController {
     );
   }
 
+  @ApiTags('Safaris')
   @Roles(RoleEnum.admin, RoleEnum.wholesaler)
   @Patch('safari/:id')
   async updateSafariService(
