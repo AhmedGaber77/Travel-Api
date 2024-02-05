@@ -63,24 +63,24 @@ export class ServicesService {
     private readonly hotelsService: HotelsService,
   ) {}
 
-  async create(createServiceDto: CreateServiceDto): Promise<ServiceEntity> {
-    if (!createServiceDto.WholesalerId) {
-      throw new Error('Wholesaler ID is required');
-    }
+  // async create(createServiceDto: CreateServiceDto): Promise<ServiceEntity> {
+  //   if (!createServiceDto.WholesalerId) {
+  //     throw new Error('Wholesaler ID is required');
+  //   }
 
-    const wholesaler = await this.wholesalerService.findOne(
-      createServiceDto.WholesalerId,
-    );
+  //   const wholesaler = await this.wholesalerService.findOne(
+  //     createServiceDto.WholesalerId,
+  //   );
 
-    if (!wholesaler) {
-      throw new Error('Invalid wholesaler ID');
-    }
+  //   if (!wholesaler) {
+  //     throw new Error('Invalid wholesaler ID');
+  //   }
 
-    const service = this.serviceRepository.create(createServiceDto);
-    service.wholesaler = wholesaler;
+  //   const service = this.serviceRepository.create(createServiceDto);
+  //   service.wholesaler = wholesaler;
 
-    return this.serviceRepository.save(service);
-  }
+  //   return this.serviceRepository.save(service);
+  // }
 
   findAll(paginationOptions: IPaginationOptions) {
     return this.serviceRepository.find({
