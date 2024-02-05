@@ -5,6 +5,7 @@ import { lowerCaseTransformer } from 'src/utils/transformers/lower-case.transfor
 import { RoleDto } from 'src/roles/dto/role.dto';
 import { StatusDto } from 'src/statuses/dto/status.dto';
 import { FileDto } from 'src/files/dto/file.dto';
+import { GalleryEntity } from 'src/image-upload/entities/gallery.entity';
 
 export class CreateUserDto {
   @ApiProperty({ example: 'test1@example.com' })
@@ -32,6 +33,14 @@ export class CreateUserDto {
   @ApiProperty({ type: () => FileDto })
   @IsOptional()
   photo?: FileDto | null;
+
+  @ApiProperty({ type: () => Number })
+  @IsOptional()
+  profilePhotoId?: GalleryEntity['id'] | null;
+
+  @ApiProperty({ type: () => GalleryEntity })
+  @IsOptional()
+  profilePhoto?: GalleryEntity | null;
 
   @ApiProperty({ type: RoleDto })
   @IsOptional()

@@ -24,6 +24,8 @@ export class UserMapper {
     user.createdAt = raw.createdAt;
     user.updatedAt = raw.updatedAt;
     user.deletedAt = raw.deletedAt;
+    user.profilePhoto = raw.profilePhoto;
+    user.profilePhotoId = raw.profilePhotoId;
     user.travelOffice = raw.travelOffice;
     user.travelOfficeId = raw.travelOfficeId;
     return user;
@@ -63,6 +65,10 @@ export class UserMapper {
     userEntity.firstName = user.firstName;
     userEntity.lastName = user.lastName;
     userEntity.photo = photo;
+    userEntity.profilePhoto =
+      user.profilePhoto != null ? user.profilePhoto : undefined;
+    userEntity.profilePhotoId =
+      user.profilePhotoId !== null ? user.profilePhotoId : undefined;
     userEntity.role = role;
     userEntity.status = status;
     userEntity.createdAt = user.createdAt;

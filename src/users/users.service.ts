@@ -12,12 +12,17 @@ import { RoleEnum } from 'src/roles/roles.enum';
 import { FilesService } from 'src/files/files.service';
 import bcrypt from 'bcryptjs';
 import { AuthProvidersEnum } from 'src/auth/auth-providers.enum';
+import { InjectRepository } from '@nestjs/typeorm';
+import { GalleryEntity } from 'src/image-upload/entities/gallery.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly usersRepository: UserRepository,
     private readonly filesService: FilesService,
+    @InjectRepository(GalleryEntity)
+    private readonly galleryRepository: Repository<GalleryEntity>,
   ) {}
 
   async create(createProfileDto: CreateUserDto): Promise<User> {
@@ -65,6 +70,26 @@ export class UsersService {
       }
     }
 
+    if (clonedPayload.profilePhotoId) {
+      const image = await this.galleryRepository.findOne({
+        where: { id: clonedPayload.profilePhotoId },
+      });
+      if (!image) {
+        throw new HttpException(
+          {
+            status: HttpStatus.UNPROCESSABLE_ENTITY,
+            errors: {
+              profilePhoto: 'imageNotExists',
+            },
+          },
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
+      }
+      console.log('here');
+      clonedPayload.profilePhoto = image;
+      clonedPayload.profilePhotoId = image.id;
+      console.log(clonedPayload);
+    }
     if (clonedPayload.role?.id) {
       const roleObject = Object.values(RoleEnum).includes(
         clonedPayload.role.id,

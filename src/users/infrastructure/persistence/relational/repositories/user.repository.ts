@@ -47,6 +47,7 @@ export class UsersRelationalRepository implements UserRepository {
       where: where,
       relations: {
         travelOffice: true,
+        profilePhoto: true,
       },
       order: sortOptions?.reduce(
         (accumulator, sort) => ({

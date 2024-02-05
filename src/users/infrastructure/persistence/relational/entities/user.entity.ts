@@ -8,6 +8,8 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  OneToOne,
+  JoinColumn,
 } from 'typeorm';
 import { RoleEntity } from '../../../../../roles/infrastructure/persistence/relational/entities/role.entity';
 import { StatusEntity } from '../../../../../statuses/infrastructure/persistence/relational/entities/status.entity';
@@ -21,6 +23,7 @@ import { Exclude, Expose } from 'class-transformer';
 import { User } from '../../../../domain/user';
 import { WholesalerEntity } from 'src/modules/wholesalers/entities/wholesaler.entity';
 import { TravelOfficeEntity } from 'src/modules/travel-offices/entities/travel-office.entity';
+import { GalleryEntity } from 'src/image-upload/entities/gallery.entity';
 
 @Entity({
   name: 'user',
@@ -88,6 +91,12 @@ export class UserEntity extends EntityRelationalHelper implements User {
   travelOfficeId?: TravelOfficeEntity['id'];
   @ManyToOne(() => TravelOfficeEntity, (travelOffice) => travelOffice.users)
   travelOffice?: TravelOfficeEntity;
+
+  @Column({ nullable: true })
+  profilePhotoId?: GalleryEntity['id'];
+  @OneToOne(() => GalleryEntity, (gallery) => gallery.user, { cascade: true })
+  @JoinColumn({ name: 'profilePhotoId' })
+  profilePhoto?: GalleryEntity;
 
   @CreateDateColumn()
   createdAt: Date;
