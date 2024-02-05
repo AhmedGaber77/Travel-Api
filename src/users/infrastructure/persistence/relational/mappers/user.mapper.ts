@@ -28,6 +28,7 @@ export class UserMapper {
     user.profilePhotoId = raw.profilePhotoId;
     user.travelOffice = raw.travelOffice;
     user.travelOfficeId = raw.travelOfficeId;
+    console.log(user);
     return user;
   }
 
@@ -66,7 +67,7 @@ export class UserMapper {
     userEntity.lastName = user.lastName;
     userEntity.photo = photo;
     userEntity.profilePhoto =
-      user.profilePhoto != null ? user.profilePhoto : undefined;
+      user.profilePhoto !== null ? user.profilePhoto : undefined;
     userEntity.profilePhotoId =
       user.profilePhotoId !== null ? user.profilePhotoId : undefined;
     userEntity.role = role;
@@ -74,6 +75,7 @@ export class UserMapper {
     userEntity.createdAt = user.createdAt;
     userEntity.updatedAt = user.updatedAt;
     userEntity.deletedAt = user.deletedAt;
+
     return userEntity;
   }
 }

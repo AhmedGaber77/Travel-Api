@@ -64,6 +64,10 @@ export class UsersRelationalRepository implements UserRepository {
   async findOne(fields: EntityCondition<User>): Promise<NullableType<User>> {
     const entity = await this.usersRepository.findOne({
       where: fields as FindOptionsWhere<UserEntity>,
+      relations: {
+        travelOffice: true,
+        profilePhoto: true,
+      },
     });
 
     return entity ? UserMapper.toDomain(entity) : null;
