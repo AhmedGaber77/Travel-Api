@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsPositive, IsString, Min } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 import { ServiceEntity } from 'src/modules/services/entities/service.entity';
 import { EntityRelationalHelper } from 'src/utils/relational-entity-helper';
 import {
@@ -69,14 +69,6 @@ export class FlightEntity extends EntityRelationalHelper {
   @IsString()
   @Column({ nullable: true })
   description?: string;
-
-  @ApiProperty({
-    type: () => Number,
-  })
-  @IsPositive()
-  @Min(1)
-  @IsNotEmpty()
-  availableSeats: number;
 
   @ApiProperty({
     type: () => String,

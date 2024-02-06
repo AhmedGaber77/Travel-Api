@@ -13,17 +13,13 @@ import {
 import { ServicesService } from './services.service';
 import {
   UpdateCruiseServiceDto,
-  UpdateFlightServiceDto,
-  UpdateSafariServiceDto,
   UpdateServiceDto,
   UpdateStandardPackageServiceDto,
   UpdateTransportationServiceDto,
 } from './dto/update-service.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { CreateFlightServiceDto } from './dto/create-flight-service.dto';
 import { CreateTransportationServiceDto } from './dto/create-transportation-service.dto';
 import { CreateCruiseServiceDto } from './dto/create-cruise-service.dto';
-import { CreateSafariServiceDto } from './dto/create-safari-service.dto';
 import { QueryServiceDto } from './dto/query-service.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/roles/roles.guard';
@@ -75,79 +71,6 @@ export class ServicesController {
     return await this.servicesService.updateStandardPackageService(
       id,
       updateStandardPackageServiceDto,
-    );
-  }
-
-  // @ApiTags('Hotel Rooms')
-  // @Roles(RoleEnum.admin, RoleEnum.wholesaler, RoleEnum.travelAgent)
-  // @Get('hotel-rooms')
-  // async findAllHotelRoomServices() {
-  //   return this.servicesService.findAllHotelRoomServices();
-  // }
-
-  // @ApiTags('Hotel Rooms')
-  // @Roles(RoleEnum.admin, RoleEnum.wholesaler, RoleEnum.travelAgent)
-  // @Get('hotel-rooms/:id')
-  // async findOneHotelRoomService(@Param('id') id: number) {
-  //   return this.servicesService.findOneService(id, 'room');
-  // }
-
-  // @ApiTags('Hotel Rooms')
-  // @Roles(RoleEnum.admin, RoleEnum.wholesaler)
-  // @Post('hotel-rooms')
-  // async createHotelRoomService(
-  //   @Body(new ValidationPipe({ transform: true }))
-  //   createHotelRoomServiceDto: CreateHotelRoomServiceDto,
-  // ) {
-  //   return await this.servicesService.createHotelRoomService(
-  //     createHotelRoomServiceDto,
-  //   );
-  // }
-
-  // @ApiTags('Hotel Rooms')
-  // @Roles(RoleEnum.admin, RoleEnum.wholesaler)
-  // @Patch('hotel-rooms/:id')
-  // async updateHotelRoomService(
-  //   @Param('id') id: number,
-  //   @Body(new ValidationPipe({ transform: true }))
-  //   updateHotelRoomServiceDto: UpdateHotelRoomServiceDto,
-  // ) {
-  //   return await this.servicesService.updateHotelRoomService(
-  //     id,
-  //     updateHotelRoomServiceDto,
-  //   );
-  // }
-
-  @ApiTags('Flights')
-  @Roles(RoleEnum.admin, RoleEnum.wholesaler, RoleEnum.travelAgent)
-  @Get('flights')
-  async findAllFlightServices() {
-    return this.servicesService.findAllFlightServices();
-  }
-
-  @ApiTags('Flights')
-  @Roles(RoleEnum.admin, RoleEnum.wholesaler)
-  @Post('flights')
-  async createFlightService(
-    @Body(new ValidationPipe({ transform: true }))
-    createFlightServiceDto: CreateFlightServiceDto,
-  ) {
-    return await this.servicesService.createFlightService(
-      createFlightServiceDto,
-    );
-  }
-
-  @ApiTags('Flights')
-  @Roles(RoleEnum.admin, RoleEnum.wholesaler)
-  @Patch('flights/:id')
-  async updateFlightService(
-    @Param('id') id: number,
-    @Body(new ValidationPipe({ transform: true }))
-    updateFlightServiceDto: UpdateFlightServiceDto,
-  ) {
-    return await this.servicesService.updateFlightService(
-      id,
-      updateFlightServiceDto,
     );
   }
 
@@ -214,39 +137,6 @@ export class ServicesController {
     return await this.servicesService.updateCruiseService(
       id,
       updateCruiseServiceDto,
-    );
-  }
-
-  @ApiTags('Safaris')
-  @Roles(RoleEnum.admin, RoleEnum.wholesaler, RoleEnum.travelAgent)
-  @Get('safari')
-  async findAllSafariServices() {
-    return this.servicesService.findAllSafariServices();
-  }
-
-  @ApiTags('Safaris')
-  @Roles(RoleEnum.admin, RoleEnum.wholesaler)
-  @Post('safari')
-  async createSafariService(
-    @Body(new ValidationPipe({ transform: true }))
-    createSafariServiceDto: CreateSafariServiceDto,
-  ) {
-    return await this.servicesService.createSafariService(
-      createSafariServiceDto,
-    );
-  }
-
-  @ApiTags('Safaris')
-  @Roles(RoleEnum.admin, RoleEnum.wholesaler)
-  @Patch('safari/:id')
-  async updateSafariService(
-    @Param('id') id: number,
-    @Body(new ValidationPipe({ transform: true }))
-    updateSafariServiceDto: UpdateSafariServiceDto,
-  ) {
-    return await this.servicesService.updateSafariService(
-      id,
-      updateSafariServiceDto,
     );
   }
 

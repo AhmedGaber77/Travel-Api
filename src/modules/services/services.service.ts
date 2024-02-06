@@ -2,8 +2,6 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateServiceDto } from './dto/create-service.dto';
 import {
   UpdateCruiseServiceDto,
-  UpdateFlightServiceDto,
-  UpdateSafariServiceDto,
   UpdateServiceDto,
   UpdateStandardPackageServiceDto,
   UpdateTransportationServiceDto,
@@ -12,14 +10,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ServiceEntity, ServiceType } from './entities/service.entity';
 import { In, Repository } from 'typeorm';
 import { WholesalersService } from '../wholesalers/wholesalers.service';
-import { CreateFlightServiceDto } from './dto/create-flight-service.dto';
 import { FlightEntity } from '../flights/entities/flight.entity';
 import { CreateTransportationServiceDto } from './dto/create-transportation-service.dto';
 import { TransportationEntity } from '../transportations/entities/transportation.entity';
 import { CruiseEntity } from '../cruises/entities/cruise.entity';
 import { SafariEntity } from '../safari/entities/safari.entity';
 import { CreateCruiseServiceDto } from './dto/create-cruise-service.dto';
-import { CreateSafariServiceDto } from './dto/create-safari-service.dto';
 import { GalleryEntity } from 'src/image-upload/entities/gallery.entity';
 import { IPaginationOptions } from 'src/utils/types/pagination-options';
 import { StandardPackageEntity } from '../packages/entities/standard-package.entity';
@@ -41,12 +37,9 @@ export class ServicesService {
     @InjectRepository(ServiceEntity)
     private serviceRepository: Repository<ServiceEntity>,
 
-    @InjectRepository(FlightEntity)
-    private flightRepository: Repository<FlightEntity>,
     @InjectRepository(TransportationEntity)
     private transportationRepository: Repository<TransportationEntity>,
-    @InjectRepository(SafariEntity)
-    private safariRepository: Repository<SafariEntity>,
+
     @InjectRepository(CruiseEntity)
     private cruiseRepository: Repository<CruiseEntity>,
     @InjectRepository(GalleryEntity)
@@ -158,18 +151,6 @@ export class ServicesService {
     );
   }
 
-  async createFlightService(createFlightServiceDto: CreateFlightServiceDto) {
-    const flightService = this.flightRepository.create(
-      createFlightServiceDto.flight,
-    );
-    await this.createService(
-      createFlightServiceDto.service,
-      ServiceType.FlightSeat,
-      this.flightRepository,
-      flightService,
-    );
-  }
-
   async createTransportationService(
     createTransportationServiceDto: CreateTransportationServiceDto,
   ) {
@@ -181,18 +162,6 @@ export class ServicesService {
       ServiceType.Transportation,
       this.transportationRepository,
       transportationService,
-    );
-  }
-
-  async createSafariService(createSafariServiceDto: CreateSafariServiceDto) {
-    const safariService = this.safariRepository.create(
-      createSafariServiceDto.safari,
-    );
-    await this.createService(
-      createSafariServiceDto.service,
-      ServiceType.Safari,
-      this.safariRepository,
-      safariService,
     );
   }
 
@@ -220,10 +189,6 @@ export class ServicesService {
 
   async findAllStandardPackageServices() {
     return this.findAllServices(ServiceType.StandardPackage, 'standardPackage');
-  }
-
-  async findAllFlightServices() {
-    return this.findAllServices(ServiceType.FlightSeat, 'flight');
   }
 
   async findAllTransportationServices() {
@@ -327,19 +292,6 @@ export class ServicesService {
     return await this.serviceRepository.save(updatedService);
   }
 
-  async updateFlightService(
-    id: number,
-    updateFlightServiceDto: UpdateFlightServiceDto,
-  ) {
-    await this.updateService(
-      id,
-      updateFlightServiceDto.service,
-      ServiceType.FlightSeat,
-      this.flightRepository,
-      updateFlightServiceDto.flight,
-    );
-  }
-
   async updateTransportationService(
     id: number,
     updateTransportationServiceDto: UpdateTransportationServiceDto,
@@ -350,19 +302,6 @@ export class ServicesService {
       ServiceType.Transportation,
       this.transportationRepository,
       updateTransportationServiceDto.transportation,
-    );
-  }
-
-  async updateSafariService(
-    id: number,
-    updateSafariServiceDto: UpdateSafariServiceDto,
-  ) {
-    await this.updateService(
-      id,
-      updateSafariServiceDto.service,
-      ServiceType.Safari,
-      this.safariRepository,
-      updateSafariServiceDto.safari,
     );
   }
 

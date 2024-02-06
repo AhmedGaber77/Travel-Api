@@ -3,13 +3,12 @@ import { FlightsService } from './flights.service';
 import { FlightsController } from './flights.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { FlightEntity } from './entities/flight.entity';
-import { ServicesModule } from '../services/services.module';
-import { SeatEntity } from './entities/seat.entity';
+import { ServiceEntity } from '../services/entities/service.entity';
+import { GalleryEntity } from 'src/image-upload/entities/gallery.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([FlightEntity, SeatEntity]),
-    ServicesModule,
+    TypeOrmModule.forFeature([FlightEntity, ServiceEntity, GalleryEntity]),
   ],
   controllers: [FlightsController],
   providers: [FlightsService],
