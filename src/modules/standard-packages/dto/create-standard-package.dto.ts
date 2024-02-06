@@ -49,10 +49,10 @@ export class CreateStandardPackageServiceDto {
   service: CreateServiceDto;
 
   @ApiProperty({
-    description: 'information about the safari',
+    description: 'information about the cruise',
     type: () => CreateStandardPackageDto,
   })
   @ValidateNested({ each: true })
   @Type(() => CreateStandardPackageDto)
-  safari: CreateStandardPackageDto;
+  standardPackage: CreateStandardPackageDto;
 }

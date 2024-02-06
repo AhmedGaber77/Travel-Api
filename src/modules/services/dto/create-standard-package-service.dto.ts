@@ -1,4 +1,4 @@
-import { CreateStandardPackageDto } from 'src/modules/packages/dto/create-standard-package.dto';
+import { CreateStandardPackageDto } from 'src/modules/standard-packages/dto/create-standard-package.dto';
 import { CreateServiceDto } from './create-service.dto';
 import { ApiProperty } from '@nestjs/swagger';
 import { ValidateNested } from 'class-validator';

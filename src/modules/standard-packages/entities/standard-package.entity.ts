@@ -9,7 +9,7 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { PackageDayEntity } from './package-day.entity';
+import { PackageDayEntity } from './standard-package-day.entity';
 
 @Entity({ name: 'standard_package' })
 export class StandardPackageEntity extends EntityRelationalHelper {
@@ -39,11 +39,6 @@ export class StandardPackageEntity extends EntityRelationalHelper {
   @IsString()
   tourType: string;
 
-  // @ApiProperty({
-  //   type: () => Number,
-  // })
-  // @Column({ type: Number })
-  // serviceId: ServiceEntity['id'];
   @OneToOne(() => ServiceEntity, (service) => service.standardPackage)
   service: ServiceEntity;
 

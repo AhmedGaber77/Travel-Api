@@ -1,9 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateServiceDto } from './dto/create-service.dto';
-import {
-  UpdateServiceDto,
-  UpdateStandardPackageServiceDto,
-} from './dto/update-service.dto';
+import { UpdateServiceDto } from './dto/update-service.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ServiceEntity, ServiceType } from './entities/service.entity';
 import { In, Repository } from 'typeorm';
@@ -14,10 +11,8 @@ import { CruiseEntity } from '../cruises/entities/cruise.entity';
 import { SafariEntity } from '../safari/entities/safari.entity';
 import { GalleryEntity } from 'src/image-upload/entities/gallery.entity';
 import { IPaginationOptions } from 'src/utils/types/pagination-options';
-import { StandardPackageEntity } from '../packages/entities/standard-package.entity';
-import { CreateStandardPackageServiceDto } from './dto/create-standard-package-service.dto';
-import { PackageDayEntity } from '../packages/entities/package-day.entity';
 import { HotelRoomEntity } from '../hotel-rooms/entities/hotel-room.entity';
+import { StandardPackageEntity } from '../standard-packages/entities/standard-package.entity';
 
 export type Service =
   | HotelRoomEntity
@@ -35,10 +30,7 @@ export class ServicesService {
 
     @InjectRepository(GalleryEntity)
     private galleryRepository: Repository<GalleryEntity>,
-    @InjectRepository(StandardPackageEntity)
-    private standardPackageRepository: Repository<StandardPackageEntity>,
-    @InjectRepository(PackageDayEntity)
-    private packageDayRepository: Repository<PackageDayEntity>,
+
     private wholesalerService: WholesalersService,
   ) {}
 
@@ -124,23 +116,23 @@ export class ServicesService {
     return this.serviceRepository.save(service);
   }
 
-  async createStandardPackageService(
-    createStandardPackageServiceDto: CreateStandardPackageServiceDto,
-  ) {
-    console.log(createStandardPackageServiceDto);
-    const standardPackageService = this.standardPackageRepository.create(
-      createStandardPackageServiceDto.standardPackage,
-    );
-    standardPackageService.packageDays = this.packageDayRepository.create(
-      createStandardPackageServiceDto.standardPackage.packageDays,
-    );
-    await this.createService(
-      createStandardPackageServiceDto.service,
-      ServiceType.StandardPackage,
-      this.standardPackageRepository,
-      standardPackageService,
-    );
-  }
+  // async createStandardPackageService(
+  //   createStandardPackageServiceDto: CreateStandardPackageServiceDto,
+  // ) {
+  //   console.log(createStandardPackageServiceDto);
+  //   const standardPackageService = this.standardPackageRepository.create(
+  //     createStandardPackageServiceDto.standardPackage,
+  //   );
+  //   standardPackageService.packageDays = this.packageDayRepository.create(
+  //     createStandardPackageServiceDto.standardPackage.packageDays,
+  //   );
+  //   await this.createService(
+  //     createStandardPackageServiceDto.service,
+  //     ServiceType.StandardPackage,
+  //     this.standardPackageRepository,
+  //     standardPackageService,
+  //   );
+  // }
 
   async findAllServices(serviceType: ServiceType, relation: string) {
     const services = await this.serviceRepository.find({
@@ -225,37 +217,37 @@ export class ServicesService {
     // await specificServiceRepository.save(entity);
   }
 
-  async updateStandardPackageService(
-    id: number,
-    updateStandardPackageServiceDto: UpdateStandardPackageServiceDto,
-  ) {
-    const service = await this.serviceRepository.findOne({
-      where: { id },
-      relations: {
-        standardPackage: true,
-      },
-    });
-    console.log(updateStandardPackageServiceDto.standardPackage.packageDays);
-    if (!service) {
-      throw new NotFoundException(`Service with id ${id} does not exist`);
-    }
-    if (service.standardPackage === null) {
-      throw new NotFoundException(
-        `Service info for a service with id ${id} does not exist`,
-      );
-    }
-    const updatedService = this.serviceRepository.merge(
-      service,
-      updateStandardPackageServiceDto.service,
-    );
-    const updatedStandardPackage = this.standardPackageRepository.merge(
-      service.standardPackage,
-      updateStandardPackageServiceDto.standardPackage,
-    );
+  // async updateStandardPackageService(
+  //   id: number,
+  //   updateStandardPackageServiceDto: UpdateStandardPackageServiceDto,
+  // ) {
+  //   const service = await this.serviceRepository.findOne({
+  //     where: { id },
+  //     relations: {
+  //       standardPackage: true,
+  //     },
+  //   });
+  //   console.log(updateStandardPackageServiceDto.standardPackage.packageDays);
+  //   if (!service) {
+  //     throw new NotFoundException(`Service with id ${id} does not exist`);
+  //   }
+  //   if (service.standardPackage === null) {
+  //     throw new NotFoundException(
+  //       `Service info for a service with id ${id} does not exist`,
+  //     );
+  //   }
+  //   const updatedService = this.serviceRepository.merge(
+  //     service,
+  //     updateStandardPackageServiceDto.service,
+  //   );
+  //   const updatedStandardPackage = this.standardPackageRepository.merge(
+  //     service.standardPackage,
+  //     updateStandardPackageServiceDto.standardPackage,
+  //   );
 
-    updatedService.standardPackage = updatedStandardPackage;
-    return await this.serviceRepository.save(updatedService);
-  }
+  //   updatedService.standardPackage = updatedStandardPackage;
+  //   return await this.serviceRepository.save(updatedService);
+  // }
 
   async findOneService(id: number, relation: string) {
     const service = await this.serviceRepository.findOne({

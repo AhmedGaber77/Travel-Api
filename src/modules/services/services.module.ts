@@ -9,8 +9,6 @@ import { TransportationEntity } from '../transportations/entities/transportation
 import { SafariEntity } from '../safari/entities/safari.entity';
 import { CruiseEntity } from '../cruises/entities/cruise.entity';
 import { GalleryEntity } from 'src/image-upload/entities/gallery.entity';
-import { StandardPackageEntity } from '../packages/entities/standard-package.entity';
-import { PackageDayEntity } from '../packages/entities/package-day.entity';
 import { HotelRoomEntity } from '../hotel-rooms/entities/hotel-room.entity';
 
 @Module({
@@ -23,8 +21,6 @@ import { HotelRoomEntity } from '../hotel-rooms/entities/hotel-room.entity';
       SafariEntity,
       CruiseEntity,
       GalleryEntity,
-      StandardPackageEntity,
-      PackageDayEntity,
     ]),
     WholesalersModule,
     // HotelsModule,

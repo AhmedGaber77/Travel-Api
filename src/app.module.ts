@@ -37,6 +37,7 @@ import { ImageUploadModule } from './image-upload/image-upload.module';
 import { ReservationsModule } from './modules/reservations/reservations.module';
 import { AccountsModule } from './modules/accounts/accounts.module';
 import { HotelRoomsModule } from './modules/hotel-rooms/hotel-rooms.module';
+import { StandardPackagesModule } from './modules/standard-packages/standard-packages.module';
 
 @Module({
   imports: [
@@ -99,6 +100,7 @@ import { HotelRoomsModule } from './modules/hotel-rooms/hotel-rooms.module';
     ReservationsModule,
     AccountsModule,
     HotelRoomsModule,
+    StandardPackagesModule,
   ],
   providers: [IsUniqueConstraint],
 })
