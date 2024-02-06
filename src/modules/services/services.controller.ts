@@ -14,10 +14,8 @@ import { ServicesService } from './services.service';
 import {
   UpdateServiceDto,
   UpdateStandardPackageServiceDto,
-  UpdateTransportationServiceDto,
 } from './dto/update-service.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { CreateTransportationServiceDto } from './dto/create-transportation-service.dto';
 import { QueryServiceDto } from './dto/query-service.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/roles/roles.guard';
@@ -69,39 +67,6 @@ export class ServicesController {
     return await this.servicesService.updateStandardPackageService(
       id,
       updateStandardPackageServiceDto,
-    );
-  }
-
-  @ApiTags('Transportations')
-  @Roles(RoleEnum.admin, RoleEnum.wholesaler, RoleEnum.travelAgent)
-  @Get('transportations')
-  async findAllTransportationServices() {
-    return this.servicesService.findAllTransportationServices();
-  }
-
-  @ApiTags('Transportations')
-  @Roles(RoleEnum.admin, RoleEnum.wholesaler)
-  @Post('transportations')
-  async createTransportationService(
-    @Body(new ValidationPipe({ transform: true }))
-    createTransportationServiceDto: CreateTransportationServiceDto,
-  ) {
-    return await this.servicesService.createTransportationService(
-      createTransportationServiceDto,
-    );
-  }
-
-  @ApiTags('Transportations')
-  @Roles(RoleEnum.admin, RoleEnum.wholesaler)
-  @Patch('transportations/:id')
-  async updateTransportationService(
-    @Param('id') id: number,
-    @Body(new ValidationPipe({ transform: true }))
-    updateTransportationServiceDto: UpdateTransportationServiceDto,
-  ) {
-    return await this.servicesService.updateTransportationService(
-      id,
-      updateTransportationServiceDto,
     );
   }
 

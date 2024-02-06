@@ -1,5 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsNotEmpty, IsString, ValidateNested } from 'class-validator';
+import { CreateServiceDto } from 'src/modules/services/dto/create-service.dto';
 import { ServiceEntity } from 'src/modules/services/entities/service.entity';
 
 export class CreateTransportationDto {
@@ -68,4 +70,22 @@ export class CreateTransportationDto {
     type: () => Number,
   })
   ServiceId: ServiceEntity['id'];
+}
+
+export class CreateTransportationServiceDto {
+  @ApiProperty({
+    description: 'information about the service',
+    type: () => CreateServiceDto,
+  })
+  @ValidateNested({ each: true })
+  @Type(() => CreateServiceDto)
+  service: CreateServiceDto;
+
+  @ApiProperty({
+    description: 'information about the transportation',
+    type: () => CreateTransportationDto,
+  })
+  @ValidateNested({ each: true })
+  @Type(() => CreateTransportationDto)
+  transportation: CreateTransportationDto;
 }

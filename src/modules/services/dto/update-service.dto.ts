@@ -2,7 +2,6 @@ import { ApiHideProperty, ApiProperty, PartialType } from '@nestjs/swagger';
 import { CreateServiceDto } from './create-service.dto';
 import { Exclude, Type } from 'class-transformer';
 import { ValidateNested } from 'class-validator';
-import { CreateTransportationDto } from 'src/modules/transportations/dto/create-transportation.dto';
 import { CreateStandardPackageDto } from 'src/modules/packages/dto/create-standard-package.dto';
 import { CreatePackageDayDto } from 'src/modules/packages/dto/create-package-day.dto';
 import { ServiceType } from '../entities/service.entity';
@@ -16,10 +15,6 @@ export class UpdateServiceDto extends PartialType(CreateServiceDto) {
 }
 
 export class PartialCreateServiceDto extends PartialType(CreateServiceDto) {}
-
-export class PartialCreateTransportationServiceDto extends PartialType(
-  CreateTransportationDto,
-) {}
 
 export class PartioalCreateStandardPackageServiceDto extends PartialType(
   CreateStandardPackageDto,
@@ -44,29 +39,4 @@ export class UpdateStandardPackageServiceDto {
   @ValidateNested({ each: true })
   @Type(() => PartioalCreateStandardPackageServiceDto)
   standardPackage: PartioalCreateStandardPackageServiceDto;
-}
-
-export class UpdateTransportationServiceDto {
-  @ApiProperty({
-    description: 'information about the service',
-    type: () => UpdateServiceDto,
-  })
-  @ValidateNested({ each: true })
-  @Type(() => UpdateServiceDto)
-  service: UpdateServiceDto;
-
-  @ApiProperty({
-    description: 'The id of the transportation',
-    example: 1,
-    required: true,
-  })
-  TransportationId: number;
-
-  @ApiProperty({
-    description: 'information about the transportation',
-    type: () => PartialCreateTransportationServiceDto,
-  })
-  @ValidateNested({ each: true })
-  @Type(() => PartialCreateTransportationServiceDto)
-  transportation: PartialCreateTransportationServiceDto;
 }

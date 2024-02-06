@@ -3,6 +3,7 @@ import { IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { ServiceEntity } from 'src/modules/services/entities/service.entity';
 import { Type } from 'class-transformer';
 import { CreatePackageDayDto } from './create-package-day.dto';
+import { CreateServiceDto } from 'src/modules/services/dto/create-service.dto';
 
 export class CreateStandardPackageDto {
   @ApiProperty({
@@ -36,4 +37,22 @@ export class CreateStandardPackageDto {
   @Type(() => CreatePackageDayDto)
   @ValidateNested({ each: true })
   packageDays: CreatePackageDayDto[];
+}
+
+export class CreateStandardPackageServiceDto {
+  @ApiProperty({
+    description: 'information about the service',
+    type: () => CreateServiceDto,
+  })
+  @ValidateNested({ each: true })
+  @Type(() => CreateServiceDto)
+  service: CreateServiceDto;
+
+  @ApiProperty({
+    description: 'information about the safari',
+    type: () => CreateStandardPackageDto,
+  })
+  @ValidateNested({ each: true })
+  @Type(() => CreateStandardPackageDto)
+  safari: CreateStandardPackageDto;
 }

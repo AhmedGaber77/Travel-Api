@@ -3,14 +3,12 @@ import { CreateServiceDto } from './dto/create-service.dto';
 import {
   UpdateServiceDto,
   UpdateStandardPackageServiceDto,
-  UpdateTransportationServiceDto,
 } from './dto/update-service.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ServiceEntity, ServiceType } from './entities/service.entity';
 import { In, Repository } from 'typeorm';
 import { WholesalersService } from '../wholesalers/wholesalers.service';
 import { FlightEntity } from '../flights/entities/flight.entity';
-import { CreateTransportationServiceDto } from './dto/create-transportation-service.dto';
 import { TransportationEntity } from '../transportations/entities/transportation.entity';
 import { CruiseEntity } from '../cruises/entities/cruise.entity';
 import { SafariEntity } from '../safari/entities/safari.entity';
@@ -34,9 +32,6 @@ export class ServicesService {
   constructor(
     @InjectRepository(ServiceEntity)
     private serviceRepository: Repository<ServiceEntity>,
-
-    @InjectRepository(TransportationEntity)
-    private transportationRepository: Repository<TransportationEntity>,
 
     @InjectRepository(GalleryEntity)
     private galleryRepository: Repository<GalleryEntity>,
@@ -144,20 +139,6 @@ export class ServicesService {
       ServiceType.StandardPackage,
       this.standardPackageRepository,
       standardPackageService,
-    );
-  }
-
-  async createTransportationService(
-    createTransportationServiceDto: CreateTransportationServiceDto,
-  ) {
-    const transportationService = this.transportationRepository.create(
-      createTransportationServiceDto.transportation,
-    );
-    await this.createService(
-      createTransportationServiceDto.service,
-      ServiceType.Transportation,
-      this.transportationRepository,
-      transportationService,
     );
   }
 
@@ -274,19 +255,6 @@ export class ServicesService {
 
     updatedService.standardPackage = updatedStandardPackage;
     return await this.serviceRepository.save(updatedService);
-  }
-
-  async updateTransportationService(
-    id: number,
-    updateTransportationServiceDto: UpdateTransportationServiceDto,
-  ) {
-    await this.updateService(
-      id,
-      updateTransportationServiceDto.service,
-      ServiceType.Transportation,
-      this.transportationRepository,
-      updateTransportationServiceDto.transportation,
-    );
   }
 
   async findOneService(id: number, relation: string) {
