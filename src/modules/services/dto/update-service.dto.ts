@@ -1,24 +1,25 @@
 import { ApiHideProperty, ApiProperty, PartialType } from '@nestjs/swagger';
 import { CreateServiceDto } from './create-service.dto';
-import { Type } from 'class-transformer';
+import { Exclude, Type } from 'class-transformer';
 import { ValidateNested } from 'class-validator';
-import { CreateHotelRoomDto } from 'src/modules/hotels/dto/create-room.dto';
 import { CreateFlightDto } from 'src/modules/flights/dto/create-flight.dto';
 import { CreateCruiseDto } from 'src/modules/cruises/dto/create-cruise.dto';
 import { CreateSafariDto } from 'src/modules/safari/dto/create-safari.dto';
 import { CreateTransportationDto } from 'src/modules/transportations/dto/create-transportation.dto';
 import { CreateStandardPackageDto } from 'src/modules/packages/dto/create-standard-package.dto';
 import { CreatePackageDayDto } from 'src/modules/packages/dto/create-package-day.dto';
+import { ServiceType } from '../entities/service.entity';
 
 export class UpdateServiceDto extends PartialType(CreateServiceDto) {
-  @ApiHideProperty()
-  WholesalerId: number;
+  @Exclude()
+  WholesalerId?: number | undefined;
+
+  @Exclude()
+  type?: ServiceType | undefined;
 }
 
 export class PartialCreateServiceDto extends PartialType(CreateServiceDto) {}
-export class PartialCreateHotelRoomDto extends PartialType(
-  CreateHotelRoomDto,
-) {}
+
 export class PartialCreateFlightServiceDto extends PartialType(
   CreateFlightDto,
 ) {}
@@ -55,31 +56,6 @@ export class UpdateStandardPackageServiceDto {
   @ValidateNested({ each: true })
   @Type(() => PartioalCreateStandardPackageServiceDto)
   standardPackage: PartioalCreateStandardPackageServiceDto;
-}
-
-export class UpdateHotelRoomServiceDto {
-  @ApiProperty({
-    description: 'information about the service',
-    type: () => UpdateServiceDto,
-  })
-  @ValidateNested({ each: true })
-  @Type(() => UpdateServiceDto)
-  service: UpdateServiceDto;
-
-  @ApiProperty({
-    description: 'The id of the hotel',
-    example: 1,
-    required: true,
-  })
-  HotelId: number;
-
-  @ApiProperty({
-    description: 'information about the room',
-    type: () => PartialCreateHotelRoomDto,
-  })
-  @ValidateNested({ each: true })
-  @Type(() => PartialCreateHotelRoomDto)
-  room: PartialCreateHotelRoomDto;
 }
 
 export class UpdateFlightServiceDto {

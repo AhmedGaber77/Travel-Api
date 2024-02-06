@@ -14,14 +14,12 @@ import { ServicesService } from './services.service';
 import {
   UpdateCruiseServiceDto,
   UpdateFlightServiceDto,
-  UpdateHotelRoomServiceDto,
   UpdateSafariServiceDto,
   UpdateServiceDto,
   UpdateStandardPackageServiceDto,
   UpdateTransportationServiceDto,
 } from './dto/update-service.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { CreateHotelRoomServiceDto } from './dto/create-hotel-room.dto';
 import { CreateFlightServiceDto } from './dto/create-flight-service.dto';
 import { CreateTransportationServiceDto } from './dto/create-transportation-service.dto';
 import { CreateCruiseServiceDto } from './dto/create-cruise-service.dto';
@@ -80,45 +78,45 @@ export class ServicesController {
     );
   }
 
-  @ApiTags('Hotel Rooms')
-  @Roles(RoleEnum.admin, RoleEnum.wholesaler, RoleEnum.travelAgent)
-  @Get('hotel-rooms')
-  async findAllHotelRoomServices() {
-    return this.servicesService.findAllHotelRoomServices();
-  }
+  // @ApiTags('Hotel Rooms')
+  // @Roles(RoleEnum.admin, RoleEnum.wholesaler, RoleEnum.travelAgent)
+  // @Get('hotel-rooms')
+  // async findAllHotelRoomServices() {
+  //   return this.servicesService.findAllHotelRoomServices();
+  // }
 
-  @ApiTags('Hotel Rooms')
-  @Roles(RoleEnum.admin, RoleEnum.wholesaler, RoleEnum.travelAgent)
-  @Get('hotel-rooms/:id')
-  async findOneHotelRoomService(@Param('id') id: number) {
-    return this.servicesService.findOneService(id, 'room');
-  }
+  // @ApiTags('Hotel Rooms')
+  // @Roles(RoleEnum.admin, RoleEnum.wholesaler, RoleEnum.travelAgent)
+  // @Get('hotel-rooms/:id')
+  // async findOneHotelRoomService(@Param('id') id: number) {
+  //   return this.servicesService.findOneService(id, 'room');
+  // }
 
-  @ApiTags('Hotel Rooms')
-  @Roles(RoleEnum.admin, RoleEnum.wholesaler)
-  @Post('hotel-rooms')
-  async createHotelRoomService(
-    @Body(new ValidationPipe({ transform: true }))
-    createHotelRoomServiceDto: CreateHotelRoomServiceDto,
-  ) {
-    return await this.servicesService.createHotelRoomService(
-      createHotelRoomServiceDto,
-    );
-  }
+  // @ApiTags('Hotel Rooms')
+  // @Roles(RoleEnum.admin, RoleEnum.wholesaler)
+  // @Post('hotel-rooms')
+  // async createHotelRoomService(
+  //   @Body(new ValidationPipe({ transform: true }))
+  //   createHotelRoomServiceDto: CreateHotelRoomServiceDto,
+  // ) {
+  //   return await this.servicesService.createHotelRoomService(
+  //     createHotelRoomServiceDto,
+  //   );
+  // }
 
-  @ApiTags('Hotel Rooms')
-  @Roles(RoleEnum.admin, RoleEnum.wholesaler)
-  @Patch('hotel-rooms/:id')
-  async updateHotelRoomService(
-    @Param('id') id: number,
-    @Body(new ValidationPipe({ transform: true }))
-    updateHotelRoomServiceDto: UpdateHotelRoomServiceDto,
-  ) {
-    return await this.servicesService.updateHotelRoomService(
-      id,
-      updateHotelRoomServiceDto,
-    );
-  }
+  // @ApiTags('Hotel Rooms')
+  // @Roles(RoleEnum.admin, RoleEnum.wholesaler)
+  // @Patch('hotel-rooms/:id')
+  // async updateHotelRoomService(
+  //   @Param('id') id: number,
+  //   @Body(new ValidationPipe({ transform: true }))
+  //   updateHotelRoomServiceDto: UpdateHotelRoomServiceDto,
+  // ) {
+  //   return await this.servicesService.updateHotelRoomService(
+  //     id,
+  //     updateHotelRoomServiceDto,
+  //   );
+  // }
 
   @ApiTags('Flights')
   @Roles(RoleEnum.admin, RoleEnum.wholesaler, RoleEnum.travelAgent)

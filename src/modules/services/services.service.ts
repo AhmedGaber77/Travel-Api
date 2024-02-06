@@ -3,7 +3,6 @@ import { CreateServiceDto } from './dto/create-service.dto';
 import {
   UpdateCruiseServiceDto,
   UpdateFlightServiceDto,
-  UpdateHotelRoomServiceDto,
   UpdateSafariServiceDto,
   UpdateServiceDto,
   UpdateStandardPackageServiceDto,
@@ -13,9 +12,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ServiceEntity, ServiceType } from './entities/service.entity';
 import { In, Repository } from 'typeorm';
 import { WholesalersService } from '../wholesalers/wholesalers.service';
-import { CreateHotelRoomServiceDto } from './dto/create-hotel-room.dto';
-import { HotelsService } from '../hotels/hotels.service';
-import { RoomEntity } from '../hotels/entities/room.entity';
 import { CreateFlightServiceDto } from './dto/create-flight-service.dto';
 import { FlightEntity } from '../flights/entities/flight.entity';
 import { CreateTransportationServiceDto } from './dto/create-transportation-service.dto';
@@ -29,9 +25,10 @@ import { IPaginationOptions } from 'src/utils/types/pagination-options';
 import { StandardPackageEntity } from '../packages/entities/standard-package.entity';
 import { CreateStandardPackageServiceDto } from './dto/create-standard-package-service.dto';
 import { PackageDayEntity } from '../packages/entities/package-day.entity';
+import { HotelRoomEntity } from '../hotel-rooms/entities/hotel-room.entity';
 
 export type Service =
-  | RoomEntity
+  | HotelRoomEntity
   | FlightEntity
   | TransportationEntity
   | SafariEntity
@@ -43,8 +40,7 @@ export class ServicesService {
   constructor(
     @InjectRepository(ServiceEntity)
     private serviceRepository: Repository<ServiceEntity>,
-    @InjectRepository(RoomEntity)
-    private roomRepository: Repository<RoomEntity>,
+
     @InjectRepository(FlightEntity)
     private flightRepository: Repository<FlightEntity>,
     @InjectRepository(TransportationEntity)
@@ -60,7 +56,6 @@ export class ServicesService {
     @InjectRepository(PackageDayEntity)
     private packageDayRepository: Repository<PackageDayEntity>,
     private wholesalerService: WholesalersService,
-    private readonly hotelsService: HotelsService,
   ) {}
 
   async create(createServiceDto: CreateServiceDto): Promise<ServiceEntity> {
@@ -128,7 +123,7 @@ export class ServicesService {
     if (!specificServiceEntity) {
       return this.serviceRepository.save(service);
     }
-    if (specificServiceEntity instanceof RoomEntity) {
+    if (specificServiceEntity instanceof HotelRoomEntity) {
       service.room = specificServiceEntity;
     } else if (specificServiceEntity instanceof FlightEntity) {
       service.flight = specificServiceEntity;
@@ -160,25 +155,6 @@ export class ServicesService {
       ServiceType.StandardPackage,
       this.standardPackageRepository,
       standardPackageService,
-    );
-  }
-
-  async createHotelRoomService(
-    createHotelRoomServiceDto: CreateHotelRoomServiceDto,
-  ) {
-    const hotel = await this.hotelsService.findOne(
-      createHotelRoomServiceDto.room.HotelId,
-    );
-    const roomService = this.roomRepository.create(
-      createHotelRoomServiceDto.room,
-    );
-    roomService.hotel = hotel;
-
-    await this.createService(
-      createHotelRoomServiceDto.service,
-      ServiceType.HotelRoom,
-      this.roomRepository,
-      roomService,
     );
   }
 
@@ -244,10 +220,6 @@ export class ServicesService {
 
   async findAllStandardPackageServices() {
     return this.findAllServices(ServiceType.StandardPackage, 'standardPackage');
-  }
-
-  async findAllHotelRoomServices() {
-    return this.findAllServices(ServiceType.HotelRoom, 'room');
   }
 
   async findAllFlightServices() {
@@ -353,21 +325,6 @@ export class ServicesService {
 
     updatedService.standardPackage = updatedStandardPackage;
     return await this.serviceRepository.save(updatedService);
-  }
-
-  async updateHotelRoomService(
-    id: number,
-    updateHotelRoomServiceDto: UpdateHotelRoomServiceDto,
-  ) {
-    await this.updateService(
-      id,
-      updateHotelRoomServiceDto.service,
-      ServiceType.HotelRoom,
-      this.roomRepository,
-      {
-        ...updateHotelRoomServiceDto.room,
-      },
-    );
   }
 
   async updateFlightService(

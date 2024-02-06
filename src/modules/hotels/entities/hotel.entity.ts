@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import {
   Column,
   CreateDateColumn,
@@ -8,9 +8,9 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { RoomEntity } from './room.entity';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { EntityRelationalHelper } from 'src/utils/relational-entity-helper';
+import { HotelRoomEntity } from 'src/modules/hotel-rooms/entities/hotel-room.entity';
 
 @Entity({ name: 'hotel' })
 export class HotelEntity extends EntityRelationalHelper {
@@ -53,6 +53,7 @@ export class HotelEntity extends EntityRelationalHelper {
     type: () => String,
   })
   @IsString()
+  @IsOptional()
   @Column({ nullable: true })
   zipCode?: string;
 
@@ -60,6 +61,7 @@ export class HotelEntity extends EntityRelationalHelper {
     type: () => String,
   })
   @IsString()
+  @IsOptional()
   @Column({ nullable: true })
   mobileNumber?: string;
 
@@ -67,6 +69,7 @@ export class HotelEntity extends EntityRelationalHelper {
     type: () => String,
   })
   @IsString()
+  @IsOptional()
   @Column({ nullable: true })
   phoneNumber?: string;
 
@@ -74,6 +77,7 @@ export class HotelEntity extends EntityRelationalHelper {
     type: () => String,
   })
   @IsString()
+  @IsOptional()
   @Column({ nullable: true })
   website?: string;
 
@@ -81,16 +85,20 @@ export class HotelEntity extends EntityRelationalHelper {
     type: () => String,
   })
   @IsString()
+  @IsOptional()
   @Column({ nullable: true })
   email?: string;
 
   @ApiPropertyOptional({ type: () => String })
   @IsString()
+  @IsOptional()
   @Column({ nullable: true })
   description?: string;
 
-  @OneToMany(() => RoomEntity, (room) => room.hotel)
-  rooms: RoomEntity[];
+  @OneToMany(() => HotelRoomEntity, (room) => room.hotel, {
+    onDelete: 'RESTRICT',
+  })
+  rooms: HotelRoomEntity[];
 
   @CreateDateColumn()
   createdAt: Date;
