@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { HotelEntity } from 'src/modules/hotels/entities/hotel.entity';
 import { ServiceEntity } from 'src/modules/services/entities/service.entity';
 import { TravelOfficeEntity } from 'src/modules/travel-offices/entities/travel-office.entity';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
@@ -27,6 +28,9 @@ export class GalleryEntity extends EntityRelationalHelper {
 
   @ManyToOne(() => ServiceEntity, (service) => service.images)
   service: ServiceEntity;
+
+  @ManyToOne(() => HotelEntity, (hotel) => hotel.images)
+  hotel: HotelEntity;
 
   @OneToOne(
     () => TravelOfficeEntity,

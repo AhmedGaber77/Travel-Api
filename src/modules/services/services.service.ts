@@ -1,37 +1,26 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateServiceDto } from './dto/create-service.dto';
 import {
-  UpdateCruiseServiceDto,
-  UpdateFlightServiceDto,
-  UpdateHotelRoomServiceDto,
-  UpdateSafariServiceDto,
   UpdateServiceDto,
   UpdateStandardPackageServiceDto,
-  UpdateTransportationServiceDto,
 } from './dto/update-service.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ServiceEntity, ServiceType } from './entities/service.entity';
 import { In, Repository } from 'typeorm';
 import { WholesalersService } from '../wholesalers/wholesalers.service';
-import { CreateHotelRoomServiceDto } from './dto/create-hotel-room.dto';
-import { HotelsService } from '../hotels/hotels.service';
-import { RoomEntity } from '../hotels/entities/room.entity';
-import { CreateFlightServiceDto } from './dto/create-flight-service.dto';
 import { FlightEntity } from '../flights/entities/flight.entity';
-import { CreateTransportationServiceDto } from './dto/create-transportation-service.dto';
 import { TransportationEntity } from '../transportations/entities/transportation.entity';
 import { CruiseEntity } from '../cruises/entities/cruise.entity';
 import { SafariEntity } from '../safari/entities/safari.entity';
-import { CreateCruiseServiceDto } from './dto/create-cruise-service.dto';
-import { CreateSafariServiceDto } from './dto/create-safari-service.dto';
 import { GalleryEntity } from 'src/image-upload/entities/gallery.entity';
 import { IPaginationOptions } from 'src/utils/types/pagination-options';
 import { StandardPackageEntity } from '../packages/entities/standard-package.entity';
 import { CreateStandardPackageServiceDto } from './dto/create-standard-package-service.dto';
 import { PackageDayEntity } from '../packages/entities/package-day.entity';
+import { HotelRoomEntity } from '../hotel-rooms/entities/hotel-room.entity';
 
 export type Service =
-  | RoomEntity
+  | HotelRoomEntity
   | FlightEntity
   | TransportationEntity
   | SafariEntity
@@ -43,16 +32,7 @@ export class ServicesService {
   constructor(
     @InjectRepository(ServiceEntity)
     private serviceRepository: Repository<ServiceEntity>,
-    @InjectRepository(RoomEntity)
-    private roomRepository: Repository<RoomEntity>,
-    @InjectRepository(FlightEntity)
-    private flightRepository: Repository<FlightEntity>,
-    @InjectRepository(TransportationEntity)
-    private transportationRepository: Repository<TransportationEntity>,
-    @InjectRepository(SafariEntity)
-    private safariRepository: Repository<SafariEntity>,
-    @InjectRepository(CruiseEntity)
-    private cruiseRepository: Repository<CruiseEntity>,
+
     @InjectRepository(GalleryEntity)
     private galleryRepository: Repository<GalleryEntity>,
     @InjectRepository(StandardPackageEntity)
@@ -60,7 +40,6 @@ export class ServicesService {
     @InjectRepository(PackageDayEntity)
     private packageDayRepository: Repository<PackageDayEntity>,
     private wholesalerService: WholesalersService,
-    private readonly hotelsService: HotelsService,
   ) {}
 
   // async create(createServiceDto: CreateServiceDto): Promise<ServiceEntity> {
@@ -128,7 +107,7 @@ export class ServicesService {
     if (!specificServiceEntity) {
       return this.serviceRepository.save(service);
     }
-    if (specificServiceEntity instanceof RoomEntity) {
+    if (specificServiceEntity instanceof HotelRoomEntity) {
       service.room = specificServiceEntity;
     } else if (specificServiceEntity instanceof FlightEntity) {
       service.flight = specificServiceEntity;
@@ -163,75 +142,6 @@ export class ServicesService {
     );
   }
 
-  async createHotelRoomService(
-    createHotelRoomServiceDto: CreateHotelRoomServiceDto,
-  ) {
-    const hotel = await this.hotelsService.findOne(
-      createHotelRoomServiceDto.room.HotelId,
-    );
-    const roomService = this.roomRepository.create(
-      createHotelRoomServiceDto.room,
-    );
-    roomService.hotel = hotel;
-
-    await this.createService(
-      createHotelRoomServiceDto.service,
-      ServiceType.HotelRoom,
-      this.roomRepository,
-      roomService,
-    );
-  }
-
-  async createFlightService(createFlightServiceDto: CreateFlightServiceDto) {
-    const flightService = this.flightRepository.create(
-      createFlightServiceDto.flight,
-    );
-    await this.createService(
-      createFlightServiceDto.service,
-      ServiceType.FlightSeat,
-      this.flightRepository,
-      flightService,
-    );
-  }
-
-  async createTransportationService(
-    createTransportationServiceDto: CreateTransportationServiceDto,
-  ) {
-    const transportationService = this.transportationRepository.create(
-      createTransportationServiceDto.transportation,
-    );
-    await this.createService(
-      createTransportationServiceDto.service,
-      ServiceType.Transportation,
-      this.transportationRepository,
-      transportationService,
-    );
-  }
-
-  async createSafariService(createSafariServiceDto: CreateSafariServiceDto) {
-    const safariService = this.safariRepository.create(
-      createSafariServiceDto.safari,
-    );
-    await this.createService(
-      createSafariServiceDto.service,
-      ServiceType.Safari,
-      this.safariRepository,
-      safariService,
-    );
-  }
-
-  async createCruiseService(createCruiseServiceDto: CreateCruiseServiceDto) {
-    const cruiseService = this.cruiseRepository.create(
-      createCruiseServiceDto.cruise,
-    );
-    await this.createService(
-      createCruiseServiceDto.service,
-      ServiceType.Cruise,
-      this.cruiseRepository,
-      cruiseService,
-    );
-  }
-
   async findAllServices(serviceType: ServiceType, relation: string) {
     const services = await this.serviceRepository.find({
       where: { type: serviceType },
@@ -244,14 +154,6 @@ export class ServicesService {
 
   async findAllStandardPackageServices() {
     return this.findAllServices(ServiceType.StandardPackage, 'standardPackage');
-  }
-
-  async findAllHotelRoomServices() {
-    return this.findAllServices(ServiceType.HotelRoom, 'room');
-  }
-
-  async findAllFlightServices() {
-    return this.findAllServices(ServiceType.FlightSeat, 'flight');
   }
 
   async findAllTransportationServices() {
@@ -353,73 +255,6 @@ export class ServicesService {
 
     updatedService.standardPackage = updatedStandardPackage;
     return await this.serviceRepository.save(updatedService);
-  }
-
-  async updateHotelRoomService(
-    id: number,
-    updateHotelRoomServiceDto: UpdateHotelRoomServiceDto,
-  ) {
-    await this.updateService(
-      id,
-      updateHotelRoomServiceDto.service,
-      ServiceType.HotelRoom,
-      this.roomRepository,
-      {
-        ...updateHotelRoomServiceDto.room,
-      },
-    );
-  }
-
-  async updateFlightService(
-    id: number,
-    updateFlightServiceDto: UpdateFlightServiceDto,
-  ) {
-    await this.updateService(
-      id,
-      updateFlightServiceDto.service,
-      ServiceType.FlightSeat,
-      this.flightRepository,
-      updateFlightServiceDto.flight,
-    );
-  }
-
-  async updateTransportationService(
-    id: number,
-    updateTransportationServiceDto: UpdateTransportationServiceDto,
-  ) {
-    await this.updateService(
-      id,
-      updateTransportationServiceDto.service,
-      ServiceType.Transportation,
-      this.transportationRepository,
-      updateTransportationServiceDto.transportation,
-    );
-  }
-
-  async updateSafariService(
-    id: number,
-    updateSafariServiceDto: UpdateSafariServiceDto,
-  ) {
-    await this.updateService(
-      id,
-      updateSafariServiceDto.service,
-      ServiceType.Safari,
-      this.safariRepository,
-      updateSafariServiceDto.safari,
-    );
-  }
-
-  async updateCruiseService(
-    id: number,
-    updateCruiseServiceDto: UpdateCruiseServiceDto,
-  ) {
-    await this.updateService(
-      id,
-      updateCruiseServiceDto.service,
-      ServiceType.Cruise,
-      this.cruiseRepository,
-      updateCruiseServiceDto.cruise,
-    );
   }
 
   async findOneService(id: number, relation: string) {

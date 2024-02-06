@@ -36,6 +36,7 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { ImageUploadModule } from './image-upload/image-upload.module';
 import { ReservationsModule } from './modules/reservations/reservations.module';
 import { AccountsModule } from './modules/accounts/accounts.module';
+import { HotelRoomsModule } from './modules/hotel-rooms/hotel-rooms.module';
 
 @Module({
   imports: [
@@ -97,6 +98,7 @@ import { AccountsModule } from './modules/accounts/accounts.module';
     ImageUploadModule,
     ReservationsModule,
     AccountsModule,
+    HotelRoomsModule,
   ],
   providers: [IsUniqueConstraint],
 })

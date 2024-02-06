@@ -4,8 +4,6 @@ import { ServicesController } from './services.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ServiceEntity } from './entities/service.entity';
 import { WholesalersModule } from '../wholesalers/wholesalers.module';
-import { HotelsModule } from '../hotels/hotels.module';
-import { RoomEntity } from '../hotels/entities/room.entity';
 import { FlightEntity } from '../flights/entities/flight.entity';
 import { TransportationEntity } from '../transportations/entities/transportation.entity';
 import { SafariEntity } from '../safari/entities/safari.entity';
@@ -13,12 +11,13 @@ import { CruiseEntity } from '../cruises/entities/cruise.entity';
 import { GalleryEntity } from 'src/image-upload/entities/gallery.entity';
 import { StandardPackageEntity } from '../packages/entities/standard-package.entity';
 import { PackageDayEntity } from '../packages/entities/package-day.entity';
+import { HotelRoomEntity } from '../hotel-rooms/entities/hotel-room.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       ServiceEntity,
-      RoomEntity,
+      HotelRoomEntity,
       FlightEntity,
       TransportationEntity,
       SafariEntity,
@@ -28,7 +27,7 @@ import { PackageDayEntity } from '../packages/entities/package-day.entity';
       PackageDayEntity,
     ]),
     WholesalersModule,
-    HotelsModule,
+    // HotelsModule,
   ],
   controllers: [ServicesController],
   providers: [ServicesService],

@@ -3,13 +3,14 @@ import { IsEnum, IsNotEmpty, IsPositive, IsString, Min } from 'class-validator';
 import { GalleryEntity } from 'src/image-upload/entities/gallery.entity';
 import { CruiseEntity } from 'src/modules/cruises/entities/cruise.entity';
 import { FlightEntity } from 'src/modules/flights/entities/flight.entity';
-import { RoomEntity } from 'src/modules/hotels/entities/room.entity';
+import { HotelRoomEntity } from 'src/modules/hotel-rooms/entities/hotel-room.entity';
 import { PackageEntity } from 'src/modules/packages/entities/package.entity';
 import { StandardPackageEntity } from 'src/modules/packages/entities/standard-package.entity';
 import { ReservationEntity } from 'src/modules/reservations/entities/reservation.entity';
 import { SafariEntity } from 'src/modules/safari/entities/safari.entity';
 import { TransportationEntity } from 'src/modules/transportations/entities/transportation.entity';
 import { WholesalerEntity } from 'src/modules/wholesalers/entities/wholesaler.entity';
+import { EntityRelationalHelper } from 'src/utils/relational-entity-helper';
 import {
   Column,
   CreateDateColumn,
@@ -37,7 +38,7 @@ export enum ServiceType {
 
 @Entity({ name: 'service' })
 @Unique(['name'])
-export class ServiceEntity {
+export class ServiceEntity extends EntityRelationalHelper {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -108,9 +109,9 @@ export class ServiceEntity {
   @ManyToMany(() => PackageEntity, (packageEntity) => packageEntity.services)
   packages: PackageEntity[];
 
-  @OneToOne(() => RoomEntity, (room) => room.service, { cascade: true })
+  @OneToOne(() => HotelRoomEntity, (room) => room.service, { cascade: true })
   @JoinColumn()
-  room: RoomEntity;
+  room: HotelRoomEntity;
 
   @OneToOne(() => FlightEntity, (flight) => flight.service, { cascade: true })
   @JoinColumn()
@@ -144,6 +145,7 @@ export class ServiceEntity {
 
   @OneToMany(() => GalleryEntity, (gallery) => gallery.service, {
     cascade: true,
+    eager: true,
   })
   @JoinColumn()
   images: GalleryEntity[];

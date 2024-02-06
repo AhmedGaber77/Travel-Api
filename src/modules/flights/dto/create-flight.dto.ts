@@ -1,5 +1,7 @@
-import { IsDateString, IsPositive, IsString, Min } from 'class-validator';
+import { IsDateString, IsString, ValidateNested } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { CreateServiceDto } from 'src/modules/services/dto/create-service.dto';
+import { Type } from 'class-transformer';
 export class CreateFlightDto {
   @ApiProperty({
     example: 'Airline Name',
@@ -53,15 +55,6 @@ export class CreateFlightDto {
   description?: string;
 
   @ApiProperty({
-    type: () => Number,
-    description: 'The number of available seats',
-    example: 3,
-  })
-  @IsPositive()
-  @Min(1)
-  availableSeats: number;
-
-  @ApiProperty({
     type: () => String,
     description: 'The departure city',
     example: 'New York',
@@ -76,4 +69,22 @@ export class CreateFlightDto {
   })
   @IsString()
   arrivalCity: string;
+}
+
+export class CreateFlightServiceDto {
+  @ApiProperty({
+    description: 'information about the service',
+    type: () => CreateServiceDto,
+  })
+  @ValidateNested({ each: true })
+  @Type(() => CreateServiceDto)
+  service: CreateServiceDto;
+
+  @ApiProperty({
+    description: 'inormation about the flight',
+    type: () => CreateFlightDto,
+  })
+  @ValidateNested({ each: true })
+  @Type(() => CreateFlightDto)
+  flight: CreateFlightDto;
 }

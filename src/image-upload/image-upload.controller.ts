@@ -1,7 +1,10 @@
 import {
   Controller,
+  FileTypeValidator,
   Get,
+  MaxFileSizeValidator,
   Param,
+  ParseFilePipe,
   Post,
   UploadedFiles,
   UseInterceptors,
@@ -34,7 +37,17 @@ export class ImageUploadController {
     },
   })
   @UseInterceptors(FilesInterceptor('files'))
-  async uploadImages(@UploadedFiles() files: Express.Multer.File[]) {
+  async uploadImages(
+    @UploadedFiles(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 3 * 1024 * 1024 }),
+          new FileTypeValidator({ fileType: 'image/*' }),
+        ],
+      }),
+    )
+    files: Express.Multer.File[],
+  ) {
     return await this.imageUploadService.uploadImages(files);
   }
 

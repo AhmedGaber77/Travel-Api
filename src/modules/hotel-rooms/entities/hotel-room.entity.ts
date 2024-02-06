@@ -9,35 +9,51 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { HotelEntity } from './hotel.entity';
-import { ServiceEntity } from 'src/modules/services/entities/service.entity';
+import { HotelEntity } from '../../hotels/entities/hotel.entity';
+import { ServiceEntity } from '../../services/entities/service.entity';
 import { EntityRelationalHelper } from 'src/utils/relational-entity-helper';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Entity('room')
-export class RoomEntity extends EntityRelationalHelper {
+export class HotelRoomEntity extends EntityRelationalHelper {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: String })
+  @ApiProperty({
+    type: () => String,
+  })
   @IsNotEmpty()
   @IsString()
+  @Column()
   type: string;
 
-  @Column({ type: Number })
+  @ApiProperty({
+    type: () => Number,
+  })
   @IsPositive()
+  @Column()
   roomArea: number;
 
-  @Column({ type: Number })
+  @ApiProperty({
+    type: () => Number,
+  })
   @IsPositive()
+  @Column()
   numberOfBeds: number;
 
-  @Column({ type: Number })
+  @ApiProperty({
+    type: () => Number,
+  })
   @IsPositive()
+  @Column()
   numberOfSleeps: number;
 
-  @Column({ type: Number })
+  @ApiProperty({
+    type: () => Number,
+  })
+  @Column()
   hotelId: HotelEntity['id'];
-  @ManyToOne(() => HotelEntity, (hotel) => hotel.rooms, { eager: true })
+  @ManyToOne(() => HotelEntity, (hotel) => hotel.rooms)
   hotel: HotelEntity;
 
   @OneToOne(() => ServiceEntity, (service) => service.room)

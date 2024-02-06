@@ -1,6 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsPositive, IsString } from 'class-validator';
-import { Column } from 'typeorm';
+import { Type } from 'class-transformer';
+import {
+  IsNotEmpty,
+  IsPositive,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
+import { CreateServiceDto } from 'src/modules/services/dto/create-service.dto';
 
 export class CreateHotelRoomDto {
   @ApiProperty({ example: 'Deluxe', description: 'The type of the room' })
@@ -9,12 +15,10 @@ export class CreateHotelRoomDto {
   type: string;
 
   @ApiProperty({ example: 120, description: 'the area of the room' })
-  @Column({ type: Number })
   @IsPositive()
   roomArea: number;
 
   @ApiProperty({ example: 1, description: 'the number of beds in the room' })
-  @Column({ type: Number })
   @IsPositive()
   numberOfBeds: number;
 
@@ -22,7 +26,6 @@ export class CreateHotelRoomDto {
     example: 1,
     description: 'the number of persons that can sleep in the room',
   })
-  @Column({ type: Number })
   @IsPositive()
   numberOfSleeps: number;
 
@@ -32,5 +35,23 @@ export class CreateHotelRoomDto {
     required: true,
   })
   @IsNotEmpty()
-  HotelId: number;
+  hotelId: number;
+}
+
+export class CreateHotelRoomServiceDto {
+  @ApiProperty({
+    description: 'information about the service',
+    type: () => CreateServiceDto,
+  })
+  @ValidateNested({ each: true })
+  @Type(() => CreateServiceDto)
+  service: CreateServiceDto;
+
+  @ApiProperty({
+    description: 'information about the room',
+    type: () => CreateHotelRoomDto,
+  })
+  @ValidateNested({ each: true })
+  @Type(() => CreateHotelRoomDto)
+  room: CreateHotelRoomDto;
 }
