@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateServiceDto } from './dto/create-service.dto';
 import {
-  UpdateCruiseServiceDto,
   UpdateServiceDto,
   UpdateStandardPackageServiceDto,
   UpdateTransportationServiceDto,
@@ -15,7 +14,6 @@ import { CreateTransportationServiceDto } from './dto/create-transportation-serv
 import { TransportationEntity } from '../transportations/entities/transportation.entity';
 import { CruiseEntity } from '../cruises/entities/cruise.entity';
 import { SafariEntity } from '../safari/entities/safari.entity';
-import { CreateCruiseServiceDto } from './dto/create-cruise-service.dto';
 import { GalleryEntity } from 'src/image-upload/entities/gallery.entity';
 import { IPaginationOptions } from 'src/utils/types/pagination-options';
 import { StandardPackageEntity } from '../packages/entities/standard-package.entity';
@@ -40,8 +38,6 @@ export class ServicesService {
     @InjectRepository(TransportationEntity)
     private transportationRepository: Repository<TransportationEntity>,
 
-    @InjectRepository(CruiseEntity)
-    private cruiseRepository: Repository<CruiseEntity>,
     @InjectRepository(GalleryEntity)
     private galleryRepository: Repository<GalleryEntity>,
     @InjectRepository(StandardPackageEntity)
@@ -162,18 +158,6 @@ export class ServicesService {
       ServiceType.Transportation,
       this.transportationRepository,
       transportationService,
-    );
-  }
-
-  async createCruiseService(createCruiseServiceDto: CreateCruiseServiceDto) {
-    const cruiseService = this.cruiseRepository.create(
-      createCruiseServiceDto.cruise,
-    );
-    await this.createService(
-      createCruiseServiceDto.service,
-      ServiceType.Cruise,
-      this.cruiseRepository,
-      cruiseService,
     );
   }
 
@@ -302,19 +286,6 @@ export class ServicesService {
       ServiceType.Transportation,
       this.transportationRepository,
       updateTransportationServiceDto.transportation,
-    );
-  }
-
-  async updateCruiseService(
-    id: number,
-    updateCruiseServiceDto: UpdateCruiseServiceDto,
-  ) {
-    await this.updateService(
-      id,
-      updateCruiseServiceDto.service,
-      ServiceType.Cruise,
-      this.cruiseRepository,
-      updateCruiseServiceDto.cruise,
     );
   }
 

@@ -2,7 +2,6 @@ import { ApiHideProperty, ApiProperty, PartialType } from '@nestjs/swagger';
 import { CreateServiceDto } from './create-service.dto';
 import { Exclude, Type } from 'class-transformer';
 import { ValidateNested } from 'class-validator';
-import { CreateCruiseDto } from 'src/modules/cruises/dto/create-cruise.dto';
 import { CreateTransportationDto } from 'src/modules/transportations/dto/create-transportation.dto';
 import { CreateStandardPackageDto } from 'src/modules/packages/dto/create-standard-package.dto';
 import { CreatePackageDayDto } from 'src/modules/packages/dto/create-package-day.dto';
@@ -17,10 +16,6 @@ export class UpdateServiceDto extends PartialType(CreateServiceDto) {
 }
 
 export class PartialCreateServiceDto extends PartialType(CreateServiceDto) {}
-
-export class PartialCreateCruiseServiceDto extends PartialType(
-  CreateCruiseDto,
-) {}
 
 export class PartialCreateTransportationServiceDto extends PartialType(
   CreateTransportationDto,
@@ -49,31 +44,6 @@ export class UpdateStandardPackageServiceDto {
   @ValidateNested({ each: true })
   @Type(() => PartioalCreateStandardPackageServiceDto)
   standardPackage: PartioalCreateStandardPackageServiceDto;
-}
-
-export class UpdateCruiseServiceDto {
-  @ApiProperty({
-    description: 'information about the service',
-    type: () => UpdateServiceDto,
-  })
-  @ValidateNested({ each: true })
-  @Type(() => UpdateServiceDto)
-  service: UpdateServiceDto;
-
-  @ApiProperty({
-    description: 'The id of the cruise',
-    example: 1,
-    required: true,
-  })
-  CruiseId: number;
-
-  @ApiProperty({
-    description: 'information about the cruise',
-    type: () => PartialCreateCruiseServiceDto,
-  })
-  @ValidateNested({ each: true })
-  @Type(() => PartialCreateCruiseServiceDto)
-  cruise: PartialCreateCruiseServiceDto;
 }
 
 export class UpdateTransportationServiceDto {

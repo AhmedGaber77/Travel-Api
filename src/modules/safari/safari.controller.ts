@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Patch,
   Post,
@@ -65,9 +67,10 @@ export class SafariController {
 
   @ApiOperation({ summary: 'Soft delete a Safari service' })
   @ApiResponse({
-    status: 200,
+    status: HttpStatus.NO_CONTENT,
     description: 'The Safari service has been successfully deleted.',
   })
+  @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')
   softDeleteSafariService(@Param('id') id: string) {
     return this.safariService.softDeleteSafariService(+id);
