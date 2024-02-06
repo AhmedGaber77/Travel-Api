@@ -8,18 +8,32 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
 import { SafariService } from './safari.service';
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CreateSafariServiceDto } from './dto/create-safari.dto';
 import { UpdateSafariServiceDto } from './dto/update-safari.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { RolesGuard } from 'src/roles/roles.guard';
+import { Roles } from 'src/roles/roles.decorator';
+import { RoleEnum } from 'src/roles/roles.enum';
 
 @ApiTags('Safaris')
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'), RolesGuard)
 @Controller({ path: 'safari', version: '1' })
 export class SafariController {
   constructor(private readonly safariService: SafariService) {}
 
+  @Roles(RoleEnum.admin, RoleEnum.wholesaler)
   @ApiOperation({ summary: 'Create a new Safari service' })
   @ApiBody({ type: CreateSafariServiceDto })
   @ApiResponse({
@@ -34,6 +48,7 @@ export class SafariController {
     return this.safariService.createSafariService(createSafariServiceDto);
   }
 
+  @Roles(RoleEnum.admin, RoleEnum.wholesaler, RoleEnum.travelAgent)
   @ApiOperation({ summary: 'Find all Safari services' })
   @ApiResponse({ status: 200, description: 'List of all Safari services' })
   @Get()
@@ -41,6 +56,7 @@ export class SafariController {
     return this.safariService.findAllSafariServices();
   }
 
+  @Roles(RoleEnum.admin, RoleEnum.wholesaler, RoleEnum.travelAgent)
   @ApiOperation({ summary: 'Find one Safari service' })
   @ApiResponse({
     status: 200,
@@ -51,6 +67,7 @@ export class SafariController {
     return this.safariService.findOneSafariService(+id);
   }
 
+  @Roles(RoleEnum.admin, RoleEnum.wholesaler)
   @ApiOperation({ summary: 'Update a Safari service' })
   @ApiResponse({
     status: 200,
@@ -65,6 +82,7 @@ export class SafariController {
     return this.safariService.updateSafariService(+id, updateSafariServiceDto);
   }
 
+  @Roles(RoleEnum.admin, RoleEnum.wholesaler)
   @ApiOperation({ summary: 'Soft delete a Safari service' })
   @ApiResponse({
     status: HttpStatus.NO_CONTENT,

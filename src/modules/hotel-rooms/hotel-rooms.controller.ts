@@ -8,18 +8,32 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
 import { HotelRoomsService } from './hotel-rooms.service';
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CreateHotelRoomServiceDto } from './dto/create-hotel-room.dto';
 import { UpdateHotelRoomServiceDto } from './dto/update-hotel-room.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { RolesGuard } from 'src/roles/roles.guard';
+import { Roles } from 'src/roles/roles.decorator';
+import { RoleEnum } from 'src/roles/roles.enum';
 
 @ApiTags('Hotel Rooms')
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'), RolesGuard)
 @Controller({ path: 'hotel-rooms', version: '1' })
 export class HotelRoomsController {
   constructor(private readonly roomsService: HotelRoomsService) {}
 
+  @Roles(RoleEnum.admin, RoleEnum.wholesaler)
   @ApiOperation({ summary: 'Create a new hotel room service' })
   @ApiBody({ type: CreateHotelRoomServiceDto })
   @ApiResponse({
@@ -36,6 +50,7 @@ export class HotelRoomsController {
     );
   }
 
+  @Roles(RoleEnum.admin, RoleEnum.wholesaler, RoleEnum.travelAgent)
   @ApiOperation({ summary: 'Find all hotel room services' })
   @ApiResponse({ status: 200, description: 'List of all hotel room services' })
   @Get()
@@ -43,6 +58,7 @@ export class HotelRoomsController {
     return await this.roomsService.findAllHotelRoomServices();
   }
 
+  @Roles(RoleEnum.admin, RoleEnum.wholesaler, RoleEnum.travelAgent)
   @ApiOperation({ summary: 'Find one hotel room service' })
   @ApiResponse({
     status: 200,
@@ -53,6 +69,7 @@ export class HotelRoomsController {
     return await this.roomsService.findOneHotelRoomService(+id);
   }
 
+  @Roles(RoleEnum.admin, RoleEnum.wholesaler)
   @ApiOperation({ summary: 'Update a hotel room service' })
   @ApiBody({ type: UpdateHotelRoomServiceDto })
   @ApiResponse({
@@ -71,6 +88,7 @@ export class HotelRoomsController {
     );
   }
 
+  @Roles(RoleEnum.admin, RoleEnum.wholesaler)
   @ApiOperation({ summary: 'Soft delete a hotel room service' })
   @ApiResponse({
     status: 204,

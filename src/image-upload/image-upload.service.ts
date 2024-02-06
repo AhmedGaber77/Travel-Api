@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -16,9 +17,9 @@ export class ImageUploadService {
     private readonly galleryRepository: Repository<GalleryEntity>,
   ) {}
   async uploadImages(files: Express.Multer.File[]) {
-    // if (!files || !files.length) {
-    //   throw new BadRequestException('No files provided');
-    // }
+    if (!files || files.length === 0) {
+      throw new BadRequestException('No files provided');
+    }
 
     console.log(files);
     try {

@@ -8,18 +8,32 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { HotelsService } from './hotels.service';
 import { CreateHotelDto } from './dto/create-hotel.dto';
 import { UpdateHotelDto } from './dto/update-hotel.dto';
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { UpdateHotelRoomDto } from '../hotel-rooms/dto/update-hotel-room.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { RolesGuard } from 'src/roles/roles.guard';
+import { Roles } from 'src/roles/roles.decorator';
+import { RoleEnum } from 'src/roles/roles.enum';
 
 @ApiTags('Hotels')
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'), RolesGuard)
 @Controller({ path: 'hotels', version: '1' })
 export class HotelsController {
   constructor(private readonly hotelsService: HotelsService) {}
 
+  @Roles(RoleEnum.admin, RoleEnum.wholesaler)
   @ApiOperation({ summary: 'Create a new hotel' })
   @ApiBody({ type: CreateHotelDto })
   @ApiResponse({
@@ -31,6 +45,7 @@ export class HotelsController {
     return this.hotelsService.createHotel(createHotelDto);
   }
 
+  @Roles(RoleEnum.admin, RoleEnum.wholesaler, RoleEnum.travelAgent)
   @ApiOperation({ summary: 'Find all hotels' })
   @ApiResponse({ status: 200, description: 'List of all hotels' })
   @Get()
@@ -38,6 +53,7 @@ export class HotelsController {
     return this.hotelsService.findAllHotels();
   }
 
+  @Roles(RoleEnum.admin, RoleEnum.wholesaler, RoleEnum.travelAgent)
   @ApiOperation({ summary: 'Find one hotel' })
   @ApiResponse({
     status: 200,
@@ -48,6 +64,7 @@ export class HotelsController {
     return this.hotelsService.findOneHotel(+id);
   }
 
+  @Roles(RoleEnum.admin, RoleEnum.wholesaler)
   @ApiOperation({ summary: 'Update a hotel' })
   @ApiResponse({
     status: 200,
@@ -58,6 +75,7 @@ export class HotelsController {
     return this.hotelsService.updateHotel(+id, updateHotelDto);
   }
 
+  @Roles(RoleEnum.admin, RoleEnum.wholesaler)
   @ApiOperation({ summary: 'Soft delete a hotel' })
   @ApiResponse({ status: 200, description: 'The deleted hotel' })
   @HttpCode(HttpStatus.NO_CONTENT)
@@ -66,6 +84,7 @@ export class HotelsController {
     return this.hotelsService.softDeleteHotel(+id);
   }
 
+  @Roles(RoleEnum.admin, RoleEnum.wholesaler, RoleEnum.travelAgent)
   @ApiOperation({ summary: 'Find all rooms for a hotel' })
   @ApiResponse({ status: 200, description: 'List of all rooms for a hotel' })
   @Get(':id/rooms')
@@ -73,6 +92,7 @@ export class HotelsController {
     return this.hotelsService.findManyHotelRoomsbyHotelId(+id);
   }
 
+  @Roles(RoleEnum.admin, RoleEnum.wholesaler, RoleEnum.travelAgent)
   @ApiOperation({ summary: 'Find one room for a hotel' })
   @ApiResponse({
     status: 200,
@@ -83,6 +103,7 @@ export class HotelsController {
     return this.hotelsService.findOneHotelRoombyHotelId(+id, +roomId);
   }
 
+  @Roles(RoleEnum.admin, RoleEnum.wholesaler)
   @ApiOperation({ summary: 'Update a room for a hotel' })
   @ApiResponse({
     status: 200,
