@@ -3,10 +3,11 @@ import { CreateHotelDto } from './dto/create-hotel.dto';
 import { UpdateHotelDto } from './dto/update-hotel.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { HotelEntity } from './entities/hotel.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import {} from '../services/entities/service.entity';
 import { HotelRoomEntity } from '../hotel-rooms/entities/hotel-room.entity';
 import { UpdateHotelRoomDto } from '../hotel-rooms/dto/update-hotel-room.dto';
+import { GalleryEntity } from 'src/image-upload/entities/gallery.entity';
 
 @Injectable()
 export class HotelsService {
@@ -15,9 +16,17 @@ export class HotelsService {
     private readonly hotelRepository: Repository<HotelEntity>,
     @InjectRepository(HotelRoomEntity)
     private readonly roomRepository: Repository<HotelRoomEntity>,
+    @InjectRepository(GalleryEntity)
+    private readonly galleryRepository: Repository<GalleryEntity>,
   ) {}
-  async create(createHotelDto: CreateHotelDto) {
+  async createHotel(createHotelDto: CreateHotelDto) {
     const hotel = this.hotelRepository.create(createHotelDto);
+    if (createHotelDto.imageIds) {
+      const images = await this.galleryRepository.find({
+        where: { id: In(createHotelDto.imageIds) },
+      });
+      hotel.images = images;
+    }
     return this.hotelRepository.save(hotel);
   }
 
@@ -39,6 +48,12 @@ export class HotelsService {
   ): Promise<HotelEntity> {
     const existingHotel = await this.findOneHotel(id);
     this.hotelRepository.merge(existingHotel, updateHotelDto);
+    if (updateHotelDto.imageIds) {
+      const images = await this.galleryRepository.find({
+        where: { id: In(updateHotelDto.imageIds) },
+      });
+      existingHotel.images = images;
+    }
     return this.hotelRepository.save(existingHotel);
   }
 

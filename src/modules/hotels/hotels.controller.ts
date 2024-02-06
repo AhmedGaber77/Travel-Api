@@ -27,8 +27,8 @@ export class HotelsController {
     description: 'The hotel has been successfully created.',
   })
   @Post()
-  create(@Body() createHotelDto: CreateHotelDto) {
-    return this.hotelsService.create(createHotelDto);
+  createHotel(@Body() createHotelDto: CreateHotelDto) {
+    return this.hotelsService.createHotel(createHotelDto);
   }
 
   @ApiOperation({ summary: 'Find all hotels' })

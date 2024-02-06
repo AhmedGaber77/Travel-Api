@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsPositive, IsString } from 'class-validator';
 
 export class CreateHotelDto {
   @ApiProperty({
@@ -86,11 +86,13 @@ export class CreateHotelDto {
   @IsOptional()
   description?: string;
 
-  // @ApiProperty({
-  //   description: 'The rooms of the hotel',
-  //   type: [CreateRoomDto],
-  // })
-  // @ValidateNested()
-  // @IsOptional()
-  // rooms?: CreateRoomDto[];
+  @ApiProperty({
+    description: 'The image ids of the hotel',
+    example: [1, 2, 3],
+    required: false,
+    nullable: true,
+  })
+  @IsOptional()
+  @IsPositive({ each: true })
+  imageIds?: number[];
 }

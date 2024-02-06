@@ -11,6 +11,7 @@ import {
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { EntityRelationalHelper } from 'src/utils/relational-entity-helper';
 import { HotelRoomEntity } from 'src/modules/hotel-rooms/entities/hotel-room.entity';
+import { GalleryEntity } from 'src/image-upload/entities/gallery.entity';
 
 @Entity({ name: 'hotel' })
 export class HotelEntity extends EntityRelationalHelper {
@@ -99,6 +100,11 @@ export class HotelEntity extends EntityRelationalHelper {
     onDelete: 'RESTRICT',
   })
   rooms: HotelRoomEntity[];
+
+  @OneToMany(() => GalleryEntity, (gallery) => gallery.hotel, {
+    cascade: true,
+  })
+  images: GalleryEntity[];
 
   @CreateDateColumn()
   createdAt: Date;
