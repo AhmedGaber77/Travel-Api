@@ -31,6 +31,7 @@ export class ImageUploadService {
 
       return savedEntities;
     } catch (error) {
+      console.log(error);
       throw new InternalServerErrorException('Image upload failed');
     }
   }
