@@ -2,7 +2,6 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { CreateServiceDto } from 'src/modules/services/dto/create-service.dto';
-import { ServiceEntity } from 'src/modules/services/entities/service.entity';
 
 export class CreateTransportationDto {
   @ApiProperty({
@@ -66,10 +65,10 @@ export class CreateTransportationDto {
   })
   returningDate?: Date;
 
-  @ApiProperty({
-    type: () => Number,
-  })
-  ServiceId: ServiceEntity['id'];
+  // @ApiProperty({
+  //   type: () => Number,
+  // })
+  // ServiceId: ServiceEntity['id'];
 }
 
 export class CreateTransportationServiceDto {

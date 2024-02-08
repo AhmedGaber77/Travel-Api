@@ -7,7 +7,6 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { CreateServiceDto } from 'src/modules/services/dto/create-service.dto';
-import { ServiceEntity } from 'src/modules/services/entities/service.entity';
 
 export class CreateSafariDto {
   @ApiProperty({
@@ -80,12 +79,12 @@ export class CreateSafariDto {
   @IsNotEmpty()
   address: string;
 
-  @ApiProperty({
-    type: () => Number,
-    description: 'The service id of the cruise',
-    example: 1,
-  })
-  ServiceId: ServiceEntity;
+  // @ApiProperty({
+  //   type: () => Number,
+  //   description: 'The service id of the cruise',
+  //   example: 1,
+  // })
+  // ServiceId: ServiceEntity;
 }
 
 export class CreateSafariServiceDto {

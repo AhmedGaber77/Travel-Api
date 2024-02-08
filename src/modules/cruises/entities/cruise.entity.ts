@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsPositive, IsString } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 import { ServiceEntity } from 'src/modules/services/entities/service.entity';
 import { EntityRelationalHelper } from 'src/utils/relational-entity-helper';
 import {
@@ -63,13 +63,13 @@ export class CruiseEntity extends EntityRelationalHelper {
   @Column()
   cabinType: string;
 
-  @ApiProperty({
-    type: () => Number,
-  })
-  @IsPositive()
-  @IsNotEmpty()
-  @Column()
-  availableSeats: number;
+  // @ApiProperty({
+  //   type: () => Number,
+  // })
+  // @IsPositive()
+  // @IsNotEmpty()
+  // @Column()
+  // availableSeats: number;
 
   @OneToOne(() => ServiceEntity, (service) => service.cruise)
   service: ServiceEntity;

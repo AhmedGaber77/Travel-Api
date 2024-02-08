@@ -74,13 +74,6 @@ export class CreateServiceDto {
   WholesalerId: number;
 
   @ApiProperty({
-    description: 'The destination of the service',
-    example: 'New York City',
-  })
-  @IsString()
-  destination: string;
-
-  @ApiProperty({
     description: 'Is this service an offer?',
     example: true,
     default: false,
@@ -98,16 +91,6 @@ export class CreateServiceDto {
   })
   cancelationPolicy: string;
 
-  // @ApiProperty({
-  //   description: 'The images of the service',
-  //   type: [GalleryEntity],
-  // })
-  // @IsArray()
-  // @Type(() => GalleryEntity)
-  // @IsNotEmpty()
-  // @ValidateNested({ each: true })
-  // images: GalleryEntity[];
-
   @ApiProperty({
     description: 'The image ids of the service',
     example: [1, 2, 3],
@@ -119,14 +102,4 @@ export class CreateServiceDto {
   @IsArray()
   @IsNotEmpty()
   imageIds: number[];
-
-  // @ApiProperty({
-  //   description: 'The images of the service',
-  //   example: [1, 2, 3],
-  //   type: 'array',
-  //   items: {
-  //     type: 'number',
-  //   },
-  // })
-  // images?: number[];
 }

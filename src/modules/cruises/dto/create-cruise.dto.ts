@@ -1,13 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import {
-  IsNotEmpty,
-  IsPositive,
-  IsString,
-  ValidateNested,
-} from 'class-validator';
+import { IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { CreateServiceDto } from 'src/modules/services/dto/create-service.dto';
-import { ServiceEntity } from 'src/modules/services/entities/service.entity';
 
 export class CreateCruiseDto {
   @ApiProperty({
@@ -62,22 +56,22 @@ export class CreateCruiseDto {
   @IsNotEmpty()
   cabinType: string;
 
-  @ApiProperty({
-    type: () => Number,
-    description: 'Number of available seats',
-    example: 10,
-  })
-  @IsPositive()
-  @IsNotEmpty()
-  availableSeats: number;
+  // @ApiProperty({
+  //   type: () => Number,
+  //   description: 'Number of available seats',
+  //   example: 10,
+  // })
+  // @IsPositive()
+  // @IsNotEmpty()
+  // availableSeats: number;
 
-  @ApiProperty({
-    type: () => Number,
-    description: 'The id of the service',
-    example: 1,
-  })
-  @IsNotEmpty()
-  ServiceId: ServiceEntity['id'];
+  // @ApiProperty({
+  //   type: () => Number,
+  //   description: 'The id of the service',
+  //   example: 1,
+  // })
+  // @IsNotEmpty()
+  // ServiceId: ServiceEntity['id'];
 }
 
 export class CreateCruiseServiceDto {

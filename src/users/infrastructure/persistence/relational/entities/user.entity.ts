@@ -10,6 +10,7 @@ import {
   UpdateDateColumn,
   OneToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 import { RoleEntity } from '../../../../../roles/infrastructure/persistence/relational/entities/role.entity';
 import { StatusEntity } from '../../../../../statuses/infrastructure/persistence/relational/entities/status.entity';
@@ -24,6 +25,7 @@ import { User } from '../../../../domain/user';
 import { WholesalerEntity } from 'src/modules/wholesalers/entities/wholesaler.entity';
 import { TravelOfficeEntity } from 'src/modules/travel-offices/entities/travel-office.entity';
 import { GalleryEntity } from 'src/image-upload/entities/gallery.entity';
+import { ReservationEntity } from 'src/modules/reservations/entities/reservation.entity';
 
 @Entity({
   name: 'user',
@@ -97,6 +99,9 @@ export class UserEntity extends EntityRelationalHelper implements User {
   @OneToOne(() => GalleryEntity, (gallery) => gallery.user, { cascade: true })
   @JoinColumn({ name: 'profilePhotoId' })
   profilePhoto?: GalleryEntity;
+
+  @OneToMany(() => ReservationEntity, (reservation) => reservation.user)
+  reservations: ReservationEntity[];
 
   @CreateDateColumn()
   createdAt: Date;

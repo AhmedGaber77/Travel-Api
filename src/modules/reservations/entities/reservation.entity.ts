@@ -2,6 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { ServiceEntity } from 'src/modules/services/entities/service.entity';
 import { TravelOfficeEntity } from 'src/modules/travel-offices/entities/travel-office.entity';
+import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { EntityRelationalHelper } from 'src/utils/relational-entity-helper';
 import {
   Column,
@@ -60,8 +61,8 @@ export class ReservationEntity extends EntityRelationalHelper {
   })
   @IsString()
   @IsOptional()
-  @Column()
-  CancelReason: string;
+  @Column({ nullable: true })
+  CancelReason?: string;
 
   // @Column()
   // serviceId: ServiceEntity['id'];
@@ -74,8 +75,13 @@ export class ReservationEntity extends EntityRelationalHelper {
   @ManyToOne(
     () => TravelOfficeEntity,
     (travelOffice) => travelOffice.reservations,
+    { cascade: true },
   )
   travelOffice: TravelOfficeEntity;
+
+  @ManyToOne(() => UserEntity, (user) => user.reservations, { cascade: true })
+  @JoinColumn({ name: 'userId' })
+  user: UserEntity;
 
   @CreateDateColumn()
   createdAt: Date;

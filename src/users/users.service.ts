@@ -165,8 +165,11 @@ export class UsersService {
       const userObject = await this.usersRepository.findOne({
         email: clonedPayload.email,
       });
+      console.log(userObject);
+      console.log(id);
 
       if (userObject?.id !== id) {
+        console.log('here');
         throw new HttpException(
           {
             status: HttpStatus.UNPROCESSABLE_ENTITY,

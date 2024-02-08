@@ -1,12 +1,12 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, Min } from 'class-validator';
 import { ServiceEntity } from 'src/modules/services/entities/service.entity';
-import { TravelOfficeEntity } from 'src/modules/travel-offices/entities/travel-office.entity';
 
 export class CreateReservationDto {
   @ApiProperty({
     type: () => Number,
   })
+  @Min(1)
   @IsNotEmpty()
   quantity: number;
 
@@ -26,8 +26,8 @@ export class CreateReservationDto {
   })
   serviceId: ServiceEntity['id'];
 
-  @ApiPropertyOptional({
-    type: () => Number,
-  })
-  travelOfficeId: TravelOfficeEntity['id'];
+  // @ApiPropertyOptional({
+  //   type: () => Number,
+  // })
+  // travelOfficeId: TravelOfficeEntity['id'];
 }
