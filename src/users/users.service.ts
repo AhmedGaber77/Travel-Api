@@ -15,6 +15,7 @@ import { AuthProvidersEnum } from 'src/auth/auth-providers.enum';
 import { InjectRepository } from '@nestjs/typeorm';
 import { GalleryEntity } from 'src/image-upload/entities/gallery.entity';
 import { Repository } from 'typeorm';
+import { TravelOfficeEntity } from 'src/modules/travel-offices/entities/travel-office.entity';
 
 @Injectable()
 export class UsersService {
@@ -23,6 +24,8 @@ export class UsersService {
     private readonly filesService: FilesService,
     @InjectRepository(GalleryEntity)
     private readonly galleryRepository: Repository<GalleryEntity>,
+    @InjectRepository(TravelOfficeEntity)
+    private readonly travelOfficeRepository: Repository<TravelOfficeEntity>,
   ) {}
 
   async create(createProfileDto: CreateUserDto): Promise<User> {
@@ -85,10 +88,8 @@ export class UsersService {
           HttpStatus.UNPROCESSABLE_ENTITY,
         );
       }
-      console.log('here');
       clonedPayload.profilePhoto = image;
       clonedPayload.profilePhotoId = image.id;
-      console.log(clonedPayload);
     }
     if (clonedPayload.role?.id) {
       const roleObject = Object.values(RoleEnum).includes(
@@ -104,6 +105,34 @@ export class UsersService {
           },
           HttpStatus.UNPROCESSABLE_ENTITY,
         );
+      }
+      if (clonedPayload.role.id === RoleEnum.travelAgent) {
+        if (!clonedPayload.travelOfficeId) {
+          throw new HttpException(
+            {
+              status: HttpStatus.UNPROCESSABLE_ENTITY,
+              errors: {
+                travelOffice: 'travelOfficeNotExists',
+              },
+            },
+            HttpStatus.UNPROCESSABLE_ENTITY,
+          );
+        }
+        const travelOffice = await this.travelOfficeRepository.findOne({
+          where: { id: clonedPayload.travelOfficeId },
+        });
+        if (!travelOffice) {
+          throw new HttpException(
+            {
+              status: HttpStatus.UNPROCESSABLE_ENTITY,
+              errors: {
+                travelOffice: 'travelOfficeNotExists',
+              },
+            },
+            HttpStatus.UNPROCESSABLE_ENTITY,
+          );
+        }
+        clonedPayload.travelOffice = travelOffice;
       }
     }
 

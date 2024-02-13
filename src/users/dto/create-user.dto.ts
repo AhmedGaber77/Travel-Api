@@ -6,6 +6,7 @@ import { RoleDto } from 'src/roles/dto/role.dto';
 import { StatusDto } from 'src/statuses/dto/status.dto';
 import { FileDto } from 'src/files/dto/file.dto';
 import { GalleryEntity } from 'src/image-upload/entities/gallery.entity';
+import { TravelOfficeEntity } from 'src/modules/travel-offices/entities/travel-office.entity';
 
 export class CreateUserDto {
   @ApiProperty({ example: 'test1@example.com' })
@@ -46,6 +47,14 @@ export class CreateUserDto {
   @IsOptional()
   @Type(() => RoleDto)
   role?: RoleDto | null;
+
+  @ApiProperty({ type: () => TravelOfficeEntity })
+  @IsOptional()
+  travelOffice?: TravelOfficeEntity | null;
+
+  @ApiProperty({ type: () => Number })
+  @IsOptional()
+  travelOfficeId?: number | null;
 
   @ApiProperty({ type: StatusDto })
   @IsOptional()
