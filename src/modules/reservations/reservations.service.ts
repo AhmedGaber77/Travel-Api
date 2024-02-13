@@ -23,6 +23,8 @@ import {
 } from './dto/query-reservation.dto';
 import { IPaginationOptions } from 'src/utils/types/pagination-options';
 import { TravelOfficeEntity } from '../travel-offices/entities/travel-office.entity';
+import { TravelerEntity } from './entities/traveler.entity';
+import { UpdateTravelerDto } from './dto/update-traveler.dto';
 
 @Injectable()
 export class ReservationsService {
@@ -33,6 +35,8 @@ export class ReservationsService {
     private serviceRepository: Repository<ServiceEntity>,
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
+    @InjectRepository(TravelerEntity)
+    private travelerRepository: Repository<TravelerEntity>,
   ) {}
   async create(
     userReq: UserEntity,
@@ -116,7 +120,6 @@ export class ReservationsService {
       );
     }
 
-    console.log(user.travelOffice);
     return this.findManyWithPagination({
       filterOptions: query?.filters,
       sortOptions: query?.sort,
@@ -128,17 +131,97 @@ export class ReservationsService {
     });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} reservation`;
+  findOneReservation(id: number) {
+    return this.reservationRepository.findOne({
+      where: { id },
+      relations: {
+        travelOffice: true,
+        user: true,
+        service: {
+          flight: true,
+          room: true,
+          transportation: true,
+          cruise: true,
+          safari: true,
+          standardPackage: true,
+        },
+        travelers: true,
+      },
+    });
   }
 
-  update(id: number, updateReservationDto: UpdateReservationDto) {
-    console.log(updateReservationDto);
-    return `This action updates a #${id} reservation`;
+  async updateReservation(
+    id: number,
+    updateReservationDto: UpdateReservationDto,
+  ) {
+    const reservation = await this.reservationRepository.findOne({
+      where: { id },
+    });
+    if (!reservation) {
+      throw new NotFoundException(`Reservation with ID ${id} not found`);
+    }
+
+    this.reservationRepository.merge(reservation, updateReservationDto);
+    return await this.reservationRepository.save(reservation);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} reservation`;
+  async remove(id: number) {
+    const reservation = this.reservationRepository.findOne({
+      where: { id },
+    });
+    if (!reservation) {
+      throw new NotFoundException(`Reservation with ID ${id} not found`);
+    }
+    await this.reservationRepository.softDelete(id);
+  }
+
+  async updateTraveler(
+    reservationId: number,
+    travelerId: number,
+    updateTravelerDto: UpdateTravelerDto,
+  ) {
+    const reservation = await this.reservationRepository.findOne({
+      where: { id: reservationId },
+      relations: {
+        travelers: true,
+      },
+    });
+    if (!reservation) {
+      throw new NotFoundException(
+        `Reservation with ID ${reservationId} not found`,
+      );
+    }
+    const traveler = await this.travelerRepository.findOne({
+      where: { id: travelerId },
+    });
+    if (!traveler) {
+      throw new NotFoundException(`Traveler with ID ${travelerId} not found`);
+    }
+    this.travelerRepository.merge(traveler, updateTravelerDto);
+    return this.travelerRepository.save(traveler);
+  }
+
+  async removeTraveler(reservationId: number, travelerId: number) {
+    const reservation = await this.reservationRepository.findOne({
+      where: { id: reservationId },
+      relations: {
+        travelers: true,
+      },
+    });
+    if (!reservation) {
+      throw new NotFoundException(
+        `Reservation with ID ${reservationId} not found`,
+      );
+    }
+    const traveler = reservation.travelers.find(
+      (traveler) => traveler.id === travelerId,
+    );
+    if (!traveler) {
+      throw new NotFoundException(
+        `Traveler with ID ${travelerId} not found in reservation`,
+      );
+    }
+    await this.travelerRepository.remove(traveler);
   }
 
   async findManyWithPagination({
@@ -154,7 +237,7 @@ export class ReservationsService {
   }): Promise<ReservationEntity[]> {
     const where: FindOptionsWhere<ReservationEntity> = {};
     if (travelOffice) {
-      where.travelOffice = travelOffice;
+      where.travelOfficeId = travelOffice.id;
     }
     if (filterOptions?.status) {
       where.status = filterOptions?.status;
@@ -166,6 +249,14 @@ export class ReservationsService {
       where: where,
       relations: {
         travelOffice: true,
+        service: {
+          flight: true,
+          room: true,
+          transportation: true,
+          cruise: true,
+          safari: true,
+          standardPackage: true,
+        },
       },
       order: sortOptions?.reduce(
         (accumulator, sort) => ({

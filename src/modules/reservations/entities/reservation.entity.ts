@@ -11,9 +11,11 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { TravelerEntity } from './traveler.entity';
 
 export enum ReservationStatus {
   Pending = 'pending',
@@ -70,18 +72,24 @@ export class ReservationEntity extends EntityRelationalHelper {
   @JoinColumn({ name: 'serviceId' })
   service: ServiceEntity;
 
-  // @Column()
-  // travelOfficeId: TravelOfficeEntity['id'];
+  @Column()
+  travelOfficeId: TravelOfficeEntity['id'];
   @ManyToOne(
     () => TravelOfficeEntity,
     (travelOffice) => travelOffice.reservations,
     { cascade: true },
   )
+  @JoinColumn({ name: 'travelOfficeId' })
   travelOffice: TravelOfficeEntity;
 
   @ManyToOne(() => UserEntity, (user) => user.reservations, { cascade: true })
   @JoinColumn({ name: 'userId' })
   user: UserEntity;
+
+  @OneToMany(() => TravelerEntity, (traveler) => traveler.reservation, {
+    cascade: true,
+  })
+  travelers: TravelerEntity[];
 
   @CreateDateColumn()
   createdAt: Date;

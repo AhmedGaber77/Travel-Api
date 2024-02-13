@@ -49,7 +49,7 @@ export class ReservationsController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.reservationsService.findOne(+id);
+    return this.reservationsService.findOneReservation(+id);
   }
 
   @Patch(':id')
@@ -57,11 +57,22 @@ export class ReservationsController {
     @Param('id') id: string,
     @Body() updateReservationDto: UpdateReservationDto,
   ) {
-    return this.reservationsService.update(+id, updateReservationDto);
+    return this.reservationsService.updateReservation(
+      +id,
+      updateReservationDto,
+    );
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.reservationsService.remove(+id);
+  }
+
+  @Delete(':id/travelers/:travelerId')
+  removeTraveler(
+    @Param('id') reservationId: string,
+    @Param('travelerId') travelerId: string,
+  ) {
+    return this.reservationsService.removeTraveler(+reservationId, +travelerId);
   }
 }
