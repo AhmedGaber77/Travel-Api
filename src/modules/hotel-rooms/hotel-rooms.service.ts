@@ -76,6 +76,8 @@ export class HotelRoomsService {
     id: number,
     updateHotelRoomServiceDto: UpdateHotelRoomServiceDto,
   ): Promise<ServiceEntity> {
+    console.log(id);
+    console.log(updateHotelRoomServiceDto);
     const service = await this.serviceRepository.findOne({
       where: { id },
       relations: { room: true },
