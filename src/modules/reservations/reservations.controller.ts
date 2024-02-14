@@ -20,6 +20,9 @@ import { Roles } from 'src/roles/roles.decorator';
 import { RoleEnum } from 'src/roles/roles.enum';
 import { RolesGuard } from 'src/roles/roles.guard';
 import { QueryReservationDto } from './dto/query-reservation.dto';
+import { CreateTravelerDto } from './dto/create-traveler.dto';
+import { UpdateTravelerDto } from './dto/update-traveler.dto';
+import { UpdateReservationStatusDto } from './dto/update-status.dto';
 
 @Controller('reservations')
 export class ReservationsController {
@@ -63,9 +66,49 @@ export class ReservationsController {
     );
   }
 
+  @Patch(':id/status')
+  updateStatus(
+    @Param('id') id: string,
+    @Body() updateReservationStatusDto: UpdateReservationStatusDto,
+  ) {
+    return this.reservationsService.updateStatus(
+      +id,
+      updateReservationStatusDto,
+    );
+  }
+
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.reservationsService.remove(+id);
+  }
+
+  @Get(':id/travelers')
+  findAllTravelers(@Param('id') reservationId: string) {
+    return this.reservationsService.findAllTravelers(+reservationId);
+  }
+
+  @Post(':id/travelers')
+  createTraveler(
+    @Param('id') reservationId: string,
+    @Body() createTravelerDto: CreateTravelerDto,
+  ) {
+    return this.reservationsService.createTraveler(
+      +reservationId,
+      createTravelerDto,
+    );
+  }
+
+  @Patch(':id/travelers/:travelerId')
+  updateTraveler(
+    @Param('id') reservationId: string,
+    @Param('travelerId') travelerId: string,
+    @Body() updateTravelerDto: UpdateTravelerDto,
+  ) {
+    return this.reservationsService.updateTraveler(
+      +reservationId,
+      +travelerId,
+      updateTravelerDto,
+    );
   }
 
   @Delete(':id/travelers/:travelerId')

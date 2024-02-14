@@ -31,7 +31,7 @@ export class HotelsService {
   }
 
   async findAllHotels(): Promise<HotelEntity[]> {
-    return this.hotelRepository.find();
+    return this.hotelRepository.find({ relations: { images: true } });
   }
 
   async findOneHotel(id: number): Promise<HotelEntity> {

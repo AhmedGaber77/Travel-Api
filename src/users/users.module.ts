@@ -9,6 +9,7 @@ import { DocumentUserPersistenceModule } from './infrastructure/persistence/docu
 import { RelationalUserPersistenceModule } from './infrastructure/persistence/relational/relational-persistence.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { GalleryEntity } from 'src/image-upload/entities/gallery.entity';
+import { TravelOfficeEntity } from 'src/modules/travel-offices/entities/travel-office.entity';
 
 const infrastructurePersistenceModule = (databaseConfig() as DatabaseConfig)
   .isDocumentDatabase
@@ -19,7 +20,7 @@ const infrastructurePersistenceModule = (databaseConfig() as DatabaseConfig)
   imports: [
     infrastructurePersistenceModule,
     FilesModule,
-    TypeOrmModule.forFeature([GalleryEntity]),
+    TypeOrmModule.forFeature([GalleryEntity, TravelOfficeEntity]),
   ],
   controllers: [UsersController],
   providers: [UsersService],

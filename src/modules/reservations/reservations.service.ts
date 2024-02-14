@@ -25,6 +25,8 @@ import { IPaginationOptions } from 'src/utils/types/pagination-options';
 import { TravelOfficeEntity } from '../travel-offices/entities/travel-office.entity';
 import { TravelerEntity } from './entities/traveler.entity';
 import { UpdateTravelerDto } from './dto/update-traveler.dto';
+import { CreateTravelerDto } from './dto/create-traveler.dto';
+import { UpdateReservationStatusDto } from './dto/update-status.dto';
 
 @Injectable()
 export class ReservationsService {
@@ -175,6 +177,35 @@ export class ReservationsService {
     await this.reservationRepository.softDelete(id);
   }
 
+  async updateStatus(
+    id: number,
+    updateReservationStatusDto: UpdateReservationStatusDto,
+  ) {
+    const reservation = await this.reservationRepository.findOne({
+      where: { id },
+    });
+    if (!reservation) {
+      throw new NotFoundException(`Reservation with ID ${id} not found`);
+    }
+    reservation.status = updateReservationStatusDto.status;
+    return this.reservationRepository.save(reservation);
+  }
+
+  async findAllTravelers(reservationId: number) {
+    const reservation = await this.reservationRepository.findOne({
+      where: { id: reservationId },
+      relations: {
+        travelers: true,
+      },
+    });
+    if (!reservation) {
+      throw new NotFoundException(
+        `Reservation with ID ${reservationId} not found`,
+      );
+    }
+    return reservation.travelers;
+  }
+
   async updateTraveler(
     reservationId: number,
     travelerId: number,
@@ -222,6 +253,23 @@ export class ReservationsService {
       );
     }
     await this.travelerRepository.remove(traveler);
+  }
+
+  async createTraveler(
+    reservationId: number,
+    createTravelerDto: CreateTravelerDto,
+  ) {
+    const reservation = await this.reservationRepository.findOne({
+      where: { id: reservationId },
+    });
+    if (!reservation) {
+      throw new NotFoundException(
+        `Reservation with ID ${reservationId} not found`,
+      );
+    }
+    const traveler = this.travelerRepository.create(createTravelerDto);
+    traveler.reservation = reservation;
+    return this.travelerRepository.save(traveler);
   }
 
   async findManyWithPagination({
