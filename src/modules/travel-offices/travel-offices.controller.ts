@@ -5,6 +5,7 @@ import {
   Body,
   Patch,
   Param,
+  Request,
   Delete,
   HttpCode,
   HttpStatus,
@@ -97,6 +98,15 @@ export class TravelOfficesController {
     return this.travelOfficesService.assignWholesalerToTravelOffice(
       +travelOfficeId,
       +assignWholesalerDto.wholesalerId,
+    );
+  }
+
+  @Roles(RoleEnum.admin, RoleEnum.wholesaler, RoleEnum.travelAgent)
+  @Get(':id/account')
+  getTravelOfficeAccount(@Request() request, @Param('id') id: string) {
+    return this.travelOfficesService.getTravelOfficeAccount(
+      +id,
+      request.user.id,
     );
   }
 }

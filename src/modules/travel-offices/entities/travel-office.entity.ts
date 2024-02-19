@@ -64,7 +64,9 @@ export class TravelOfficeEntity extends EntityRelationalHelper {
   @OneToMany(() => ReservationEntity, (reservation) => reservation.travelOffice)
   reservations: ReservationEntity[];
 
-  @OneToOne(() => AccountEntity, (account) => account.travelOffice)
+  @OneToOne(() => AccountEntity, (account) => account.travelOffice, {
+    cascade: true,
+  })
   @JoinColumn()
   account: AccountEntity;
 

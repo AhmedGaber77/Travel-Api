@@ -4,6 +4,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CreateTravelOfficeDto } from './dto/create-travel-office.dto';
 import { UpdateTravelOfficeDto } from './dto/update-travel-office.dto';
@@ -14,6 +15,7 @@ import { WholesalersService } from '../wholesalers/wholesalers.service';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { GalleryEntity } from 'src/image-upload/entities/gallery.entity';
 import { AccountEntity } from '../accounts/entities/account.entity';
+import { RoleEnum } from 'src/roles/roles.enum';
 
 @Injectable()
 export class TravelOfficesService {
@@ -31,7 +33,6 @@ export class TravelOfficesService {
   async create(
     createTravelOfficeDto: CreateTravelOfficeDto,
   ): Promise<TravelOfficeEntity> {
-    console.log(createTravelOfficeDto);
     const wholesaler = await this.wholesalerService.findOne(
       createTravelOfficeDto.WholesalerId,
     );
@@ -48,9 +49,7 @@ export class TravelOfficesService {
           travelOffice.profilePhoto = photo;
         }
       }
-      travelOffice.account = this.accountRepository.create({
-        travelOffice,
-      });
+      travelOffice.account = this.accountRepository.create();
       await this.travelOfficeRepository.save(travelOffice);
       return this.findOne(travelOffice.id);
     } catch (error) {
@@ -161,5 +160,48 @@ export class TravelOfficesService {
 
     travelOffice.users.push(user);
     await this.travelOfficeRepository.save(travelOffice);
+  }
+
+  async getTravelOfficeAccount(
+    travelOfficeId: number,
+    userId: number,
+  ): Promise<TravelOfficeEntity> {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: { role: true },
+      select: { travelOffice: { id: true } },
+    });
+    if (!user) {
+      throw new NotFoundException(`User with id ${userId} not found`);
+    }
+    if (user.role?.id === RoleEnum.travelAgent) {
+      if (!user.travelOfficeId) {
+        throw new HttpException(
+          `User with id ${userId} is not assigned to a travel office`,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      if (user.travelOfficeId !== travelOfficeId) {
+        throw new UnauthorizedException('User Unauthorized');
+      }
+    }
+    const travelOffice = await this.travelOfficeRepository.findOne({
+      where: { id: travelOfficeId },
+      relations: {
+        account: true,
+      },
+      select: {
+        name: true,
+        id: true,
+        profilePhoto: { imageUrl: true },
+        email: true,
+      },
+    });
+    if (!travelOffice) {
+      throw new NotFoundException(
+        `Travel office with id ${travelOfficeId} not found`,
+      );
+    }
+    return travelOffice;
   }
 }
