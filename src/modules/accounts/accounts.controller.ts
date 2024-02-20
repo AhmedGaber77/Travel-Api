@@ -30,8 +30,8 @@ export class AccountsController {
   }
 
   @Get(':id/transactions')
-  getAllAccountTransactions(@Param('id') id: string) {
-    return this.accountsService.getAllAccountTransactions(+id);
+  findAllAccountTransactions(@Param('id') id: string) {
+    return this.accountsService.findAllAccountTransactions(+id);
   }
 
   @Get(':id/transactions/:transactionId')

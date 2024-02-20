@@ -42,7 +42,7 @@ export class AccountsService {
     return `This action updates a #${id} account`;
   }
 
-  async getAllAccountTransactions(accountId: number) {
+  async findAllAccountTransactions(accountId: number) {
     const transactions = await this.transactionRepository.find({
       where: { account: { id: accountId } },
     });
@@ -82,5 +82,23 @@ export class AccountsService {
     }
     newTransaction.account = account;
     return await this.transactionRepository.save(newTransaction);
+  }
+
+  async softDeleteAccountTransaction(accountId: number, transactionId: number) {
+    const transaction = await this.transactionRepository.findOne({
+      where: { account: { id: accountId }, id: transactionId },
+    });
+    if (!transaction) {
+      throw new NotFoundException(
+        `Transaction with id ${transactionId} not found`,
+      );
+    }
+    if (transaction.type === TransactionType.Deposit) {
+      transaction.account.currentBalance -= transaction.amount;
+    }
+    if (transaction.type === TransactionType.Withdraw) {
+      transaction.account.currentBalance += transaction.amount;
+    }
+    return await this.transactionRepository.softRemove(transaction);
   }
 }

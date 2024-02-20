@@ -36,8 +36,14 @@ export class ReservationsController {
     groups: ['me'],
   })
   @Post()
-  create(@Request() req, @Body() createReservationDto: CreateReservationDto) {
-    return this.reservationsService.create(req.user, createReservationDto);
+  createReservation(
+    @Request() req,
+    @Body() createReservationDto: CreateReservationDto,
+  ) {
+    return this.reservationsService.createReservation(
+      req.user.id,
+      createReservationDto,
+    );
   }
 
   @ApiBearerAuth()
@@ -47,8 +53,8 @@ export class ReservationsController {
     groups: ['me'],
   })
   @Get()
-  findAll(@Request() req, @Query() query: QueryReservationDto) {
-    return this.reservationsService.findAll(req.user, query);
+  findAllReservations(@Request() req, @Query() query: QueryReservationDto) {
+    return this.reservationsService.findAllReservations(req.user, query);
   }
 
   @Get(':id')
@@ -84,8 +90,8 @@ export class ReservationsController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.reservationsService.remove(+id);
+  softDeleteReservation(@Param('id') id: string) {
+    return this.reservationsService.softDeleteReservation(+id);
   }
 
   @Get(':id/travelers')

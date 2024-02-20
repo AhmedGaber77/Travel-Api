@@ -40,25 +40,26 @@ export class ReservationsService {
     @InjectRepository(TravelerEntity)
     private travelerRepository: Repository<TravelerEntity>,
   ) {}
-  async create(
-    userReq: UserEntity,
+
+  async createReservation(
+    userId: UserEntity['id'],
     createReservationDto: CreateReservationDto,
-  ) {
+  ): Promise<ReservationEntity> {
     const user = await this.userRepository.findOne({
-      where: { id: userReq.id },
+      where: { id: userId },
       relations: {
         travelOffice: true,
       },
     });
-    console.log('user: ', user);
+    // console.log('user: ', user);
 
     // TODO: Maybe remove this in the futere
     if (!user) {
       throw new UnauthorizedException('User Unauthorized');
     }
 
-    if (user.travelOffice == null) {
-      console.log(user.travelOffice);
+    if (user.role?.id !== RoleEnum.travelAgent || user.travelOffice == null) {
+      // console.log(user.travelOffice);
       throw new UnauthorizedException(
         'User is not in a travel office and cannot make a reservation',
       );
@@ -88,7 +89,7 @@ export class ReservationsService {
     return await this.reservationRepository.save(reservation);
   }
 
-  async findAll(userReq: UserEntity, query: QueryReservationDto) {
+  async findAllReservations(userReq: UserEntity, query: QueryReservationDto) {
     const page = query?.page ?? 1;
     let limit = query?.limit ?? 10;
     if (limit > 50) {
@@ -167,7 +168,7 @@ export class ReservationsService {
     return await this.reservationRepository.save(reservation);
   }
 
-  async remove(id: number) {
+  async softDeleteReservation(id: number) {
     const reservation = this.reservationRepository.findOne({
       where: { id },
     });
