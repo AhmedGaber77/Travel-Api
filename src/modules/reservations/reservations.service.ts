@@ -27,6 +27,11 @@ import { TravelerEntity } from './entities/traveler.entity';
 import { UpdateTravelerDto } from './dto/update-traveler.dto';
 import { CreateTravelerDto } from './dto/create-traveler.dto';
 import { UpdateReservationStatusDto } from './dto/update-status.dto';
+import {
+  Action,
+  CaslAbilityFactory,
+} from 'src/casl/casl-ability.factory/casl-ability.factory';
+import { ForbiddenError } from '@casl/ability';
 
 @Injectable()
 export class ReservationsService {
@@ -39,7 +44,51 @@ export class ReservationsService {
     private userRepository: Repository<UserEntity>,
     @InjectRepository(TravelerEntity)
     private travelerRepository: Repository<TravelerEntity>,
+    private caslAbilityFactory: CaslAbilityFactory,
   ) {}
+
+  async createReservationNew(
+    userId: UserEntity['id'],
+    createReservationDto: CreateReservationDto,
+  ): Promise<ReservationEntity> {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: {
+        travelOffice: true,
+      },
+    });
+    if (!user) {
+      throw new UnauthorizedException('User Unauthorized');
+    }
+
+    const ability = this.caslAbilityFactory.createForUser(user);
+    ForbiddenError.from(ability)
+      .setMessage('user simply cannot make a reservation شطبنا')
+      .throwUnlessCan(Action.Create, ReservationEntity);
+
+    const service = await this.serviceRepository.findOne({
+      where: { id: createReservationDto.serviceId },
+    });
+    if (!service) {
+      throw new NotFoundException(
+        `Service with ID ${createReservationDto.serviceId} not found`,
+      );
+    }
+
+    if (createReservationDto.quantity > service.quantityAvailable) {
+      throw new HttpException(
+        `The quantity requested exceeds the quantity available`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const reservation = this.reservationRepository.create(createReservationDto);
+    // reservation.travelOffice = user.travelOffice;
+    reservation.user = user;
+    reservation.service = service;
+    reservation.status = ReservationStatus.Pending;
+    return await this.reservationRepository.save(reservation);
+  }
 
   async createReservation(
     userId: UserEntity['id'],

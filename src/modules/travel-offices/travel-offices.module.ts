@@ -8,6 +8,7 @@ import { WholesalersModule } from '../wholesalers/wholesalers.module';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { GalleryEntity } from 'src/image-upload/entities/gallery.entity';
 import { AccountEntity } from '../accounts/entities/account.entity';
+import { CaslModule } from 'src/casl/casl.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { AccountEntity } from '../accounts/entities/account.entity';
       AccountEntity,
     ]),
     WholesalersModule,
+    CaslModule,
   ],
   controllers: [TravelOfficesController],
   providers: [TravelOfficesService],

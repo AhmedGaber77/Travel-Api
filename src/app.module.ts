@@ -38,6 +38,7 @@ import { ReservationsModule } from './modules/reservations/reservations.module';
 import { AccountsModule } from './modules/accounts/accounts.module';
 import { HotelRoomsModule } from './modules/hotel-rooms/hotel-rooms.module';
 import { StandardPackagesModule } from './modules/standard-packages/standard-packages.module';
+import { CaslModule } from './casl/casl.module';
 
 @Module({
   imports: [
@@ -101,6 +102,7 @@ import { StandardPackagesModule } from './modules/standard-packages/standard-pac
     AccountsModule,
     HotelRoomsModule,
     StandardPackagesModule,
+    CaslModule,
   ],
   providers: [IsUniqueConstraint],
 })

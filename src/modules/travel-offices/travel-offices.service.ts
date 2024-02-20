@@ -66,6 +66,7 @@ export class TravelOfficesService {
       where: { id },
       relations: {
         users: true,
+        profilePhoto: true,
       },
     });
     if (!travelOffice) {

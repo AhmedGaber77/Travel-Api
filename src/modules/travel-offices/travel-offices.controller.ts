@@ -17,13 +17,16 @@ import { UpdateTravelOfficeDto } from './dto/update-travel-office.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AssignWholesalerDto } from './dto/assign-wholesaler.dto';
 import { AddUserToTravelOfficeDto } from './dto/assign-user-travel-office.dto';
-import { RolesGuard } from 'src/roles/roles.guard';
 import { AuthGuard } from '@nestjs/passport';
 import { Roles } from 'src/roles/roles.decorator';
 import { RoleEnum } from 'src/roles/roles.enum';
+import { AbilitiesGuard } from 'src/casl/abilities.guard';
+import { CheckAbilities } from 'src/casl/abilities.decorator';
+import { TravelOfficeEntity } from './entities/travel-office.entity';
+import { Action } from 'src/casl/casl-ability.factory/casl-ability.factory';
 
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'), RolesGuard)
+@UseGuards(AuthGuard('jwt'), AbilitiesGuard)
 @ApiTags('Travel Offices')
 @Controller({ path: 'travel-offices', version: '1' })
 export class TravelOfficesController {
@@ -35,7 +38,8 @@ export class TravelOfficesController {
     return this.travelOfficesService.create(createTravelOfficeDto);
   }
 
-  @Roles(RoleEnum.admin, RoleEnum.wholesaler)
+  // @Roles(RoleEnum.admin, RoleEnum.wholesaler)
+  @CheckAbilities({ action: Action.Read, subject: TravelOfficeEntity })
   @Get()
   findAll() {
     return this.travelOfficesService.findAll();

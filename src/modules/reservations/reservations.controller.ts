@@ -23,6 +23,10 @@ import { QueryReservationDto } from './dto/query-reservation.dto';
 import { CreateTravelerDto } from './dto/create-traveler.dto';
 import { UpdateTravelerDto } from './dto/update-traveler.dto';
 import { UpdateReservationStatusDto } from './dto/update-status.dto';
+import { Action } from 'src/casl/casl-ability.factory/casl-ability.factory';
+import { ReservationEntity } from './entities/reservation.entity';
+import { AbilitiesGuard } from 'src/casl/abilities.guard';
+import { CheckAbilities } from 'src/casl/abilities.decorator';
 
 @ApiTags('Reservations')
 @Controller('reservations')
@@ -30,17 +34,24 @@ export class ReservationsController {
   constructor(private readonly reservationsService: ReservationsService) {}
 
   @ApiBearerAuth()
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(RoleEnum.travelAgent)
-  @SerializeOptions({
-    groups: ['me'],
-  })
+  @UseGuards(AuthGuard('jwt'), AbilitiesGuard)
+  // @Roles(RoleEnum.travelAgent)
+  // @SerializeOptions({
+  //   groups: ['me'],
+  // })
+  // @CheckPolicies((ability) => {
+  //   ForbiddenError.from(ability)
+  //     .setMessage('User is not a travel agent')
+  //     .throwUnlessCan(Action.Create, ReservationEntity);
+  //   return true;
+  // })
+  @CheckAbilities({ action: Action.Create, subject: ReservationEntity })
   @Post()
-  createReservation(
+  createReservationNew(
     @Request() req,
     @Body() createReservationDto: CreateReservationDto,
   ) {
-    return this.reservationsService.createReservation(
+    return this.reservationsService.createReservationNew(
       req.user.id,
       createReservationDto,
     );
