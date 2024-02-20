@@ -15,7 +15,7 @@ import { ReservationsService } from './reservations.service';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/roles/roles.decorator';
 import { RoleEnum } from 'src/roles/roles.enum';
 import { RolesGuard } from 'src/roles/roles.guard';
@@ -24,6 +24,7 @@ import { CreateTravelerDto } from './dto/create-traveler.dto';
 import { UpdateTravelerDto } from './dto/update-traveler.dto';
 import { UpdateReservationStatusDto } from './dto/update-status.dto';
 
+@ApiTags('Reservations')
 @Controller('reservations')
 export class ReservationsController {
   constructor(private readonly reservationsService: ReservationsService) {}
@@ -53,6 +54,11 @@ export class ReservationsController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.reservationsService.findOneReservation(+id);
+  }
+
+  @Get('search/:search')
+  search(@Param('search') search: string) {
+    return this.reservationsService.searchReservationByTravelOffice(search);
   }
 
   @Patch(':id')

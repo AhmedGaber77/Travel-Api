@@ -54,6 +54,9 @@ export class UserMapper {
       status.id = user.status.id;
     }
 
+    // if (user.travelOfficeId) {
+    // }
+
     const userEntity = new UserEntity();
     if (user.id && typeof user.id === 'number') {
       userEntity.id = user.id;
@@ -70,6 +73,10 @@ export class UserMapper {
       user.profilePhoto !== null ? user.profilePhoto : undefined;
     userEntity.profilePhotoId =
       user.profilePhotoId !== null ? user.profilePhotoId : undefined;
+    userEntity.travelOffice =
+      user.travelOffice !== null ? user.travelOffice : undefined;
+    userEntity.travelOfficeId =
+      user.travelOfficeId !== null ? user.travelOfficeId : undefined;
     userEntity.role = role;
     userEntity.status = status;
     userEntity.createdAt = user.createdAt;

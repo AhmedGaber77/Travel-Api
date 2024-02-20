@@ -12,7 +12,7 @@ import {
 } from 'typeorm';
 import { AccountEntity } from './account.entity';
 
-enum TransactionType {
+export enum TransactionType {
   Deposit = 'deposit',
   Withdraw = 'withdraw',
 }
@@ -29,7 +29,9 @@ export class TransactionEntity extends EntityRelationalHelper {
   @Column({ type: String, enum: TransactionType })
   type: TransactionType;
 
-  @ManyToOne(() => AccountEntity, (account) => account.transactions)
+  @ManyToOne(() => AccountEntity, (account) => account.transactions, {
+    cascade: true,
+  })
   account: AccountEntity;
 
   @ApiProperty({
@@ -56,7 +58,7 @@ export class TransactionEntity extends EntityRelationalHelper {
   @ApiPropertyOptional({
     type: () => String,
   })
-  @Column()
+  @Column({ nullable: true })
   description?: string;
 
   @ApiProperty({

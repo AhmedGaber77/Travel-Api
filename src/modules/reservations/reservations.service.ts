@@ -317,4 +317,17 @@ export class ReservationsService {
 
     return entities;
   }
+
+  async searchReservationByTravelOffice(searchQuery: string) {
+    return await this.reservationRepository.find({
+      relations: {
+        travelOffice: true,
+      },
+      where: {
+        travelOffice: {
+          name: searchQuery,
+        },
+      },
+    });
+  }
 }

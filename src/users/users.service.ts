@@ -133,6 +133,8 @@ export class UsersService {
           );
         }
         clonedPayload.travelOffice = travelOffice;
+        console.log('travelOffice: ', travelOffice);
+        console.log('clonedPayload: ', clonedPayload);
       }
     }
 
