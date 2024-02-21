@@ -24,6 +24,9 @@ import { AbilitiesGuard } from 'src/casl/abilities.guard';
 import { CheckAbilities } from 'src/casl/abilities.decorator';
 import { TravelOfficeEntity } from './entities/travel-office.entity';
 import { Action } from 'src/casl/casl-ability.factory/casl-ability.factory';
+import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
+import { WholesalerEntity } from '../wholesalers/entities/wholesaler.entity';
+import { AccountEntity } from '../accounts/entities/account.entity';
 
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'), AbilitiesGuard)
@@ -45,19 +48,25 @@ export class TravelOfficesController {
     return this.travelOfficesService.findAll();
   }
 
-  @Roles(RoleEnum.admin, RoleEnum.wholesaler)
+  @CheckAbilities({ action: Action.Read, subject: TravelOfficeEntity })
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.travelOfficesService.findOne(+id);
   }
 
-  @Roles(RoleEnum.admin, RoleEnum.wholesaler)
+  @CheckAbilities(
+    { action: Action.Read, subject: TravelOfficeEntity },
+    { action: Action.Read, subject: UserEntity },
+  )
   @Get(':travelOfficeId/users')
   findUsersByTravelOfficeId(@Param('travelOfficeId') travelOfficeId: string) {
     return this.travelOfficesService.findUsersByTravelOfficeId(+travelOfficeId);
   }
 
-  @Roles(RoleEnum.admin)
+  @CheckAbilities(
+    { action: Action.Update, subject: TravelOfficeEntity },
+    { action: Action.Update, subject: UserEntity },
+  )
   @Post(':travelOfficeId/users')
   assignUserToTravelOffice(
     @Param('travelOfficeId') travelOfficeId: string,
@@ -69,7 +78,7 @@ export class TravelOfficesController {
     );
   }
 
-  @Roles(RoleEnum.admin)
+  @CheckAbilities({ action: Action.Update, subject: TravelOfficeEntity })
   @Patch(':id')
   update(
     @Param('id') id: string,
@@ -78,14 +87,17 @@ export class TravelOfficesController {
     return this.travelOfficesService.update(+id, updateTravelOfficeDto);
   }
 
-  @Roles(RoleEnum.admin)
+  @CheckAbilities({ action: Action.Delete, subject: TravelOfficeEntity })
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id') id: string) {
     return this.travelOfficesService.remove(+id);
   }
 
-  @Roles(RoleEnum.admin, RoleEnum.wholesaler, RoleEnum.travelAgent)
+  @CheckAbilities(
+    { action: Action.Read, subject: TravelOfficeEntity },
+    { action: Action.Read, subject: WholesalerEntity },
+  )
   @Get(':travelOfficeId/wholesaler')
   getWholesalers(@Param('travelOfficeId') travelOfficeId: string) {
     return this.travelOfficesService.findWholesalerByTravelOfficeId(
@@ -93,7 +105,10 @@ export class TravelOfficesController {
     );
   }
 
-  @Roles(RoleEnum.admin)
+  @CheckAbilities(
+    { action: Action.Update, subject: TravelOfficeEntity },
+    { action: Action.Update, subject: WholesalerEntity },
+  )
   @Post(':travelOfficeId/wholesaler')
   addWholesaler(
     @Param('travelOfficeId') travelOfficeId: string,
@@ -105,7 +120,10 @@ export class TravelOfficesController {
     );
   }
 
-  @Roles(RoleEnum.admin, RoleEnum.wholesaler, RoleEnum.travelAgent)
+  @CheckAbilities(
+    { action: Action.Read, subject: TravelOfficeEntity },
+    { action: Action.Read, subject: AccountEntity },
+  )
   @Get(':id/account')
   getTravelOfficeAccount(@Request() request, @Param('id') id: string) {
     return this.travelOfficesService.getTravelOfficeAccount(

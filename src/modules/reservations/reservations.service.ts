@@ -27,11 +27,7 @@ import { TravelerEntity } from './entities/traveler.entity';
 import { UpdateTravelerDto } from './dto/update-traveler.dto';
 import { CreateTravelerDto } from './dto/create-traveler.dto';
 import { UpdateReservationStatusDto } from './dto/update-status.dto';
-import {
-  Action,
-  CaslAbilityFactory,
-} from 'src/casl/casl-ability.factory/casl-ability.factory';
-import { ForbiddenError } from '@casl/ability';
+import { CaslAbilityFactory } from 'src/casl/casl-ability.factory/casl-ability.factory';
 
 @Injectable()
 export class ReservationsService {
@@ -60,11 +56,11 @@ export class ReservationsService {
     if (!user) {
       throw new UnauthorizedException('User Unauthorized');
     }
-
-    const ability = this.caslAbilityFactory.createForUser(user);
-    ForbiddenError.from(ability)
-      .setMessage('user simply cannot make a reservation شطبنا')
-      .throwUnlessCan(Action.Create, ReservationEntity);
+    if (!user.travelOffice) {
+      throw new UnauthorizedException(
+        'User is not in a travel office and cannot make a reservation',
+      );
+    }
 
     const service = await this.serviceRepository.findOne({
       where: { id: createReservationDto.serviceId },
@@ -81,9 +77,14 @@ export class ReservationsService {
         HttpStatus.BAD_REQUEST,
       );
     }
-
+    console.log('userrrrrrrr', user);
+    if (!user.travelOffice) {
+      throw new UnauthorizedException(
+        'User is not in a travel office and cannot make a reservation',
+      );
+    }
     const reservation = this.reservationRepository.create(createReservationDto);
-    // reservation.travelOffice = user.travelOffice;
+    reservation.travelOffice = user.travelOffice;
     reservation.user = user;
     reservation.service = service;
     reservation.status = ReservationStatus.Pending;
@@ -107,7 +108,7 @@ export class ReservationsService {
       throw new UnauthorizedException('User Unauthorized');
     }
 
-    if (user.role?.id !== RoleEnum.travelAgent || user.travelOffice == null) {
+    if (user.travelOffice == null) {
       // console.log(user.travelOffice);
       throw new UnauthorizedException(
         'User is not in a travel office and cannot make a reservation',
@@ -138,15 +139,28 @@ export class ReservationsService {
     return await this.reservationRepository.save(reservation);
   }
 
-  async findAllReservations(userReq: UserEntity, query: QueryReservationDto) {
+  async findAllReservations(
+    userId: UserEntity['id'],
+    query: QueryReservationDto,
+  ) {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: {
+        travelOffice: true,
+      },
+    });
+    if (!user) {
+      throw new UnauthorizedException('User Unauthorized');
+    }
+
     const page = query?.page ?? 1;
     let limit = query?.limit ?? 10;
     if (limit > 50) {
       limit = 50;
     }
     if (
-      userReq.role?.id === RoleEnum.admin ||
-      userReq.role?.id === RoleEnum.wholesaler
+      user.role?.id === RoleEnum.admin ||
+      user.role?.id === RoleEnum.wholesaler
     ) {
       return this.findManyWithPagination({
         filterOptions: query?.filters,
@@ -157,21 +171,12 @@ export class ReservationsService {
         },
       });
     }
-    const user = await this.userRepository.findOne({
-      where: { id: userReq.id },
-      relations: {
-        travelOffice: true,
-      },
-    });
-    if (!user) {
-      throw new UnauthorizedException('User Unauthorized');
-    }
+
     if (user.travelOffice == null) {
       throw new UnauthorizedException(
         'User is not in a travel office and cannot make a reservation',
       );
     }
-
     return this.findManyWithPagination({
       filterOptions: query?.filters,
       sortOptions: query?.sort,
@@ -183,9 +188,19 @@ export class ReservationsService {
     });
   }
 
-  findOneReservation(id: number) {
-    return this.reservationRepository.findOne({
-      where: { id },
+  async findOneReservation(userId: UserEntity['id'], id: number) {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: {
+        travelOffice: true,
+      },
+    });
+    if (!user) {
+      throw new UnauthorizedException('User Unauthorized');
+    }
+
+    const reservation = await this.reservationRepository.findOne({
+      where: { id, travelOffice: { id: user.travelOffice?.id } },
       relations: {
         travelOffice: true,
         user: true,
@@ -200,6 +215,11 @@ export class ReservationsService {
         travelers: true,
       },
     });
+
+    if (!reservation) {
+      throw new NotFoundException(`Reservation with ID ${id} not found`);
+    }
+    return reservation;
   }
 
   async updateReservation(
@@ -241,9 +261,19 @@ export class ReservationsService {
     return this.reservationRepository.save(reservation);
   }
 
-  async findAllTravelers(reservationId: number) {
+  async findAllTravelers(userId: UserEntity['id'], reservationId: number) {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: {
+        travelOffice: true,
+      },
+    });
+    if (!user) {
+      throw new UnauthorizedException('User Unauthorized');
+    }
+
     const reservation = await this.reservationRepository.findOne({
-      where: { id: reservationId },
+      where: { id: reservationId, travelOffice: { id: user.travelOffice?.id } },
       relations: {
         travelers: true,
       },

@@ -6,6 +6,7 @@ import {
   createMongoAbility,
 } from '@casl/ability';
 import { Injectable } from '@nestjs/common';
+import { AccountEntity } from 'src/modules/accounts/entities/account.entity';
 import { ReservationEntity } from 'src/modules/reservations/entities/reservation.entity';
 import { TravelOfficeEntity } from 'src/modules/travel-offices/entities/travel-office.entity';
 import { WholesalerEntity } from 'src/modules/wholesalers/entities/wholesaler.entity';
@@ -25,6 +26,7 @@ export type Subjects =
       | typeof WholesalerEntity
       | typeof TravelOfficeEntity
       | typeof ReservationEntity
+      | typeof AccountEntity
       | typeof UserEntity
     >
   | 'all';
@@ -42,11 +44,15 @@ export class CaslAbilityFactory {
       can(Action.Manage, 'all');
     } else if (user.role?.id === RoleEnum.travelAgent) {
       const travelOfficeId = user.travelOffice?.id;
-      can(Action.Read, TravelOfficeEntity);
-
+      can(Action.Read, TravelOfficeEntity, {
+        id: travelOfficeId,
+      });
       can(Action.Create, ReservationEntity, {
-        travelOfficeId: { $eq: travelOfficeId },
-      }).because('User is not a travel agent');
+        travelOfficeId: { $exists: true },
+      });
+      can(Action.Read, ReservationEntity, {
+        travelOfficeId: { $exists: true },
+      });
     } else if (user.role?.id === RoleEnum.wholesaler) {
       can(Action.Read, WholesalerEntity);
       can(Action.Read, TravelOfficeEntity);
