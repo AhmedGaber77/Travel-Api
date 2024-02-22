@@ -7,6 +7,7 @@ import { ReservationEntity } from './entities/reservation.entity';
 import { ServiceEntity } from '../services/entities/service.entity';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { TravelerEntity } from './entities/traveler.entity';
+import { AccountsModule } from '../accounts/accounts.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { TravelerEntity } from './entities/traveler.entity';
       TravelerEntity,
     ]),
     ServicesModule,
+    AccountsModule,
   ],
   controllers: [ReservationsController],
   providers: [ReservationsService],

@@ -200,7 +200,6 @@ export class UsersService {
       console.log(id);
 
       if (userObject?.id !== id) {
-        console.log('here');
         throw new HttpException(
           {
             status: HttpStatus.UNPROCESSABLE_ENTITY,

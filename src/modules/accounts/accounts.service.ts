@@ -45,6 +45,9 @@ export class AccountsService {
   async findAllAccountTransactions(accountId: number) {
     const transactions = await this.transactionRepository.find({
       where: { account: { id: accountId } },
+      relations: {
+        reservation: true,
+      },
     });
     return transactions;
   }
@@ -55,6 +58,9 @@ export class AccountsService {
   ): Promise<TransactionEntity> {
     const transaction = await this.transactionRepository.findOne({
       where: { account: { id: accountId }, id: transactionId },
+      relations: {
+        reservation: true,
+      },
     });
     if (!transaction) {
       throw new NotFoundException(

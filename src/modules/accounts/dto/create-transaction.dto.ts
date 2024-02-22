@@ -1,6 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum, IsNotEmpty, IsPositive } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, IsPositive } from 'class-validator';
 import { TransactionType } from '../entities/transaction.entity';
+import { ReservationEntity } from 'src/modules/reservations/entities/reservation.entity';
 
 export class CreateTransactionDto {
   @ApiProperty({
@@ -34,6 +35,12 @@ export class CreateTransactionDto {
     type: () => String,
   })
   description?: string;
+
+  @ApiProperty({
+    type: () => ReservationEntity,
+  })
+  @IsOptional()
+  reservation?: ReservationEntity;
 
   @ApiProperty({
     type: () => String,

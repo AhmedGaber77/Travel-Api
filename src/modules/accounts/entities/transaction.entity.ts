@@ -6,11 +6,14 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { AccountEntity } from './account.entity';
+import { ReservationEntity } from 'src/modules/reservations/entities/reservation.entity';
 
 export enum TransactionType {
   Deposit = 'deposit',
@@ -67,6 +70,10 @@ export class TransactionEntity extends EntityRelationalHelper {
   @IsNotEmpty()
   @Column()
   currency: string;
+
+  @OneToOne(() => ReservationEntity, (reservation) => reservation.transaction)
+  @JoinColumn()
+  reservation?: ReservationEntity;
 
   @CreateDateColumn()
   createdAt: Date;

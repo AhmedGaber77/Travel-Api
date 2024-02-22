@@ -12,10 +12,12 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { TravelerEntity } from './traveler.entity';
+import { TransactionEntity } from 'src/modules/accounts/entities/transaction.entity';
 
 export enum ReservationStatus {
   Pending = 'pending',
@@ -90,6 +92,9 @@ export class ReservationEntity extends EntityRelationalHelper {
     cascade: true,
   })
   travelers: TravelerEntity[];
+
+  @OneToOne(() => TransactionEntity, (transaction) => transaction.reservation)
+  transaction?: TransactionEntity;
 
   @CreateDateColumn()
   createdAt: Date;

@@ -8,7 +8,6 @@ import {
   Delete,
   UseGuards,
   Request,
-  SerializeOptions,
   Query,
 } from '@nestjs/common';
 import { ReservationsService } from './reservations.service';
@@ -22,19 +21,16 @@ import { RolesGuard } from 'src/roles/roles.guard';
 import { QueryReservationDto } from './dto/query-reservation.dto';
 import { CreateTravelerDto } from './dto/create-traveler.dto';
 import { UpdateTravelerDto } from './dto/update-traveler.dto';
-import { UpdateReservationStatusDto } from './dto/update-status.dto';
+import { CancelReservationDto } from './dto/cancel-reservation.dto';
 
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'), RolesGuard)
 @ApiTags('Reservations')
 @Controller('reservations')
 export class ReservationsController {
   constructor(private readonly reservationsService: ReservationsService) {}
 
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(RoleEnum.travelAgent)
-  @SerializeOptions({
-    groups: ['me'],
-  })
   @Post()
   createReservation(
     @Request() req,
@@ -46,88 +42,111 @@ export class ReservationsController {
     );
   }
 
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(RoleEnum.admin, RoleEnum.wholesaler, RoleEnum.travelAgent)
-  @SerializeOptions({
-    groups: ['me'],
-  })
   @Get()
   findAllReservations(@Request() req, @Query() query: QueryReservationDto) {
-    return this.reservationsService.findAllReservations(req.user, query);
+    return this.reservationsService.findAllReservations(req.user.id, query);
   }
 
+  @Roles(RoleEnum.admin, RoleEnum.wholesaler, RoleEnum.travelAgent)
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.reservationsService.findOneReservation(+id);
+  findOne(@Request() req, @Param('id') id: string) {
+    return this.reservationsService.findOneReservation(req.user.id, +id);
   }
 
-  @Get('search/:search')
-  search(@Param('search') search: string) {
-    return this.reservationsService.searchReservationByTravelOffice(search);
-  }
+  // @Get('search/:search')
+  // search(@Param('search') search: string) {
+  //   return this.reservationsService.searchReservationByTravelOffice(search);
+  // }
 
+  @Roles(RoleEnum.admin, RoleEnum.wholesaler, RoleEnum.travelAgent)
   @Patch(':id')
   update(
+    @Request() req,
     @Param('id') id: string,
     @Body() updateReservationDto: UpdateReservationDto,
   ) {
     return this.reservationsService.updateReservation(
+      req.user.id,
       +id,
       updateReservationDto,
     );
   }
 
-  @Patch(':id/status')
-  updateStatus(
+  @Roles(RoleEnum.admin, RoleEnum.wholesaler)
+  @Patch(':id/cancel')
+  cancelReservation(
     @Param('id') id: string,
-    @Body() updateReservationStatusDto: UpdateReservationStatusDto,
+    @Body() cancelReservationDto: CancelReservationDto,
   ) {
-    return this.reservationsService.updateStatus(
+    return this.reservationsService.cancelReservation(
       +id,
-      updateReservationStatusDto,
+      cancelReservationDto,
     );
   }
 
+  @Roles(RoleEnum.admin, RoleEnum.wholesaler)
+  @Patch(':id/confirm')
+  confirmReservation(@Param('id') id: string) {
+    return this.reservationsService.confirmReservation(+id);
+  }
+
+  @Roles(RoleEnum.admin, RoleEnum.travelAgent)
   @Delete(':id')
-  softDeleteReservation(@Param('id') id: string) {
-    return this.reservationsService.softDeleteReservation(+id);
+  softDeleteReservation(@Request() req, @Param('id') id: string) {
+    return this.reservationsService.softDeleteReservation(req.user.id, +id);
   }
 
+  @Roles(RoleEnum.admin, RoleEnum.wholesaler, RoleEnum.travelAgent)
   @Get(':id/travelers')
-  findAllTravelers(@Param('id') reservationId: string) {
-    return this.reservationsService.findAllTravelers(+reservationId);
+  findAllTravelers(@Request() req, @Param('id') reservationId: string) {
+    return this.reservationsService.findAllTravelers(
+      req.user.id,
+      +reservationId,
+    );
   }
 
+  @Roles(RoleEnum.admin, RoleEnum.wholesaler, RoleEnum.travelAgent)
   @Post(':id/travelers')
   createTraveler(
+    @Request() req,
     @Param('id') reservationId: string,
     @Body() createTravelerDto: CreateTravelerDto,
   ) {
     return this.reservationsService.createTraveler(
+      req.user.id,
       +reservationId,
       createTravelerDto,
     );
   }
 
+  @Roles(RoleEnum.admin, RoleEnum.wholesaler, RoleEnum.travelAgent)
   @Patch(':id/travelers/:travelerId')
   updateTraveler(
+    @Request() req,
     @Param('id') reservationId: string,
     @Param('travelerId') travelerId: string,
     @Body() updateTravelerDto: UpdateTravelerDto,
   ) {
     return this.reservationsService.updateTraveler(
+      req.user.id,
       +reservationId,
       +travelerId,
       updateTravelerDto,
     );
   }
 
+  @Roles(RoleEnum.admin, RoleEnum.wholesaler, RoleEnum.travelAgent)
   @Delete(':id/travelers/:travelerId')
   removeTraveler(
+    @Request() req,
     @Param('id') reservationId: string,
     @Param('travelerId') travelerId: string,
   ) {
-    return this.reservationsService.removeTraveler(+reservationId, +travelerId);
+    return this.reservationsService.removeTraveler(
+      req.user.id,
+      +reservationId,
+      +travelerId,
+    );
   }
 }
