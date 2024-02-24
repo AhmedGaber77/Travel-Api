@@ -45,6 +45,7 @@ export class ReservationsService {
     @InjectRepository(TravelerEntity)
     private travelerRepository: Repository<TravelerEntity>,
     private accountsService: AccountsService,
+    // private genericSeacrch: GenericSearch<ReservationEntity>,
   ) {}
 
   async createReservation(

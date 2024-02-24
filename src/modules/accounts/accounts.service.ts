@@ -1,13 +1,18 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { UpdateAccountDto } from './dto/update-account.dto';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AccountEntity } from './entities/account.entity';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import {
   TransactionEntity,
   TransactionType,
 } from './entities/transaction.entity';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
+import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
+import { RoleEnum } from 'src/roles/roles.enum';
 
 @Injectable()
 export class AccountsService {
@@ -16,6 +21,8 @@ export class AccountsService {
     private accountRepository: Repository<AccountEntity>,
     @InjectRepository(TransactionEntity)
     private transactionRepository: Repository<TransactionEntity>,
+    @InjectRepository(UserEntity)
+    private userRepository: Repository<UserEntity>,
   ) {}
 
   async findAllAccounts(): Promise<AccountEntity[]> {
@@ -25,9 +32,30 @@ export class AccountsService {
     });
   }
 
-  async findOneAccount(id: number): Promise<AccountEntity> {
+  async findOneAccount(
+    userId: UserEntity['id'],
+    id: number,
+  ): Promise<AccountEntity> {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: { travelOffice: true },
+      select: { travelOffice: { id: true } },
+    });
+    if (!user) {
+      throw new NotFoundException(`User with id ${userId} not found`);
+    }
+
+    let where: FindOptionsWhere<AccountEntity> = {};
+    where.id = id;
+    if (user.role?.id === RoleEnum.travelAgent) {
+      if (!user.travelOffice) {
+        throw new UnauthorizedException('User Not in a travel office');
+      }
+      where = { ...where, travelOffice: { id: user.travelOffice.id } };
+    }
+
     const account = await this.accountRepository.findOne({
-      where: { id },
+      where: where,
       relations: { travelOffice: true },
       select: { travelOffice: { id: true, name: true, email: true } },
     });
@@ -37,14 +65,37 @@ export class AccountsService {
     return account;
   }
 
-  update(id: number, updateAccountDto: UpdateAccountDto) {
-    console.log(updateAccountDto);
-    return `This action updates a #${id} account`;
-  }
+  // update(id: number, updateAccountDto: UpdateAccountDto) {
+  //   console.log(updateAccountDto);
+  //   return `This action updates a #${id} account`;
+  // }
 
-  async findAllAccountTransactions(accountId: number) {
+  async findAllAccountTransactions(
+    userId: UserEntity['id'],
+    accountId: number,
+  ) {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: { travelOffice: true },
+      select: { travelOffice: { id: true } },
+    });
+    if (!user) {
+      throw new NotFoundException(`User with id ${userId} not found`);
+    }
+
+    let where: FindOptionsWhere<TransactionEntity> = {};
+    // where.id = accountId;
+    if (user.role?.id === RoleEnum.travelAgent) {
+      if (!user.travelOffice) {
+        throw new UnauthorizedException('User Not in a travel office');
+      }
+      where = {
+        account: { id: accountId, travelOffice: { id: user.travelOffice.id } },
+      };
+    }
+
     const transactions = await this.transactionRepository.find({
-      where: { account: { id: accountId } },
+      where: where,
       relations: {
         reservation: true,
       },
@@ -53,11 +104,36 @@ export class AccountsService {
   }
 
   async findOneAccountTransaction(
+    userId: UserEntity['id'],
     accountId: number,
     transactionId: number,
   ): Promise<TransactionEntity> {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: { travelOffice: true },
+      select: { travelOffice: { id: true } },
+    });
+    if (!user) {
+      throw new NotFoundException(`User with id ${userId} not found`);
+    }
+
+    let where: FindOptionsWhere<TransactionEntity> = {};
+    where = { account: { id: accountId }, id: transactionId };
+    if (user.role?.id === RoleEnum.travelAgent) {
+      if (!user.travelOffice) {
+        throw new UnauthorizedException('User Not in a travel office');
+      }
+      where = {
+        account: {
+          id: accountId,
+          travelOffice: { id: user.travelOffice.id },
+        },
+        id: transactionId,
+      };
+    }
+
     const transaction = await this.transactionRepository.findOne({
-      where: { account: { id: accountId }, id: transactionId },
+      where: where,
       relations: {
         reservation: true,
       },

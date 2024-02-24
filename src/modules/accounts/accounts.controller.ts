@@ -1,42 +1,67 @@
-import { Controller, Get, Body, Patch, Param, Post } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Body,
+  Param,
+  Post,
+  UseGuards,
+  Request,
+  Delete,
+} from '@nestjs/common';
 import { AccountsService } from './accounts.service';
-import { UpdateAccountDto } from './dto/update-account.dto';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
+import { RolesGuard } from 'src/roles/roles.guard';
+import { Roles } from 'src/roles/roles.decorator';
+import { RoleEnum } from 'src/roles/roles.enum';
 
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'), RolesGuard)
 @ApiTags('Accounts')
 @Controller('accounts')
 export class AccountsController {
   constructor(private readonly accountsService: AccountsService) {}
 
+  @Roles(RoleEnum.admin, RoleEnum.wholesaler)
   @Get()
-  findAll() {
+  findAllAccounts() {
     return this.accountsService.findAllAccounts();
   }
 
+  @Roles(RoleEnum.admin, RoleEnum.wholesaler, RoleEnum.travelAgent)
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.accountsService.findOneAccount(+id);
+  findOneAccount(@Request() req, @Param('id') id: string) {
+    return this.accountsService.findOneAccount(req.user.id, +id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAccountDto: UpdateAccountDto) {
-    return this.accountsService.update(+id, updateAccountDto);
-  }
+  // @Roles(RoleEnum.admin, RoleEnum.wholesaler)
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateAccountDto: UpdateAccountDto) {
+  //   return this.accountsService.update(+id, updateAccountDto);
+  // }
 
+  @Roles(RoleEnum.admin, RoleEnum.wholesaler, RoleEnum.travelAgent)
   @Get(':id/transactions')
-  findAllAccountTransactions(@Param('id') id: string) {
-    return this.accountsService.findAllAccountTransactions(+id);
+  findAllAccountTransactions(@Request() req, @Param('id') id: string) {
+    return this.accountsService.findAllAccountTransactions(req.user.id, +id);
   }
 
+  @Roles(RoleEnum.admin, RoleEnum.wholesaler, RoleEnum.travelAgent)
   @Get(':id/transactions/:transactionId')
   findOneAccountTransaction(
+    @Request() req,
     @Param('id') id: string,
     @Param('transactionId') transactionId: string,
   ) {
-    return this.accountsService.findOneAccountTransaction(+id, +transactionId);
+    return this.accountsService.findOneAccountTransaction(
+      req.user.id,
+      +id,
+      +transactionId,
+    );
   }
 
+  @Roles(RoleEnum.admin, RoleEnum.wholesaler)
   @Post(':id/transactions')
   createTransaction(
     @Param('id') id: string,
@@ -48,8 +73,15 @@ export class AccountsController {
     );
   }
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.accountsService.remove(+id);
-  // }
+  @Roles(RoleEnum.admin, RoleEnum.wholesaler)
+  @Delete(':id/transactions/:transactionId')
+  softDeleteTransaction(
+    @Param('id') id: string,
+    @Param('transactionId') transactionId: string,
+  ) {
+    return this.accountsService.softDeleteAccountTransaction(
+      +id,
+      +transactionId,
+    );
+  }
 }
