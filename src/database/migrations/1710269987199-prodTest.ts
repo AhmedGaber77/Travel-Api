@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class CreateAllTables1708043524457 implements MigrationInterface {
-  name = 'CreateAllTables1708043524457';
+export class ProdTest1710269987199 implements MigrationInterface {
+  name = 'ProdTest1710269987199';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
@@ -9,12 +9,6 @@ export class CreateAllTables1708043524457 implements MigrationInterface {
     );
     await queryRunner.query(
       `CREATE TABLE "flight" ("id" SERIAL NOT NULL, "airline" character varying NOT NULL, "departureAddress" character varying NOT NULL, "arrivalAddress" character varying NOT NULL, "departureTime" TIMESTAMP NOT NULL, "arrivalTime" TIMESTAMP NOT NULL, "seatType" character varying NOT NULL, "description" character varying, "departureCity" character varying NOT NULL, "arrivalCity" character varying NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, CONSTRAINT "PK_bf571ce6731cf071fc51b94df03" PRIMARY KEY ("id"))`,
-    );
-    await queryRunner.query(
-      `CREATE TABLE "transaction" ("id" SERIAL NOT NULL, "type" character varying NOT NULL, "amount" integer NOT NULL, "transactionDate" TIMESTAMP NOT NULL, "transactionTime" TIMESTAMP NOT NULL, "description" character varying NOT NULL, "currency" character varying NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "accountId" integer, CONSTRAINT "PK_89eadb93a89810556e1cbcd6ab9" PRIMARY KEY ("id"))`,
-    );
-    await queryRunner.query(
-      `CREATE TABLE "account" ("id" SERIAL NOT NULL, "currentBalance" integer NOT NULL DEFAULT '0', CONSTRAINT "PK_54115ee388cdb6d86bb4bf5b2ea" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `CREATE TABLE "role" ("id" integer NOT NULL, "name" character varying NOT NULL, CONSTRAINT "PK_b36bcfe02fc8de3c57a8b2391c2" PRIMARY KEY ("id"))`,
@@ -45,6 +39,12 @@ export class CreateAllTables1708043524457 implements MigrationInterface {
     );
     await queryRunner.query(
       `CREATE TABLE "reservation" ("id" SERIAL NOT NULL, "quantity" integer NOT NULL, "status" "public"."reservation_status_enum" NOT NULL DEFAULT 'pending', "checkInDate" TIMESTAMP NOT NULL, "checkOutDate" TIMESTAMP, "CancelReason" character varying, "travelOfficeId" integer NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "serviceId" integer, "userId" integer, CONSTRAINT "PK_48b1f9922368359ab88e8bfa525" PRIMARY KEY ("id"))`,
+    );
+    await queryRunner.query(
+      `CREATE TABLE "transaction" ("id" SERIAL NOT NULL, "type" character varying NOT NULL, "amount" integer NOT NULL, "transactionDate" TIMESTAMP NOT NULL, "transactionTime" TIMESTAMP NOT NULL, "description" character varying, "currency" character varying NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "accountId" integer, "reservationId" integer, CONSTRAINT "REL_7cb0b46c97267f548f427b59e7" UNIQUE ("reservationId"), CONSTRAINT "PK_89eadb93a89810556e1cbcd6ab9" PRIMARY KEY ("id"))`,
+    );
+    await queryRunner.query(
+      `CREATE TABLE "account" ("id" SERIAL NOT NULL, "currentBalance" integer NOT NULL DEFAULT '0', CONSTRAINT "PK_54115ee388cdb6d86bb4bf5b2ea" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `CREATE TABLE "travel_office" ("id" SERIAL NOT NULL, "name" character varying(255) NOT NULL, "email" character varying NOT NULL, "phone" character varying NOT NULL, "address" character varying, "city" character varying, "state" character varying, "country" character varying, "postalCode" character varying, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "wholesalerId" integer, "profilePhotoId" integer, "accountId" integer, CONSTRAINT "UQ_996accdcc0d18ce857f8b4adde4" UNIQUE ("email"), CONSTRAINT "UQ_c9290c72dc3c055f48d4d5d18da" UNIQUE ("phone"), CONSTRAINT "REL_44645389a239999df0d63a6702" UNIQUE ("profilePhotoId"), CONSTRAINT "REL_f42d0bb8bf6fa1414a3816b170" UNIQUE ("accountId"), CONSTRAINT "PK_8e0c547ccdd7e175961f14e4e05" PRIMARY KEY ("id"))`,
@@ -104,9 +104,6 @@ export class CreateAllTables1708043524457 implements MigrationInterface {
       `CREATE INDEX "IDX_cf8cb3b47fbc93646728a599a1" ON "package_services_service" ("serviceId") `,
     );
     await queryRunner.query(
-      `ALTER TABLE "transaction" ADD CONSTRAINT "FK_3d6e89b14baa44a71870450d14d" FOREIGN KEY ("accountId") REFERENCES "account"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
-    );
-    await queryRunner.query(
       `ALTER TABLE "user" ADD CONSTRAINT "FK_75e2be4ce11d447ef43be0e374f" FOREIGN KEY ("photoId") REFERENCES "file"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
@@ -135,6 +132,12 @@ export class CreateAllTables1708043524457 implements MigrationInterface {
     );
     await queryRunner.query(
       `ALTER TABLE "reservation" ADD CONSTRAINT "FK_529dceb01ef681127fef04d755d" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "transaction" ADD CONSTRAINT "FK_3d6e89b14baa44a71870450d14d" FOREIGN KEY ("accountId") REFERENCES "account"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "transaction" ADD CONSTRAINT "FK_7cb0b46c97267f548f427b59e73" FOREIGN KEY ("reservationId") REFERENCES "reservation"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
       `ALTER TABLE "travel_office" ADD CONSTRAINT "FK_ac1dce5e189e88a052a3b71d332" FOREIGN KEY ("wholesalerId") REFERENCES "wholesaler"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
@@ -248,6 +251,12 @@ export class CreateAllTables1708043524457 implements MigrationInterface {
       `ALTER TABLE "travel_office" DROP CONSTRAINT "FK_ac1dce5e189e88a052a3b71d332"`,
     );
     await queryRunner.query(
+      `ALTER TABLE "transaction" DROP CONSTRAINT "FK_7cb0b46c97267f548f427b59e73"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "transaction" DROP CONSTRAINT "FK_3d6e89b14baa44a71870450d14d"`,
+    );
+    await queryRunner.query(
       `ALTER TABLE "reservation" DROP CONSTRAINT "FK_529dceb01ef681127fef04d755d"`,
     );
     await queryRunner.query(
@@ -276,9 +285,6 @@ export class CreateAllTables1708043524457 implements MigrationInterface {
     );
     await queryRunner.query(
       `ALTER TABLE "user" DROP CONSTRAINT "FK_75e2be4ce11d447ef43be0e374f"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "transaction" DROP CONSTRAINT "FK_3d6e89b14baa44a71870450d14d"`,
     );
     await queryRunner.query(
       `DROP INDEX "public"."IDX_cf8cb3b47fbc93646728a599a1"`,
@@ -311,6 +317,8 @@ export class CreateAllTables1708043524457 implements MigrationInterface {
     );
     await queryRunner.query(`DROP TABLE "wholesaler"`);
     await queryRunner.query(`DROP TABLE "travel_office"`);
+    await queryRunner.query(`DROP TABLE "account"`);
+    await queryRunner.query(`DROP TABLE "transaction"`);
     await queryRunner.query(`DROP TABLE "reservation"`);
     await queryRunner.query(`DROP TYPE "public"."reservation_status_enum"`);
     await queryRunner.query(`DROP TABLE "traveler"`);
@@ -327,8 +335,6 @@ export class CreateAllTables1708043524457 implements MigrationInterface {
     await queryRunner.query(`DROP TABLE "file"`);
     await queryRunner.query(`DROP TABLE "status"`);
     await queryRunner.query(`DROP TABLE "role"`);
-    await queryRunner.query(`DROP TABLE "account"`);
-    await queryRunner.query(`DROP TABLE "transaction"`);
     await queryRunner.query(`DROP TABLE "flight"`);
     await queryRunner.query(`DROP TABLE "cruise"`);
   }
