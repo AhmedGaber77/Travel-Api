@@ -14,8 +14,8 @@ import { ApiConsumes, ApiBody, ApiTags } from '@nestjs/swagger';
 import { NullableType } from 'src/utils/types/nullable.type';
 import { PdfEntity } from './entities/pdf.entity';
 
-@ApiTags('Pdf Upload')
-@Controller('pdfs')
+@ApiTags('Attatchment Upload')
+@Controller('attatchments')
 export class PdfUploadController {
   constructor(private readonly pdfUploadService: PdfUploadService) {}
 
