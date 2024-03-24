@@ -487,16 +487,16 @@ export class ReservationsService {
     return this.reservationRepository.save(reservation);
   }
 
-  async searchReservationByTravelOffice(searchQuery: string) {
-    return await this.reservationRepository.find({
-      relations: {
-        travelOffice: true,
-      },
-      where: {
-        travelOffice: {
-          name: searchQuery,
-        },
-      },
-    });
-  }
+  // async searchReservationByTravelOffice(searchQuery: string) {
+  //   return await this.reservationRepository.find({
+  //     relations: {
+  //       travelOffice: true,
+  //     },
+  //     where: {
+  //       travelOffice: {
+  //         name: searchQuery,
+  //       },
+  //     },
+  //   });
+  // }
 }

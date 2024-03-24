@@ -39,6 +39,7 @@ import { AccountsModule } from './modules/accounts/accounts.module';
 import { HotelRoomsModule } from './modules/hotel-rooms/hotel-rooms.module';
 import { StandardPackagesModule } from './modules/standard-packages/standard-packages.module';
 import { GenericSearchModule } from './generic-search/generic-search.module';
+import { PdfUploadModule } from './pdf-upload/pdf-upload.module';
 
 @Module({
   imports: [
@@ -103,6 +104,7 @@ import { GenericSearchModule } from './generic-search/generic-search.module';
     HotelRoomsModule,
     StandardPackagesModule,
     GenericSearchModule,
+    PdfUploadModule,
   ],
   providers: [IsUniqueConstraint],
 })

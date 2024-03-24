@@ -40,4 +40,41 @@ export class CloudinaryService {
 
     return Promise.all(promises) as Promise<UploadApiResponse[]>;
   }
+
+  async uplaodPdf(
+    file: Express.Multer.File,
+    maxSize: number = 5 * 1024 * 1024,
+  ): Promise<UploadApiResponse | UploadApiErrorResponse> {
+    if (file.size > maxSize) {
+      throw new Error('File size exceeds the maximum allowable size');
+    }
+
+    return new Promise((resolve, reject) => {
+      v2.uploader
+        .upload_stream(
+          {
+            format: 'pdf',
+            resource_type: 'raw',
+          },
+          (error, result) => {
+            if (error) return reject(error);
+            if (result) {
+              resolve(result);
+            } else {
+              reject(new Error('No result returned'));
+            }
+          },
+        )
+        .end(file.buffer);
+    });
+  }
+
+  async uploadPdfs(
+    files: Express.Multer.File[],
+    maxSize: number = 5 * 1024 * 1024,
+  ): Promise<UploadApiResponse[] | UploadApiErrorResponse[]> {
+    const promises = files.map((file) => this.uplaodPdf(file, maxSize));
+
+    return Promise.all(promises) as Promise<UploadApiResponse[]>;
+  }
 }

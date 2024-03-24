@@ -1,8 +1,15 @@
 import { EntityRelationalHelper } from 'src/utils/relational-entity-helper';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { ReservationEntity } from './reservation.entity';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, IsPhoneNumber, IsString } from 'class-validator';
+import { PdfEntity } from 'src/pdf-upload/entities/pdf.entity';
 
 @Entity({ name: 'traveler' })
 export class TravelerEntity extends EntityRelationalHelper {
@@ -42,4 +49,10 @@ export class TravelerEntity extends EntityRelationalHelper {
   @IsPhoneNumber()
   @Column()
   mobilePhone: string;
+
+  @Column({ nullable: true })
+  dateOfBirth?: Date;
+
+  @OneToMany(() => PdfEntity, (pdf) => pdf.traveler)
+  files: PdfEntity[];
 }

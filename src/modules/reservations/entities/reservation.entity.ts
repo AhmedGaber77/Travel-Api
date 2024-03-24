@@ -68,10 +68,8 @@ export class ReservationEntity extends EntityRelationalHelper {
   @Column({ nullable: true })
   CancelReason?: string;
 
-  // @Column()
-  // serviceId: ServiceEntity['id'];
   @ManyToOne(() => ServiceEntity, (service) => service.reservations)
-  @JoinColumn({ name: 'serviceId' })
+  @JoinColumn()
   service: ServiceEntity;
 
   @Column()
