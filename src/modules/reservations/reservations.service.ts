@@ -12,7 +12,7 @@ import {
   ReservationEntity,
   ReservationStatus,
 } from './entities/reservation.entity';
-import { FindOptionsWhere, Repository } from 'typeorm';
+import { FindOptionsWhere, In, Repository } from 'typeorm';
 import { ServiceEntity } from '../services/entities/service.entity';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { RoleEnum } from 'src/roles/roles.enum';
@@ -32,6 +32,7 @@ import { InfinityPaginationResultType } from 'src/utils/types/infinity-paginatio
 import { CancelReservationDto } from './dto/cancel-reservation.dto';
 import { AccountsService } from '../accounts/accounts.service';
 import { TransactionType } from '../accounts/entities/transaction.entity';
+import { PdfEntity } from 'src/pdf-upload/entities/pdf.entity';
 
 @Injectable()
 export class ReservationsService {
@@ -45,6 +46,8 @@ export class ReservationsService {
     @InjectRepository(TravelerEntity)
     private travelerRepository: Repository<TravelerEntity>,
     private accountsService: AccountsService,
+    @InjectRepository(PdfEntity)
+    private pdfRepository: Repository<PdfEntity>,
     // private genericSeacrch: GenericSearch<ReservationEntity>,
   ) {}
 
@@ -90,6 +93,11 @@ export class ReservationsService {
     }
 
     const reservation = this.reservationRepository.create(createReservationDto);
+    // if (createReservationDto.travelers) {
+    //   reservation.travelers = createReservationDto.travelers.map((traveler) =>
+    //     this.createTraveler(traveler),
+    //   );
+    // }
     reservation.travelOffice = user.travelOffice;
     reservation.user = user;
     reservation.service = service;
@@ -311,6 +319,14 @@ export class ReservationsService {
       throw new NotFoundException(`Traveler with ID ${travelerId} not found`);
     }
     this.travelerRepository.merge(traveler, updateTravelerDto);
+    if (updateTravelerDto.fileIds) {
+      const files = await this.pdfRepository.find({
+        where: {
+          id: In(updateTravelerDto.fileIds),
+        },
+      });
+      traveler.files = files;
+    }
     return this.travelerRepository.save(traveler);
   }
 
@@ -393,6 +409,16 @@ export class ReservationsService {
       );
     }
     const traveler = this.travelerRepository.create(createTravelerDto);
+
+    if (createTravelerDto.fileIds) {
+      const files = await this.pdfRepository.find({
+        where: {
+          id: In(createTravelerDto.fileIds),
+        },
+      });
+      traveler.files = files;
+    }
+
     traveler.reservation = reservation;
     return this.travelerRepository.save(traveler);
   }

@@ -51,20 +51,14 @@ export class CloudinaryService {
 
     return new Promise((resolve, reject) => {
       v2.uploader
-        .upload_stream(
-          {
-            format: 'pdf',
-            resource_type: 'raw',
-          },
-          (error, result) => {
-            if (error) return reject(error);
-            if (result) {
-              resolve(result);
-            } else {
-              reject(new Error('No result returned'));
-            }
-          },
-        )
+        .upload_stream((error, result) => {
+          if (error) return reject(error);
+          if (result) {
+            resolve(result);
+          } else {
+            reject(new Error('No result returned'));
+          }
+        })
         .end(file.buffer);
     });
   }

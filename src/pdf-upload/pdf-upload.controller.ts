@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Param,
-  FileTypeValidator,
   MaxFileSizeValidator,
   ParseFilePipe,
   UploadedFiles,
@@ -42,7 +41,7 @@ export class PdfUploadController {
       new ParseFilePipe({
         validators: [
           new MaxFileSizeValidator({ maxSize: 3 * 1024 * 1024 }),
-          new FileTypeValidator({ fileType: 'application/pdf' }),
+          // new FileTypeValidator({ fileType: 'application/pdf' }),
         ],
       }),
     )

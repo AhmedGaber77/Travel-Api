@@ -5,6 +5,7 @@ import {
   IsEmail,
   IsPhoneNumber,
   IsOptional,
+  IsPositive,
 } from 'class-validator';
 
 export class CreateTravelerDto {
@@ -39,4 +40,21 @@ export class CreateTravelerDto {
   @IsNotEmpty()
   @IsPhoneNumber()
   mobilePhone: string;
+
+  @ApiPropertyOptional({
+    type: () => Date,
+    example: '2021-01-01',
+  })
+  @IsOptional()
+  dateOfBirth?: Date;
+
+  @ApiProperty({
+    description: 'The file ids of the traveler',
+    example: [1, 2, 3],
+    required: false,
+    nullable: true,
+  })
+  @IsOptional()
+  @IsPositive({ each: true })
+  fileIds?: number[];
 }

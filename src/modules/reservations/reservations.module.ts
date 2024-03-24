@@ -8,6 +8,7 @@ import { ServiceEntity } from '../services/entities/service.entity';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { TravelerEntity } from './entities/traveler.entity';
 import { AccountsModule } from '../accounts/accounts.module';
+import { PdfEntity } from 'src/pdf-upload/entities/pdf.entity';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { AccountsModule } from '../accounts/accounts.module';
       ServiceEntity,
       UserEntity,
       TravelerEntity,
+      PdfEntity,
     ]),
     ServicesModule,
     AccountsModule,
