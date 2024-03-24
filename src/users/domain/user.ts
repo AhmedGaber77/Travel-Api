@@ -2,6 +2,7 @@ import { Exclude, Expose } from 'class-transformer';
 import { FileType } from 'src/files/domain/file';
 import { GalleryEntity } from 'src/image-upload/entities/gallery.entity';
 import { TravelOfficeEntity } from 'src/modules/travel-offices/entities/travel-office.entity';
+import { WholesalerEntity } from 'src/modules/wholesalers/entities/wholesaler.entity';
 import { Role } from 'src/roles/domain/role';
 import { Status } from 'src/statuses/domain/status';
 
@@ -28,6 +29,8 @@ export class User {
   profilePhotoId?: GalleryEntity['id'] | null;
   profilePhoto?: GalleryEntity | null;
   role?: Role | null;
+  wholesalerId?: WholesalerEntity['id'] | null;
+  wholesaler?: WholesalerEntity | null;
   travelOfficeId?: TravelOfficeEntity['id'] | null;
   travelOffice?: TravelOfficeEntity | null;
   status?: Status;

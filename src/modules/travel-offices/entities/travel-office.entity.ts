@@ -1,4 +1,3 @@
-import { IsPostalCode } from 'class-validator';
 import { GalleryEntity } from 'src/image-upload/entities/gallery.entity';
 import { AccountEntity } from 'src/modules/accounts/entities/account.entity';
 import { ReservationEntity } from 'src/modules/reservations/entities/reservation.entity';
@@ -28,27 +27,26 @@ export class TravelOfficeEntity extends EntityRelationalHelper {
   @Column({ length: 255 })
   name: string;
 
-  @Column({ type: String, unique: true })
+  @Column({ unique: true })
   email: string;
 
-  @Column({ type: String, unique: true })
+  @Column({ unique: true })
   phone: string;
 
-  @Column({ type: String, nullable: true })
-  address: string;
+  @Column({ nullable: true })
+  address?: string;
 
-  @Column({ type: String, nullable: true })
-  city: string;
+  @Column({ nullable: true })
+  city?: string;
 
-  @Column({ type: String, nullable: true })
-  state: string;
+  @Column({ nullable: true })
+  state?: string;
 
-  @Column({ type: String, nullable: true })
-  country: string;
+  @Column({ nullable: true })
+  country?: string;
 
-  @Column({ type: String, nullable: true })
-  @IsPostalCode()
-  postalCode: string;
+  @Column({ nullable: true })
+  postalCode?: string;
 
   @OneToMany(() => UserEntity, (user) => user.travelOffice)
   @JoinColumn()

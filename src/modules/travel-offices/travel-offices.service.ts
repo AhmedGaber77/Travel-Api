@@ -2,7 +2,6 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -36,25 +35,21 @@ export class TravelOfficesService {
     const wholesaler = await this.wholesalerService.findOne(
       createTravelOfficeDto.WholesalerId,
     );
-    try {
-      const travelOffice = this.travelOfficeRepository.create(
-        createTravelOfficeDto,
-      );
-      travelOffice.wholesaler = wholesaler;
-      if (createTravelOfficeDto.profilePhotoId) {
-        const photo = await this.galleryRepository.findOne({
-          where: { id: createTravelOfficeDto.profilePhotoId },
-        });
-        if (photo) {
-          travelOffice.profilePhoto = photo;
-        }
+    const travelOffice = this.travelOfficeRepository.create(
+      createTravelOfficeDto,
+    );
+    travelOffice.wholesaler = wholesaler;
+    if (createTravelOfficeDto.profilePhotoId) {
+      const photo = await this.galleryRepository.findOne({
+        where: { id: createTravelOfficeDto.profilePhotoId },
+      });
+      if (photo) {
+        travelOffice.profilePhoto = photo;
       }
-      travelOffice.account = this.accountRepository.create();
-      await this.travelOfficeRepository.save(travelOffice);
-      return this.findOne(travelOffice.id);
-    } catch (error) {
-      throw new InternalServerErrorException('Error creating travel office');
     }
+    travelOffice.account = this.accountRepository.create();
+    await this.travelOfficeRepository.save(travelOffice);
+    return this.findOne(travelOffice.id);
   }
 
   async findAll(): Promise<TravelOfficeEntity[]> {
@@ -75,12 +70,14 @@ export class TravelOfficesService {
     return travelOffice;
   }
 
-  async findOneByEmail(email: string): Promise<TravelOfficeEntity | undefined> {
+  async findOneByEmail(email: string): Promise<TravelOfficeEntity> {
     const travelOffice = await this.travelOfficeRepository.findOne({
       where: { email },
     });
     if (!travelOffice) {
-      return;
+      throw new NotFoundException(
+        `Travel office with email ${email} not found`,
+      );
     }
     return travelOffice;
   }

@@ -3,6 +3,7 @@ import {
   IsEmail,
   IsNotEmpty,
   IsOptional,
+  IsPhoneNumber,
   IsPositive,
   IsString,
 } from 'class-validator';
@@ -14,6 +15,7 @@ export class CreateTravelOfficeDto {
     example: 'ABC travel offices',
   })
   @IsNotEmpty()
+  @IsString()
   name: string;
 
   @ApiProperty({
@@ -30,13 +32,13 @@ export class CreateTravelOfficeDto {
 
   @ApiProperty({
     description: 'The phone number of the travel office',
-    example: '+1234567890',
+    example: '+201234567890',
   })
   @isUnique({
     tableName: 'travel_office',
     column: 'phone',
   })
-  // @IsPhoneNumber()
+  @IsPhoneNumber()
   @IsNotEmpty()
   phone: string;
 
@@ -52,7 +54,6 @@ export class CreateTravelOfficeDto {
     example: '123 travel office St.',
   })
   @IsString()
-  // @IsNotEmpty()
   @IsOptional()
   address: string;
 

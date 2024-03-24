@@ -1,6 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { isUnique } from 'src/validators/unique-field.validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsPhoneNumber,
+  IsString,
+} from 'class-validator';
 
 export class CreateWholesalerDto {
   @ApiProperty({
@@ -8,10 +13,6 @@ export class CreateWholesalerDto {
     example: 'ABC Wholesalers',
   })
   @IsNotEmpty()
-  @isUnique({
-    tableName: 'wholesaler',
-    column: 'name',
-  })
   name: string;
 
   @ApiProperty({
@@ -20,30 +21,28 @@ export class CreateWholesalerDto {
   })
   @IsEmail()
   @IsNotEmpty()
-  @isUnique({
-    tableName: 'wholesaler',
-    column: 'email',
-  })
   email: string;
 
   @ApiProperty({
     description: 'The phone number of the wholesaler',
     example: '+1234567890',
   })
-  @isUnique({
-    tableName: 'wholesaler',
-    column: 'phone',
-  })
-  // @IsPhoneNumber()
+  @IsPhoneNumber()
   @IsNotEmpty()
   phone: string;
+
+  @ApiProperty({
+    description: 'The mobile phone number of the wholesaler',
+    example: '+201234567890',
+  })
+  @IsOptional()
+  mobilePhone?: string;
 
   @ApiProperty({
     description: 'The address of the wholesaler',
     example: '123 Wholesaler St.',
   })
   @IsString()
-  // @IsNotEmpty()
   @IsOptional()
   address: string;
 
@@ -73,7 +72,7 @@ export class CreateWholesalerDto {
     example: '12345',
   })
   @IsOptional()
-  postalCode: string;
+  postalCode?: string;
 
   @ApiProperty({
     description: 'Additional contact information for the wholesaler',

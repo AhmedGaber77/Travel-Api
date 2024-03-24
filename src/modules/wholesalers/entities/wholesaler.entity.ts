@@ -1,7 +1,7 @@
-import { IsEmail, IsJSON, IsPostalCode } from 'class-validator';
 import { PackageEntity } from 'src/modules/packages/entities/package.entity';
 import { ServiceEntity } from 'src/modules/services/entities/service.entity';
 import { TravelOfficeEntity } from 'src/modules/travel-offices/entities/travel-office.entity';
+import { User } from 'src/users/domain/user';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
 import { EntityRelationalHelper } from 'src/utils/relational-entity-helper';
 import {
@@ -23,37 +23,36 @@ export class WholesalerEntity extends EntityRelationalHelper {
   @Column({ length: 255, unique: true })
   name: string;
 
-  @Column('json')
-  @IsJSON()
-  contactInfo: any;
-
   @Index()
   @Column({
     type: String,
     unique: true,
   })
-  @IsEmail()
   email: string | null;
 
-  @Index()
-  @Column({ type: String, unique: true })
-  // @IsPhoneNumber()
+  @Column({ unique: true })
   phone: string;
 
-  @Column({ type: String, nullable: true })
-  address: string;
+  @Column({ nullable: true })
+  mobilePhone?: string;
 
   @Column({ nullable: true })
-  city: string;
+  address?: string;
 
   @Column({ nullable: true })
-  state: string;
+  city?: string;
 
   @Column({ nullable: true })
-  country: string;
+  state?: string;
+
+  @Column({ nullable: true })
+  country?: string;
+
+  @Column({ nullable: true })
+  postalCode?: string;
 
   @OneToMany(() => UserEntity, (user) => user.wholesaler, { cascade: true })
-  users: UserEntity[];
+  users: User[];
 
   @OneToMany(
     () => TravelOfficeEntity,
@@ -66,10 +65,6 @@ export class WholesalerEntity extends EntityRelationalHelper {
 
   @OneToMany(() => ServiceEntity, (serviceEntity) => serviceEntity.wholesaler)
   services: ServiceEntity[];
-
-  @Column({ length: 255, nullable: true })
-  @IsPostalCode()
-  postalCode: string;
 
   @CreateDateColumn()
   createdAt: Date;

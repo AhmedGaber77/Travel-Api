@@ -1,8 +1,8 @@
 import {
+  BadRequestException,
   HttpException,
   HttpStatus,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateWholesalerDto } from './dto/create-wholesaler.dto';
@@ -11,24 +11,42 @@ import { WholesalerEntity } from './entities/wholesaler.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
+import { UsersService } from 'src/users/users.service';
+import { User } from 'src/users/domain/user';
 
 @Injectable()
 export class WholesalersService {
   constructor(
     @InjectRepository(WholesalerEntity)
     private wholesalersRepository: Repository<WholesalerEntity>,
+    private readonly userService: UsersService,
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
   ) {}
   async create(
     createWholesalerDto: CreateWholesalerDto,
   ): Promise<WholesalerEntity> {
-    try {
-      const wholesaler = this.wholesalersRepository.create(createWholesalerDto);
-      return await this.wholesalersRepository.save(wholesaler);
-    } catch (error) {
-      throw new InternalServerErrorException('Error creating wholesaler');
+    const existingWholesaler = await this.wholesalersRepository.findOne({
+      where: [
+        {
+          name: createWholesalerDto.name,
+        },
+        {
+          email: createWholesalerDto.email,
+        },
+        {
+          phone: createWholesalerDto.phone,
+        },
+      ],
+    });
+    if (existingWholesaler) {
+      throw new BadRequestException(
+        'Wholesaler with the same name, email or phone already exists',
+      );
     }
+    const wholesaler = this.wholesalersRepository.create(createWholesalerDto);
+
+    return await this.wholesalersRepository.save(wholesaler);
   }
 
   async findAll(): Promise<WholesalerEntity[]> {
@@ -38,7 +56,16 @@ export class WholesalersService {
   async findOne(id: number): Promise<WholesalerEntity> {
     const wholesaler = await this.wholesalersRepository.findOne({
       where: { id },
-      relations: ['travelOffices'],
+      relations: {
+        travelOffices: true,
+      },
+      select: {
+        travelOffices: {
+          name: true,
+          email: true,
+          phone: true,
+        },
+      },
     });
     if (!wholesaler) {
       throw new NotFoundException(`wholesaler with id ${id} not found`);
@@ -55,15 +82,20 @@ export class WholesalersService {
     return this.wholesalersRepository.save(wholesaler);
   }
 
-  async remove(id: number): Promise<boolean> {
+  async softDelete(id: number): Promise<boolean> {
     const wholesaler = await this.findOne(id);
     await this.wholesalersRepository.softDelete(wholesaler.id);
     return true;
   }
 
-  async findUsersByWholesalerId(id: number): Promise<UserEntity[]> {
-    const wholesaler = await this.findOne(id);
-    return wholesaler.users ? wholesaler.users : [];
+  async findUsersByWholesalerId(id: number): Promise<User[]> {
+    const users = await this.wholesalersRepository.findOne({
+      where: { id },
+      relations: {
+        users: true,
+      },
+    });
+    return users?.users ?? [];
   }
 
   async addUserToWholesaler(
@@ -71,7 +103,7 @@ export class WholesalersService {
     userId: number,
   ): Promise<void> {
     const wholesaler = await this.findOne(wholesalerId);
-    const user = await this.userRepository.findOne({ where: { id: userId } });
+    const user = await this.userService.findOne({ id: userId });
     if (!user) {
       throw new NotFoundException(`User with id ${userId} not found`);
     }
@@ -92,6 +124,7 @@ export class WholesalersService {
     if (!wholesaler.users) {
       wholesaler.users = [];
     }
+
     wholesaler.users.push(user);
     await this.wholesalersRepository.save(wholesaler);
   }
