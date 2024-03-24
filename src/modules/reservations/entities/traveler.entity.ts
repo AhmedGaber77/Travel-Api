@@ -53,6 +53,9 @@ export class TravelerEntity extends EntityRelationalHelper {
   @Column({ nullable: true })
   dateOfBirth?: Date;
 
-  @OneToMany(() => PdfEntity, (pdf) => pdf.traveler)
+  @OneToMany(() => PdfEntity, (pdf) => pdf.traveler, {
+    cascade: true,
+    eager: true,
+  })
   files: PdfEntity[];
 }

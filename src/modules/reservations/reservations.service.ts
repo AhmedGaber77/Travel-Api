@@ -497,7 +497,6 @@ export class ReservationsService {
     if (!reservation) {
       throw new NotFoundException(`Reservation with ID ${id} not found`);
     }
-    console.log(reservation.travelOffice);
     await this.accountsService.createAccountTransaction(
       reservation.travelOffice.account.id,
       {

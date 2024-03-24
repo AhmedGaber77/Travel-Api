@@ -1,5 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsPositive, IsString } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsPhoneNumber,
+  IsPositive,
+  IsString,
+  Max,
+  Min,
+} from 'class-validator';
 
 export class CreateHotelDto {
   @ApiProperty({
@@ -17,6 +25,15 @@ export class CreateHotelDto {
   @IsNotEmpty()
   @IsString()
   address: string;
+
+  @ApiProperty({
+    description: 'The stars of the hotel',
+    example: 5,
+  })
+  @IsPositive()
+  @Min(0)
+  @Max(5)
+  stars: number;
 
   @ApiProperty({
     description: 'The city of the hotel',
@@ -43,10 +60,11 @@ export class CreateHotelDto {
 
   @ApiProperty({
     description: 'The phone number of the hotel',
-    example: '+1234567890',
+    example: '+201234567890',
     required: false,
   })
   @IsString()
+  @IsPhoneNumber()
   mobileNumber: string;
 
   @ApiProperty({

@@ -1,4 +1,11 @@
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsPositive,
+  IsString,
+  Max,
+  Min,
+} from 'class-validator';
 import {
   Column,
   CreateDateColumn,
@@ -57,6 +64,16 @@ export class HotelEntity extends EntityRelationalHelper {
   @IsOptional()
   @Column({ nullable: true })
   zipCode?: string;
+
+  @ApiPropertyOptional({
+    type: () => Number,
+  })
+  @IsOptional()
+  @IsPositive()
+  @Min(0)
+  @Max(5)
+  @Column({ nullable: true })
+  stars?: number;
 
   @ApiPropertyOptional({
     type: () => String,
